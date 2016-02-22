@@ -2,7 +2,7 @@
 ![Image]
 ( )
 
-Blob Attack : http://www.team-arg.org/mybl-manual.html  
+Mystic Balloon : http://www.team-arg.org/mybl-manual.html  
 Download stable Arduboy versions : http://www.team-arg.org/mybl-downloads.html  
 MADE by TEAM a.r.g. : http://www.team-arg.org/more-about.html
  
