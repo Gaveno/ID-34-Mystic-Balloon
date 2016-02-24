@@ -225,7 +225,7 @@ bool Arduboy::nextFrame()
   // running a slow render we would constnatly be behind the clock
   // keep an eye on this and see how it works.  If it works well the
   // lastFrameStart variable could be eliminated completely
-  nextFrameStart = now + eachFrameMillis;
+  nextFrameStart = lastFrameStart + eachFrameMillis;
   lastFrameStart = now;
   post_render = true;
   return post_render;
