@@ -1,5 +1,5 @@
-#ifndef STAGE_H
-#define STAGE_H
+#ifndef GAME_H
+#define GAME_H
 
 #include "inputs.h"
 

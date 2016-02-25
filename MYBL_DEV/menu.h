@@ -21,7 +21,7 @@ extern byte gameState;
 
 boolean soundYesNo;
 int menuSelection;
-byte counter = 0; //we'll use it for frame count to
+byte counter = 0; 
 byte frames = 0;
 byte blinkingFrame = 0;
 
@@ -283,51 +283,21 @@ PROGMEM const unsigned char leftGuyRightEye[] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
-PROGMEM const unsigned char rightGuyLeftEye[] = {
+PROGMEM const unsigned char rightGuyEyes[] = {
 // width, height
-6, 8,
+16, 8,
 // frame 0
-0x02, 0x06, 0x06, 0x06, 0x06, 0x04, 
+0x20, 0x60, 0x60, 0x60, 0x60, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x1C, 0x0E, 0x07, 0x03, 
 // frame 1
-0x03, 0x07, 0x07, 0x07, 0x07, 0x06, 
+0x30, 0x70, 0x70, 0x70, 0x70, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C, 0x1E, 0x0F, 0x07, 0x03, 
 // frame 2
-0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 
+0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x08, 0x04, 0x02, 0x01, 
 // frame 3
-0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
 
-void stateMenuIntro()
-{
-  counter++;
-  if (counter < 46)
-  {
-    arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
-  }
-
-  if (counter > 45)
-  {
-    if (arduboy.everyXFrames(2))
-    {
-      frames++;
-      blinkingFrame++;
-    }
-    if (frames > 4) frames = 0;
-    if (blinkingFrame > 11) blinkingFrame = 0;
-    arduboy.drawCompressed(0, 0, titleScreen, WHITE);
-    arduboy.drawCompressed(85, 45, mysticBalloon, WHITE);
-    sprites.drawSelfMasked(79, 43, stars, frames);
-    sprites.drawSelfMasked(9, 9, leftGuyLeftEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrame]));
-    sprites.drawSelfMasked(15, 13, leftGuyRightEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrame]));
-    sprites.drawSelfMasked(109, 34, rightGuyLeftEye, pgm_read_byte(&blinkingEyesRightGuy[blinkingFrame]));
-  }
-  if ((counter > 90) || buttons.justPressed(A_BUTTON | B_BUTTON))
-  {
-    gameState = STATE_MENU_MAIN;
-  }
-}
-
-void stateMenuMain()
+void drawTitleScreen()
 {
   if (arduboy.everyXFrames(2))
   {
@@ -341,8 +311,21 @@ void stateMenuMain()
   sprites.drawSelfMasked(79, 43, stars, frames);
   sprites.drawSelfMasked(9, 9, leftGuyLeftEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrame]));
   sprites.drawSelfMasked(15, 13, leftGuyRightEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrame]));
-  sprites.drawSelfMasked(109, 34, rightGuyLeftEye, pgm_read_byte(&blinkingEyesRightGuy[blinkingFrame]));
+  sprites.drawSelfMasked(109, 34, rightGuyEyes, pgm_read_byte(&blinkingEyesRightGuy[blinkingFrame]));
+}
 
+void stateMenuIntro()
+{
+  counter++;
+  if (counter < 46) arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
+  if (counter > 45) drawTitleScreen();
+  if ((counter > 90) || buttons.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+}
+
+void stateMenuMain()
+{
+  
+  drawTitleScreen();
   arduboy.drawCompressed(51, 9, mainMenuMask, BLACK);
   arduboy.drawCompressed(51, 9, mainMenu, WHITE);
   if (buttons.justPressed(DOWN_BUTTON) && (menuSelection < 5)) menuSelection++;
@@ -374,11 +357,7 @@ void stateMenuInfo()
 
 void stateMenuSoundfx()
 {
-  if (arduboy.everyXFrames(3)) frames++;
-  if (frames > 4) frames = 0;
-  arduboy.drawCompressed(0, 0, titleScreen, WHITE);
-  arduboy.drawCompressed(85, 45, mysticBalloon, WHITE);
-  sprites.drawSelfMasked(79, 42, stars, frames);
+  drawTitleScreen();
   arduboy.drawCompressed(51, 9, soundMenuMask, BLACK);
   arduboy.drawCompressed(51, 9, soundMenu, WHITE);
   if (buttons.justPressed(DOWN_BUTTON)) soundYesNo = true;
@@ -392,11 +371,7 @@ void stateMenuSoundfx()
   }
   if (soundYesNo == true) arduboy.audio.on();
   else arduboy.audio.off();
-
 }
-
-
-
 
 
 #endif
