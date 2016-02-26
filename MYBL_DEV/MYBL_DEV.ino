@@ -3,7 +3,7 @@
 
  Arduboy version 0.1:  http://www.team-arg.org/mybl-downloads.html
 
- MADE by TEAM a.r.g. : http://www.team-arg.org/About.html
+ MADE by TEAM a.r.g. : http://www.team-arg.org/more-about.html
 
  2016 - GEVANO - pixelart by CastPixel: https://twitter.com/castpixel
 
