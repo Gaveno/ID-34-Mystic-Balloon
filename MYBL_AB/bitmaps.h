@@ -1,31 +1,60 @@
-#ifndef MENU_BITMAPS_H
-#define MENU_BITMAPS_H
+#ifndef BITMAPS_H
+#define BITMAPS_H
 
-#include "inputs.h"
-#include "game.h"
 
-//define menu states (on main menu)
-#define STATE_MENU_INTRO         0
-#define STATE_MENU_MAIN          1
-#define STATE_MENU_HELP          2
-#define STATE_MENU_PLAY          3
-#define STATE_MENU_INFO          4
-#define STATE_MENU_SOUNDFX       5
-
-//define game states (on main menu)
-#define STATE_GAME_PLAYING       6
-#define STATE_GAME_PAUSE         7
-#define STATE_GAME_OVER          8
-
-extern byte gameState;
-
-boolean soundYesNo;
-int menuSelection;
-byte counter = 0;
-byte blinkingFrames = 0;
-byte sparkleFrames = 0;
-
-const uint8_t PROGMEM TEAMarg[] = {
+///////////////// Menu bitmaps ////////////////////
+///////////////////////////////////////////////////
+ 
+const unsigned char PROGMEM TEAMarg[] = //128,48 COMPRESSED !!!!!!!!
+{
+  //         ########                                                                                       ########
+  //         ###########                                                                                   ##      ##
+  //         ####    ##################                                                                   ##  #### ###
+  //         #### ##    ################ ####################           #############         ######     ##  ##  # ####
+  //         #### #####                #######################       ##################      ########   ##  ###  # #####
+  //         #### ##  ######  ######## ##                   ###     ####            ####     ##     ## ##  ####### #  ###
+  // ####### ####  #  ####### #####  #  # #################  ##    ###   ##########   ###   ##  ###  ###  ###  ### #   ### ##########
+  //         ##### ##########  ####  ## #  ################# ##   ###  ##############   ##  ## #####  #  ###    ## ##  ###
+  //         ##### ########### ######## #   ################  #   ##  #################  ####  ######   ####    ## ########
+  // ##### # #####             ########     ################# #  ##  #######    ######## #### ######## ######  ### ########  # # ####
+  // #  #    ###### ####################    ################# #  ## #######      #######  ##  #################### ########      #  #
+  // #  # #  ###### ####################     #######          # ##  ######       ####  ## ## #################  ## ######## # #  #  #
+  // ####    ######  #  ################     ##############   # ## #######       ####  ## #  #################  ## ########      ####
+  // ####  # ####### #  #################  # ##############   ###  ######       ######### # ###################### ########  # # ####
+  // ####    ####### ####################  # ###############  ### #######       ########    #####################  ########      ####
+  // #### #   ######        #########      # ###############  ##  ######       #########   ###################### ######### # #  ####
+  // ####     #####          ########     ##  ############## ### ######################    ###################### #########     #####
+  // ##### #  #####          #########    ### ########        #  ######################   ####################### ########   #  #####
+  // #####     ###            ########    ### ###############   ######################    ####################### ########      #####
+  // ###### #  ###         #  #########  #### ################  #######      #########   ######## ############### ########  # # #####
+  // ######    ##          #   ########  ####  ################  ######      ########    #######  ############### ########      #####
+  // ####### #  #         ###  ######### ##### ################# #####       ########   ########   ###### ####### ######## # # ######
+  // #######    #         ###   ########  #### #  ############## #####      ########    #######    #####  ####### ########     ######
+  // ######## # ######## #####  ##  ##### #### #  ########                  ###  ###    #######     ###   ######  ########  #  ######
+  // ########          # #####   #  ##### #### #####             #         ####  ##                 ##    ###  # #########     ######
+  // #  ###### # # # # ########  #####    ####                ## #         ########           ##          ###  # ######### # # ###  #
+  // #  ######          #######           ####                ## #     ###                     #            #### #########     ###  #
+  // ########## # # # # #########         # ##                   #     ###             ##      ##             ## #########  # #######
+  //                    ########         ## ##                   #    ####             ##       #                ########
+  //         ###         #######         #  ##              ######    ####            ####      ##  #    #       ########
+  // ######### ######    ######         ##   #       #####################            # ##       #  ##  ####      #######   #########
+  //       ##   ##       ######         #    ################            ############## ######################     ######
+  //      ##     ##   ## #####         ## ## #########                   ############    #######################    #####
+  //     ## ##    ##  ##  ####         #  ##                                                  ##     #############   #### ##
+  //     #  ##     #      ###         ##          ########    ##########      #########       ##     ##### #########  ### ##
+  //     ##       ##      ###     #####          ##########   ###########    ###########           ######      ##########
+  //      ##   # ##       #############         ############  ############   ###########          ####            #######   ###
+  //       ##   ##   ###  ########  ####        ############  #####  #####  #####   ####       ## ####    ###               # #
+  //        ## ##    # #            ####        #####   ####  #####   ####  ####               ##  ##     # #               ###
+  //         ###     ###             ##         #####   ####  #####   ###   ####   ######                 ###
+  //                                            ############  ##########    #####  ######
+  //                                            ###########      ########      ########
+  //                                            ########### #### ## ##### #### ######## ####
+  //                                            #####   ### #  # ##  #### #  # ######## #  #
+  //                                            #####   ### #### ##   ### #### ######## ####
+  //
+  //
+  //
   0x7f, 0x2f, 0x30, 0x68, 0xb7, 0xdb, 0xed, 0xdb, 0x53, 0x9f, 0xfa, 0x73, 0x97, 0xbb, 0xd5, 0xe7,
   0x2e, 0x77, 0xb9, 0xcb, 0x5d, 0x6e, 0xbb, 0xbd, 0xdc, 0xe5, 0x2e, 0x77, 0xb9, 0xcb, 0x5d, 0xee,
   0x72, 0x97, 0x5b, 0x2b, 0xbb, 0xdc, 0x6e, 0xb7, 0xdb, 0xed, 0x76, 0xbb, 0xdd, 0x6e, 0xb7, 0xdb,
@@ -68,7 +97,8 @@ const uint8_t PROGMEM TEAMarg[] = {
   0xc9, 0x4a, 0x2a, 0xe2, 0x74, 0xb4, 0xe9, 0xd0, 0xb5, 0xce, 0x8e, 0xfd, 0x74, 0x3a, 0xb4, 0x01
 };
 
-const unsigned char PROGMEM qrcode[] =  //64,64
+
+const unsigned char PROGMEM qrcode[] =  //64,64 COMPRESSED !!!!!!!!
 {
   0x3f, 0x3f, 0xa9, 0xa5, 0x92, 0x6a, 0xbb, 0xfd, 0xd4, 0xa7, 0x3e, 0xf5, 0xa9, 0x4f, 0x7d, 0x6a,
   0xbb, 0x95, 0x4a, 0x92, 0x6e, 0xe7, 0x74, 0xce, 0x71, 0x7e, 0xea, 0x53, 0xdb, 0x79, 0xb7, 0xbb,
@@ -105,7 +135,7 @@ const unsigned char PROGMEM qrcode[] =  //64,64
 };
 
 
-const unsigned char PROGMEM titleScreen[] = //128,56
+const unsigned char PROGMEM titleScreen[] = //128,56 COMPRESSED !!!!!!!!
 {
   0x7f, 0x3f, 0xf9, 0xd2, 0x4a, 0x4a, 0x65, 0xad, 0xe2, 0x4b, 0x67, 0xb7, 0x4b, 0x25, 0x95, 0x73,
   0xce, 0x39, 0xe7, 0x9c, 0x73, 0xce, 0x49, 0x25, 0x95, 0x5d, 0x87, 0xbf, 0xad, 0x73, 0x52, 0xd9,
@@ -154,7 +184,7 @@ const unsigned char PROGMEM titleScreen[] = //128,56
   0x02
 };
 
-const uint8_t PROGMEM mysticBalloon[] = //42,24
+const uint8_t PROGMEM mysticBalloon[] = //42,24 COMPRESSED !!!!!!!!
 {
   0x29, 0x17, 0x22, 0xb2, 0x6d, 0xd3, 0xed, 0x4a, 0x6f, 0xdb, 0x95, 0x5e, 0x3b, 0xf5, 0xa9, 0x54,
   0x2a, 0x95, 0x52, 0xa5, 0x94, 0x4c, 0x27, 0x4b, 0x77, 0xab, 0x54, 0x2a, 0x95, 0xea, 0x5c, 0xe7,
@@ -167,7 +197,7 @@ const uint8_t PROGMEM mysticBalloon[] = //42,24
   0x9d, 0x4e, 0x67, 0xb7, 0x69
 };
 
-const uint8_t PROGMEM mainMenu[] = //27,40
+const uint8_t PROGMEM mainMenu[] = //27,40 COMPRESSED !!!!!!!!
 {
   0x1a, 0x27, 0x98, 0x6c, 0xba, 0x74, 0xc9, 0x52, 0xa9, 0x54, 0xaa, 0x64, 0xe9, 0x92, 0x55, 0x55,
   0x55, 0x55, 0x55, 0xaa, 0xd2, 0x25, 0x4b, 0x96, 0xac, 0x64, 0x95, 0x2e, 0x59, 0x55, 0xaa, 0xaa,
@@ -182,13 +212,13 @@ const uint8_t PROGMEM mainMenu[] = //27,40
   0xa4, 0x52, 0x52, 0x49, 0xe5, 0xb8, 0x00
 };
 
-const uint8_t PROGMEM mainMenuMask[] =
+const uint8_t PROGMEM mainMenuMask[] = //COMPRESSED !!!!!!!!
 {
   0x1a, 0x27, 0x82, 0xce, 0x02, 0x27, 0xa5, 0xec, 0x76, 0xbb, 0xdd, 0x6e, 0xb7, 0xdb, 0xed, 0x76,
   0xbb, 0xdd, 0x6e, 0xb7, 0xdb, 0xed, 0x76, 0xbb, 0xdd, 0x6e, 0xb7, 0xdb, 0xed, 0x52, 0x01
 };
 
-const uint8_t PROGMEM soundMenu[] = //35,32
+const uint8_t PROGMEM soundMenu[] = //35,32 COMPRESSED !!!!!!!!
 {
   0x22, 0x1f, 0x98, 0x6c, 0xba, 0x74, 0xa9, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x4a, 0x95, 0x2e, 0x59,
   0x55, 0xaa, 0xaa, 0xaa, 0x52, 0x95, 0xae, 0x54, 0xd5, 0x5d, 0xab, 0xeb, 0xae, 0x52, 0x95, 0x4a,
@@ -200,7 +230,7 @@ const uint8_t PROGMEM soundMenu[] = //35,32
   0x77, 0x9d, 0xbb, 0x74, 0xce, 0x39, 0xe7, 0x9c, 0x73, 0xce, 0x39, 0xe7, 0x9c, 0x53, 0x64
 };
 
-const uint8_t PROGMEM soundMenuMask[] =
+const uint8_t PROGMEM soundMenuMask[] = //COMPRESSED !!!!!!!!
 {
   0x22, 0x1f, 0x82, 0xce, 0xd2, 0xf8, 0xdb, 0x2a, 0xa9, 0xa4, 0x92, 0x4a, 0x2a, 0xa9, 0xa4, 0x92,
   0xf0, 0x52, 0x3a, 0x9d, 0x4e, 0xa7, 0xd3, 0xe9, 0x2d, 0xfe, 0xe0, 0x35, 0xfc, 0x39, 0x27, 0x95,
@@ -210,7 +240,7 @@ const uint8_t PROGMEM soundMenuMask[] =
 
 
 
-const uint8_t PROGMEM selector[] = //33,16
+const uint8_t PROGMEM selector[] = //33,16 COMPRESSED !!!!!!!!
 {
   0x20, 0x0f, 0xb8, 0x9c, 0x92, 0xaa, 0x94, 0xea, 0x9d, 0x23, 0x4a, 0xa7, 0xd3, 0xe9, 0x74, 0x3a,
   0x9d, 0x4e, 0xa7, 0xd3, 0xe9, 0x74, 0x3a, 0x9d, 0x4e, 0xa7, 0xd3, 0xe9, 0x74, 0x3a, 0x9d, 0xb7,
@@ -219,7 +249,7 @@ const uint8_t PROGMEM selector[] = //33,16
 };
 
 
-const uint8_t PROGMEM selectorMask[] =
+const uint8_t PROGMEM selectorMask[] = //COMPRESSED !!!!!!!!
 {
   0x20, 0x0f, 0x94, 0xdc, 0x6e, 0xb7, 0xdb, 0x7d, 0xda, 0x6e, 0xb7, 0xdb, 0xed, 0x76, 0xbb, 0xdd,
   0x6e, 0xb7, 0xdb, 0xed, 0x76, 0xbb, 0xdd, 0x6e, 0xb7, 0xdb, 0xed, 0x76, 0xbb, 0xf5, 0x79, 0xbd,
@@ -314,79 +344,10 @@ PROGMEM const unsigned char rightGuyEyes[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+///////////////// player bitmaps //////////////////
+///////////////////////////////////////////////////
 
-void drawTitleScreen()
-{
-  if (arduboy.everyXFrames(1)) blinkingFrames++;
-  if (arduboy.everyXFrames(2)) sparkleFrames++;
-  if (sparkleFrames > 4) sparkleFrames = 0;
-  if (blinkingFrames > 31) blinkingFrames = 0;
-  arduboy.drawCompressed(0, 0, titleScreen, WHITE);
-  arduboy.drawCompressed(85, 45, mysticBalloon, WHITE);
-  sprites.drawSelfMasked(79, 43, stars, sparkleFrames);
-  sprites.drawSelfMasked(9, 9, leftGuyLeftEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrames]));
-  sprites.drawSelfMasked(15, 13, leftGuyRightEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrames]));
-  sprites.drawSelfMasked(109, 34, rightGuyEyes, pgm_read_byte(&blinkingEyesRightGuy[blinkingFrames]));
-}
 
-void stateMenuIntro()
-{
-  counter++;
-  if (counter < 46) arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
-  if (counter > 45) drawTitleScreen();
-  if ((counter > 90) || buttons.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
-}
-
-void stateMenuMain()
-{
-
-  drawTitleScreen();
-  arduboy.drawCompressed(51, 9, mainMenuMask, BLACK);
-  arduboy.drawCompressed(51, 9, mainMenu, WHITE);
-  if (buttons.justPressed(DOWN_BUTTON) && (menuSelection < 5)) menuSelection++;
-  if (buttons.justPressed(UP_BUTTON) && (menuSelection > 2)) menuSelection--;
-  if (buttons.justPressed(A_BUTTON | B_BUTTON)) gameState = menuSelection;
-  arduboy.drawCompressed(46, 9 + 9 * (menuSelection - 2), selectorMask, BLACK);
-  arduboy.drawCompressed(46, 9 + 9 * (menuSelection - 2), selector, WHITE);
-}
-
-void stateMenuHelp()
-{
-  arduboy.drawCompressed(32, 0, qrcode, WHITE);
-  if (buttons.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
-}
-
-void stateMenuPlay()
-{
-  gameState = STATE_GAME_PLAYING;
-}
-
-void stateMenuInfo()
-{
-  if (arduboy.everyXFrames(10)) sparkleFrames++;
-  if (sparkleFrames > 4) sparkleFrames = 0;
-  arduboy.drawCompressed(43, 23, mysticBalloon, WHITE);
-  sprites.drawSelfMasked(37, 21, stars, sparkleFrames);
-  if (buttons.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
-}
-
-void stateMenuSoundfx()
-{
-  drawTitleScreen();
-  arduboy.drawCompressed(51, 9, soundMenuMask, BLACK);
-  arduboy.drawCompressed(51, 9, soundMenu, WHITE);
-  if (buttons.justPressed(DOWN_BUTTON)) soundYesNo = true;
-  if (buttons.justPressed(UP_BUTTON)) soundYesNo = false;
-  arduboy.drawCompressed(54, 18 + 9 * soundYesNo, selectorMask, BLACK);
-  arduboy.drawCompressed(54, 18 + 9 * soundYesNo, selector, WHITE);
-  if (buttons.justPressed(A_BUTTON | B_BUTTON))
-  {
-    arduboy.audio.save_on_off();
-    gameState = STATE_MENU_MAIN;
-  }
-  if (soundYesNo == true) arduboy.audio.on();
-  else arduboy.audio.off();
-}
 
 
 #endif

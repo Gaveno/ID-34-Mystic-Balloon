@@ -1,8 +1,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-extern Arduboy arduboy;
-SimpleButtons buttons (arduboy);
+#include <Arduino.h>
+#include "globals.h"
+#include "player.h"
 
 void checkInputs()
 {

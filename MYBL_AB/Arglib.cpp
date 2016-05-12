@@ -47,8 +47,11 @@ void Arduboy::start()
   pinMode(PIN_A_BUTTON, INPUT_PULLUP);
   pinMode(PIN_B_BUTTON, INPUT_PULLUP);
   tunes.initChannel(PIN_SPEAKER_1);
+#ifdef AB_DEVKIT
+  tunes.initChannel(PIN_SPEAKER_1); // use the same pin for both channels
+#else
   tunes.initChannel(PIN_SPEAKER_2);
-
+#endif
 
   csport = portOutputRegister(digitalPinToPort(CS));
   cspinmask = digitalPinToBitMask(CS);
@@ -225,7 +228,7 @@ bool Arduboy::nextFrame()
   // running a slow render we would constnatly be behind the clock
   // keep an eye on this and see how it works.  If it works well the
   // lastFrameStart variable could be eliminated completely
-  nextFrameStart = lastFrameStart + eachFrameMillis;
+  nextFrameStart = now + eachFrameMillis;
   lastFrameStart = now;
   post_render = true;
   return post_render;
@@ -1124,14 +1127,23 @@ boolean Arduboy::not_pressed(uint8_t buttons)
 
 uint8_t Arduboy::getInput()
 {
+  uint8_t buttons;
+
   // using ports here is ~100 bytes smaller than digitalRead()
-#ifdef DEVKIT
+#ifdef AB_DEVKIT
   // down, left, up
-  uint8_t buttons = ((~PINB) & B01110000);
+  buttons = ((~PINB) & B01110000);
   // right button
   buttons = buttons | (((~PINC) & B01000000) >> 4);
   // A and B
   buttons = buttons | (((~PINF) & B11000000) >> 6);
+#else
+  // down, up, left right
+  buttons = ((~PINF) & B11110000);
+  // A (left)
+  buttons = buttons | (((~PINE) & B01000000) >> 3);
+  // B (right)
+  buttons = buttons | (((~PINB) & B00010000) >> 2);
 #endif
 
   // b0dlu0rab - see button defines in Arduboy.h
@@ -1186,7 +1198,7 @@ void ArduboyAudio::off() {
   power_timer3_disable();
 }
 
-void ArduboyAudio::save_on_off() {
+void ArduboyAudio::saveOnOff() {
   EEPROM.write(EEPROM_AUDIO_ON_OFF, audio_enabled);
 }
 
@@ -1455,6 +1467,8 @@ ISR(TIMER3_COMPA_vect) {  // TIMER 3
   ArduboyTunes::soundOutput();
 }
 
+
+///////////////
 Sprites::Sprites(Arduboy &a)
 {
   arduboy = &a;
@@ -1861,5 +1875,24 @@ void Sprites::drawBitmap(int16_t x, int16_t y,
       break;
 
   }
+}
+
+/////////////////////////////////
+// Basic Collision by Dreamer3 //
+/////////////////////////////////
+
+bool Physics::collide(Point point, Rect rect)
+{
+  // does point fall within the bounds of rect
+  return ((point.x >= rect.x) && (point.x < rect.x + rect.width) &&
+      (point.y >= rect.y) && (point.y < rect.y + rect.height));
+}
+
+bool Physics::collide(Rect rect1, Rect rect2)
+{
+  return !( rect2.x                 >=  rect1.x + rect1.width    ||
+            rect2.x + rect2.width   <=  rect1.x                ||
+            rect2.y                 >=  rect1.y + rect1.height ||
+            rect2.y + rect2.height  <=  rect1.y);
 }
 
