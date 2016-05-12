@@ -25,6 +25,8 @@ void stateGameNextLevel()
 void stateGamePlaying()
 {
   checkInputs();
+
+  checkCollisions();
 }
 
 
