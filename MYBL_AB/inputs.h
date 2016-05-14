@@ -7,12 +7,34 @@
 
 void checkInputs()
 {
-  if (buttons.justPressed(RIGHT_BUTTON)){}
-  if (buttons.justPressed(LEFT_BUTTON)){}
-  if (buttons.justPressed(UP_BUTTON)){}
-  if (buttons.justPressed(DOWN_BUTTON)){}
-  if (buttons.justPressed(A_BUTTON)){}
-  if (buttons.justPressed(B_BUTTON)){}
+kid.walking = false;
+  if (buttons.pressed(DOWN_BUTTON) && (kid.y < GAME_BOTTOM))
+  {
+
+  }
+  if (buttons.pressed(LEFT_BUTTON) && (kid.x > GAME_LEFT))
+  {
+    kid.direction = FACING_LEFT;
+    kid.x--;
+    if (!kid.jumping && !kid.landing)kid.walking = true;
+  }
+  if (buttons.pressed(UP_BUTTON) && (kid.y > GAME_TOP))
+  {
+
+  }
+  if (buttons.pressed(RIGHT_BUTTON) && (kid.x < GAME_RIGHT))
+  {
+    kid.direction = FACING_RIGHT;
+    kid.x++;
+    if (!kid.jumping && !kid.landing)kid.walking = true;
+  }
+
+  if (buttons.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
+  if (buttons.justPressed(B_BUTTON))
+  {
+    kid.walking = false;
+    kid.jumping = true;
+  }
 }
 
 #endif

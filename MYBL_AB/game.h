@@ -13,6 +13,7 @@ void stateGamePrepareLevel()
 {
   level = 0;
   scorePlayer = 0;
+  setKid();
   gameState = STATE_GAME_NEXT_LEVEL;
 };
 
@@ -25,7 +26,10 @@ void stateGameNextLevel()
 void stateGamePlaying()
 {
   checkInputs();
+  checkKid();
 
+  drawKid();
+  
   checkCollisions();
 }
 
