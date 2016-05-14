@@ -12,9 +12,10 @@ struct Players
     boolean isActive;
     boolean isImune;
     boolean direction;
-    boolean walking;
-    boolean jumping;
-    boolean landing;
+    boolean isWalking;
+    boolean isJumping;
+    boolean isLanding;
+    boolean isFloating;
     byte imuneTimer;
     byte jumpTimer;
     byte HP;
@@ -26,16 +27,17 @@ Players kid;
 void setKid()
 {
   kid.x = 0;
-  kid.y = 20;
+  kid.y = 40;
   kid.isActive = true;
   kid.HP = 4;
   kid.isImune = true;
   kid.imuneTimer = 0;
   kid.jumpTimer = 0;
   kid.direction = FACING_RIGHT;
-  kid.walking = false;
-  kid.jumping = false;
-  kid.landing = false;
+  kid.isWalking = false;
+  kid.isJumping = false;
+  kid.isLanding = false;
+  kid.isFloating = false;
 }
 
 void checkKid()
@@ -52,32 +54,37 @@ void checkKid()
     }
   }
   if (kid.HP < 2) gameState = STATE_GAME_OVER;
-  if (arduboy.everyXFrames(8) && kid.walking) kid.frame++;
-  if (kid.frame > 3 || !kid.walking) kid.frame = 0;
-  if (kid.jumping && kid.jumpTimer < 20)
+  if (arduboy.everyXFrames(8) && kid.isWalking) kid.frame++;
+  if (kid.frame > 3 || !kid.isWalking) kid.frame = 0;
+  if (kid.isJumping && kid.jumpTimer < 20)
   {
-   kid.jumpTimer++;
-   kid.y--;
+    kid.jumpTimer++;
+    kid.y--;
   }
-  if(kid.jumpTimer > 19)
+  if (kid.jumpTimer > 19)
   {
-    kid.jumping = false;
-    kid.landing = true;
+    kid.isJumping = false;
+    kid.isLanding = true;
     kid.jumpTimer++;
     kid.y++;
   }
-  if(kid.jumpTimer > 39)
+  if (kid.jumpTimer > 39)
   {
-    kid.landing = false;
+    kid.isLanding = false;
     kid.jumpTimer = 0;
-    
+
   }
-  
+
 }
 
 void drawKid()
 {
-  if (kid.isActive) sprites.drawPlusMask(kid.x, kid.y, kidWalking_plus_mask, kid.frame + 6 * kid.direction + 4*kid.jumping + 5*kid.landing);
+  if (kid.isActive)
+  {
+    sprites.drawPlusMask(kid.x  + (1 * kid.direction), kid.y - 13, balloon_plus_mask, kid.direction);
+    sprites.drawPlusMask(kid.x + 4 - (7 * kid.direction), kid.y - 12, balloon_plus_mask, kid.direction);
+    sprites.drawPlusMask(kid.x, kid.y, kidWalking_plus_mask, kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * kid.isLanding);
+  }
 }
 
 

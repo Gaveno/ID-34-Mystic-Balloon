@@ -7,7 +7,7 @@
 
 void checkInputs()
 {
-kid.walking = false;
+kid.isWalking = false;
   if (buttons.pressed(DOWN_BUTTON) && (kid.y < GAME_BOTTOM))
   {
 
@@ -16,7 +16,7 @@ kid.walking = false;
   {
     kid.direction = FACING_LEFT;
     kid.x--;
-    if (!kid.jumping && !kid.landing)kid.walking = true;
+    if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
   if (buttons.pressed(UP_BUTTON) && (kid.y > GAME_TOP))
   {
@@ -26,14 +26,14 @@ kid.walking = false;
   {
     kid.direction = FACING_RIGHT;
     kid.x++;
-    if (!kid.jumping && !kid.landing)kid.walking = true;
+    if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
 
   if (buttons.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
   if (buttons.justPressed(B_BUTTON))
   {
-    kid.walking = false;
-    kid.jumping = true;
+    kid.isWalking = false;
+    kid.isJumping = true;
   }
 }
 
