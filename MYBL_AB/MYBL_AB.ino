@@ -56,7 +56,8 @@ void loop() {
   arduboy.poll();
   if (soundYesNo == true) arduboy.audio.on();
   else arduboy.audio.off();
-  arduboy.clearDisplay();
+  //arduboy.clearDisplay();
+  arduboy.fillScreen(gameState == STATE_GAME_PLAYING);
   mainGameLoop[gameState]();
   arduboy.display();
 }
