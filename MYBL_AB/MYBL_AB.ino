@@ -53,7 +53,7 @@ void setup()
 
 void loop() {
   if (!(arduboy.nextFrame())) return;
-  buttons.poll();
+  arduboy.poll();
   if (soundYesNo == true) arduboy.audio.on();
   else arduboy.audio.off();
   arduboy.clearDisplay();

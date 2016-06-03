@@ -29,13 +29,6 @@
 //#define AB_DEVKIT    //< compile for the official dev kit
 #endif
 
-
-#define AVAILABLE_TIMERS 2
-#define TUNE_OP_PLAYNOTE  0x90  /* play a note: low nibble is generator #, note is next byte */
-#define TUNE_OP_STOPNOTE  0x80  /* stop a note: low nibble is generator # */
-#define TUNE_OP_RESTART 0xe0  /* restart the score from the beginning */
-#define TUNE_OP_STOP  0xf0  /* stop playing */
-
 // EEPROM settings
 
 #define EEPROM_VERSION 0
@@ -116,15 +109,9 @@
 #define SPRITE_MASKED 1
 #define SPRITE_UNMASKED 2
 #define SPRITE_OVERWRITE 2
-// PLUS_MASK means that the mask data is included in the bitmap itself
-// 1st byte image, 2nd byte mask, 3rd byte image, 4th byte mask, etc.
-// The 2nd byte ask provides the masking data for the 1st byte of
-// image data.
 #define SPRITE_PLUS_MASK 3
 #define SPRITE_IS_MASK 250
 #define SPRITE_IS_MASK_ERASE 251
-// will select SPRITE_MASKED or SPRITE_UNMASKED depending on the presence
-// of mask (if one was passed to the draw function)
 #define SPRITE_AUTO_MODE 255
 
 class ArduboyAudio
@@ -135,36 +122,27 @@ class ArduboyAudio
     void off();
     void saveOnOff();
     bool enabled();
-    void tone(uint8_t channel, unsigned int frequency, unsigned long duration);
+    void tone(unsigned int frequency, unsigned long duration);
 
   protected:
     bool audio_enabled = false;
 };
 
-
-class ArduboyTunes
+struct Rect
 {
   public:
-    // Playtune Functions
-    void initChannel(byte pin);     // assign a timer to an output pin
-    void playScore(const byte *score);  // start playing a polyphonic score
-    void stopScore();     // stop playing the score
-    void delay(unsigned msec);    // delay in milliseconds
-    void closeChannels();     // stop all timers
-    bool playing();
-
-    void tone(unsigned int frequency, unsigned long duration);
-
-    // called via interrupt
-    void static step();
-    void static soundOutput();
-
-
-  private:
-    void static playNote (byte chan, byte note);
-    void static stopNote (byte chan);
+    int x;
+    int y;
+    uint8_t width;
+    uint8_t height;
 };
 
+struct Point
+{
+  public:
+    int x;
+    int y;
+};
 
 class Arduboy : public Print
 {
@@ -174,8 +152,10 @@ class Arduboy : public Print
     void LCDCommandMode();
 
     uint8_t getInput();
+    void poll();
     boolean pressed(uint8_t buttons);
-    boolean not_pressed(uint8_t buttons);
+    boolean notPressed(uint8_t buttons);
+    boolean justPressed(uint8_t buttons);
     void start();
     void saveMuchPower();
     void idle();
@@ -198,17 +178,8 @@ class Arduboy : public Print
     void fillScreen(uint8_t color);
     void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint8_t color);
     void fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint8_t color);
-    void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
-    void fillTriangle (int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
     void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t color);
     void drawCompressed(int16_t sx, int16_t sy, const uint8_t *bitmap, uint8_t color);
-    void drawSprite(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t frame, uint8_t color);
-    void drawMaskedSprite(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, const uint8_t *mask, uint8_t frame, uint8_t color);
-    void drawSlowXYBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t color);
-    void drawChar(int16_t x, int16_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size);
-    void setCursor(int16_t x, int16_t y);
-    void setTextSize(uint8_t s);
-    void setTextWrap(boolean w);
     unsigned char* getBuffer();
     uint8_t width();
     uint8_t height();
@@ -216,7 +187,7 @@ class Arduboy : public Print
     void initRandomSeed();
     void swap(int16_t& a, int16_t& b);
 
-    ArduboyTunes tunes;
+    //ArduboyTunes tunes;
     ArduboyAudio audio;
 
     void setFrameRate(uint8_t rate);
@@ -231,6 +202,9 @@ class Arduboy : public Print
     bool post_render = false;
     uint8_t lastFrameDurationMs = 0;
 
+    bool static collide(Point point, Rect rect);
+    bool static collide(Rect rect, Rect rect2);
+
   private:
     unsigned char sBuffer[(HEIGHT * WIDTH) / 8];
 
@@ -242,66 +216,19 @@ class Arduboy : public Print
     uint16_t rawADC(byte adc_bits);
     volatile uint8_t *mosiport, *clkport, *csport, *dcport;
     uint8_t mosipinmask, clkpinmask, cspinmask, dcpinmask;
-
-    // Adafruit stuff
-  protected:
-    int16_t cursor_x = 0;
-    int16_t cursor_y = 0;
-    uint8_t textsize = 1;
-    boolean wrap; // If set, 'wrap' text at right edge of display
-};
-
-
-class SimpleButtons
-{
-  public:
-    SimpleButtons(Arduboy &arduboy);
-
-    /// Poll the hardware buttons and tracks state over time
-    /**
-      This must be called before any of the other button member functions.  It should be called either in your main `loop()` or as part of the frame system (called pre-frame).
-    */
-    void poll();
-    boolean pressed(uint8_t buttons);
-    boolean notPressed(uint8_t buttons);
-    boolean justPressed(uint8_t button);
-
-  private:
     uint8_t currentButtonState = 0;
     uint8_t previousButtonState = 0;
-
-    Arduboy *arduboy;
 };
 
-/// base struct other Sprites inherit from
-struct SimpleSprite
-{
-  SimpleSprite(int x, int y, const uint8_t *bitmap);
-  int x, y;
-  const uint8_t *bitmap;
-  uint8_t frame = 0;
-  uint8_t drawMode = SPRITE_AUTO_MODE;
-};
 
-struct Sprite : public SimpleSprite
-{
-  Sprite(int x, int y, const uint8_t *bitmap);
-  Sprite(int x, int y, const uint8_t *bitmap, const uint8_t *mask);
-  const uint8_t *mask;
-  uint8_t maskFrame = 0;
-};
-
+/////////////////////////////////
+//      sprites by Dreamer3    //
+/////////////////////////////////
 class Sprites
 {
   public:
     Sprites(Arduboy &arduboy);
-
-    void draw(Sprite sprite);
-    void draw(SimpleSprite sprite);
-    void draw(int16_t x, int16_t y, const uint8_t *bitmap);
-    void draw(int16_t x, int16_t y, const uint8_t *bitmap, const uint8_t *mask);
-    void draw(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame);
-
+    
     // drawExternalMask() uses a separate mask to mask image (MASKED)
     //
     // image  mask   before  after
@@ -320,8 +247,7 @@ class Sprites
     // ..O..  OOOOO  OOOOO   ..O..
     // .....  .OOO.  OOOOO   O...O
     //
-    void drawExternalMask(int16_t x, int16_t y, const uint8_t *bitmap,
-                          const uint8_t *mask, uint8_t frame, uint8_t mask_frame);
+    void drawExternalMask(int16_t x, int16_t y, const uint8_t *bitmap, const uint8_t *mask, uint8_t frame, uint8_t mask_frame);
 
     // drawPlusMask has the same behavior as drawExternalMask except the
     // data is arranged in byte tuples interposing the mask right along
@@ -357,8 +283,7 @@ class Sprites
     // ..O..  OOOOO   ..O..
     // .....  OOOOO   .....
     //
-    void drawOverwrite(int16_t x, int16_t y,
-                       const uint8_t *bitmap, uint8_t frame);
+    void drawOverwrite(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame);
 
     // drawErase() removes the lit pixels in the image from the display
     // (SPRITE_IS_MASK_ERASE)
@@ -402,47 +327,15 @@ class Sprites
     // .....  OOOOO   OOOOO
     //
     void drawSelfMasked(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame);
-
     // master function, needs to be abstracted into sep function for
     // every render type
-    void draw(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame,
-              const uint8_t *mask, uint8_t sprite_frame, uint8_t drawMode);
-
-    void drawBitmap(int16_t x, int16_t y,
-                    const uint8_t *bitmap, const uint8_t *mask,
-                    int8_t w, int8_t h, uint8_t draw_mode);
+    void draw(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame, const uint8_t *mask, uint8_t sprite_frame, uint8_t drawMode);
+    void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, const uint8_t *mask, int8_t w, int8_t h, uint8_t draw_mode);
 
   private:
 
     Arduboy *arduboy;
     unsigned char *sBuffer;
-};
-
-/////////////////////////////////
-// Basic Collision by Dreamer3 //
-/////////////////////////////////
-
-struct Rect
-{
-  public:
-    int x;
-    int y;
-    uint8_t width;
-    uint8_t height;
-};
-
-struct Point
-{
-  public:
-    int x;
-    int y;
-};
-
-class Physics
-{
-  public:
-    bool static collide(Point point, Rect rect);
-    bool static collide(Rect rect, Rect rect2);
 };
 
 #endif

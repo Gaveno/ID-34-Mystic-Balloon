@@ -31,7 +31,6 @@
 
 Arduboy arduboy;
 Sprites sprites(arduboy);
-SimpleButtons buttons (arduboy);
 
 unsigned char gameState;
 boolean soundYesNo;

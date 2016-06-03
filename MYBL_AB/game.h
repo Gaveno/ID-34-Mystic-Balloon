@@ -36,7 +36,7 @@ void stateGamePlaying()
 
 void stateGamePause()
 {
-  if (buttons.justPressed(A_BUTTON | B_BUTTON))
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_MENU_MAIN;
   }
@@ -45,7 +45,7 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  if (buttons.justPressed(A_BUTTON | B_BUTTON))
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_GAME_PLAYING;
   }

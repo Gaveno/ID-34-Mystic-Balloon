@@ -1,35 +1,6 @@
 #include "Arglib.h"
 
-const byte PROGMEM tune_pin_to_timer_PGM[] = { 3, 1 };
-volatile byte *_tunes_timer1_pin_port;
-volatile byte _tunes_timer1_pin_mask;
-volatile int32_t timer1_toggle_count;
-volatile byte *_tunes_timer3_pin_port;
-volatile byte _tunes_timer3_pin_mask;
-byte _tune_pins[AVAILABLE_TIMERS];
-byte _tune_num_chans = 0;
-volatile boolean tune_playing; // is the score still playing?
-volatile unsigned wait_timer_frequency2;       /* its current frequency */
-volatile unsigned wait_timer_old_frequency2;   /* its previous frequency */
-volatile boolean wait_timer_playing = false;   /* is it currently playing a note? */
-volatile boolean doing_delay = false;          /* are we using it for a tune_delay()? */
-volatile boolean tonePlaying = false;
-volatile unsigned long wait_toggle_count;      /* countdown score waits */
-volatile unsigned long delay_toggle_count;     /* countdown tune_ delay() delays */
-
-
-// pointers to your musical score and your position in said score
-volatile const byte *score_start = 0;
-volatile const byte *score_cursor = 0;
-
 Arduboy::Arduboy() { }
-
-// store current and previous buttons state for frame based button events
-// you should be using nextFrame() in almost all cases, not calling this
-// directly
-SimpleButtons::SimpleButtons(Arduboy &a) {
-  arduboy = &a;
-}
 
 void Arduboy::start()
 {
@@ -46,12 +17,14 @@ void Arduboy::start()
   pinMode(PIN_DOWN_BUTTON, INPUT_PULLUP);
   pinMode(PIN_A_BUTTON, INPUT_PULLUP);
   pinMode(PIN_B_BUTTON, INPUT_PULLUP);
-  tunes.initChannel(PIN_SPEAKER_1);
+  //tunes.initChannel(PIN_SPEAKER_1);
+/*
 #ifdef AB_DEVKIT
   tunes.initChannel(PIN_SPEAKER_1); // use the same pin for both channels
 #else
-  tunes.initChannel(PIN_SPEAKER_2);
+ tunes.initChannel(PIN_SPEAKER_2);
 #endif
+*/
 
   csport = portOutputRegister(digitalPinToPort(CS));
   cspinmask = digitalPinToBitMask(CS);
@@ -74,6 +47,7 @@ void Arduboy::start()
   if (pressed(LEFT_BUTTON + UP_BUTTON))
     safeMode();
 #endif
+
 
   audio.setup();
   saveMuchPower();
@@ -597,117 +571,6 @@ void Arduboy::fillRoundRect
   fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
 }
 
-void Arduboy::drawTriangle
-(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
-{
-  drawLine(x0, y0, x1, y1, color);
-  drawLine(x1, y1, x2, y2, color);
-  drawLine(x2, y2, x0, y0, color);
-}
-
-void Arduboy::fillTriangle
-(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
-{
-
-  int16_t a, b, y, last;
-  // Sort coordinates by Y order (y2 >= y1 >= y0)
-  if (y0 > y1)
-  {
-    swap(y0, y1); swap(x0, x1);
-  }
-  if (y1 > y2)
-  {
-    swap(y2, y1); swap(x2, x1);
-  }
-  if (y0 > y1)
-  {
-    swap(y0, y1); swap(x0, x1);
-  }
-
-  if (y0 == y2)
-  { // Handle awkward all-on-same-line case as its own thing
-    a = b = x0;
-    if (x1 < a)
-    {
-      a = x1;
-    }
-    else if (x1 > b)
-    {
-      b = x1;
-    }
-    if (x2 < a)
-    {
-      a = x2;
-    }
-    else if (x2 > b)
-    {
-      b = x2;
-    }
-    drawFastHLine(a, y0, b - a + 1, color);
-    return;
-  }
-
-  int16_t dx01 = x1 - x0,
-          dy01 = y1 - y0,
-          dx02 = x2 - x0,
-          dy02 = y2 - y0,
-          dx12 = x2 - x1,
-          dy12 = y2 - y1,
-          sa = 0,
-          sb = 0;
-
-  // For upper part of triangle, find scanline crossings for segments
-  // 0-1 and 0-2.  If y1=y2 (flat-bottomed triangle), the scanline y1
-  // is included here (and second loop will be skipped, avoiding a /0
-  // error there), otherwise scanline y1 is skipped here and handled
-  // in the second loop...which also avoids a /0 error here if y0=y1
-  // (flat-topped triangle).
-  if (y1 == y2)
-  {
-    last = y1;   // Include y1 scanline
-  }
-  else
-  {
-    last = y1 - 1; // Skip it
-  }
-
-
-  for (y = y0; y <= last; y++)
-  {
-    a   = x0 + sa / dy01;
-    b   = x0 + sb / dy02;
-    sa += dx01;
-    sb += dx02;
-
-    if (a > b)
-    {
-      swap(a, b);
-    }
-
-    drawFastHLine(a, y, b - a + 1, color);
-  }
-
-  // For lower part of triangle, find scanline crossings for segments
-  // 0-2 and 1-2.  This loop is skipped if y1=y2.
-  sa = dx12 * (y - y1);
-  sb = dx02 * (y - y0);
-
-  for (; y <= y2; y++)
-  {
-    a   = x1 + sa / dy12;
-    b   = x0 + sb / dy02;
-    sa += dx12;
-    sb += dx02;
-
-    if (a > b)
-    {
-      swap(a, b);
-    }
-
-    drawFastHLine(a, y, b - a + 1, color);
-  }
-}
-
 void Arduboy::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t color) {
   // no need to dar at all of we're offscreen
   if (x + w < 0 || x > WIDTH - 1 || y + h < 0 || y > HEIGHT - 1)
@@ -742,85 +605,6 @@ void Arduboy::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w,
   }
 }
 
-void Arduboy::drawSprite(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t frame, uint8_t color) {
-  // no need to dar at all of we're offscreen
-  if (x + w < 0 || x > WIDTH - 1 || y + h < 0 || y > HEIGHT - 1)
-    return;
-  y = y - (frame * h);
-  int yOffset = abs(y) % 8;
-  int sRow = y / 8;
-  if (y < 0) {
-    sRow--;
-    yOffset = 8 - yOffset;
-  }
-  int rows = h / 8;
-  if (h % 8 != 0) rows++;
-  for (int a = 0 + (frame * rows); a < rows + (frame * rows); a++) {
-    int bRow = sRow + a;
-    if (bRow > (HEIGHT / 8) - 1) break;
-    if (bRow > -2) {
-      for (int iCol = 0; iCol < w; iCol++) {
-        if (iCol + x > (WIDTH - 1)) break;
-        if (iCol + x >= 0) {
-          if (bRow >= 0) {
-            if (color) this->sBuffer[ (bRow * WIDTH) + x + iCol  ]  |= pgm_read_byte(bitmap + (a * w) + iCol) << yOffset;
-            else this->sBuffer[ (bRow * WIDTH) + x + iCol  ]  &= ~(pgm_read_byte(bitmap + (a * w) + iCol) << yOffset);
-          }
-          if (yOffset && bRow < (HEIGHT / 8) - 1 && bRow > -2) {
-            if (color) this->sBuffer[ ((bRow + 1)*WIDTH) + x + iCol  ] |= pgm_read_byte(bitmap + (a * w) + iCol) >> (8 - yOffset);
-            else this->sBuffer[ ((bRow + 1)*WIDTH) + x + iCol  ] &= ~(pgm_read_byte(bitmap + (a * w) + iCol) >> (8 - yOffset));
-          }
-        }
-      }
-    }
-  }
-}
-
-void Arduboy::drawMaskedSprite(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, const uint8_t *mask, uint8_t frame, uint8_t color) {
-  // no need to dar at all of we're offscreen
-  if (x + w < 0 || x > WIDTH - 1 || y + h < 0 || y > HEIGHT - 1)
-    return;
-  y = y - (frame * h);
-  int yOffset = abs(y) % 8;
-  int sRow = y / 8;
-  if (y < 0) {
-    sRow--;
-    yOffset = 8 - yOffset;
-  }
-  int rows = h / 8;
-  if (h % 8 != 0) rows++;
-  for (int a = 0 + (frame * rows); a < rows + (frame * rows); a++) {
-    int bRow = sRow + a;
-    if (bRow > (HEIGHT / 8) - 1) break;
-    if (bRow > -2) {
-      for (int iCol = 0; iCol < w; iCol++) {
-        if (iCol + x > (WIDTH - 1)) break;
-        if (iCol + x >= 0) {
-          if (bRow >= 0) {
-            if (color) {
-              this->sBuffer[ (bRow * WIDTH) + x + iCol  ]  &= ~(pgm_read_byte(mask + (a * w) + iCol) << yOffset);
-              this->sBuffer[ (bRow * WIDTH) + x + iCol  ]  |= pgm_read_byte(bitmap + (a * w) + iCol) << yOffset;
-            }
-            else {
-              this->sBuffer[ (bRow * WIDTH) + x + iCol  ]  |= pgm_read_byte(mask + (a * w) + iCol) << yOffset;
-              this->sBuffer[ (bRow * WIDTH) + x + iCol  ]  &= ~(pgm_read_byte(bitmap + (a * w) + iCol) << yOffset);
-            }
-          }
-          if (yOffset && bRow < (HEIGHT / 8) - 1 && bRow > -2) {
-            if (color) {
-              this->sBuffer[ ((bRow + 1)*WIDTH) + x + iCol  ] &= ~(pgm_read_byte(mask + (a * w) + iCol) >> (8 - yOffset));
-              this->sBuffer[ ((bRow + 1)*WIDTH) + x + iCol  ] |= pgm_read_byte(bitmap + (a * w) + iCol) >> (8 - yOffset);
-            }
-            else {
-              this->sBuffer[ ((bRow + 1)*WIDTH) + x + iCol  ] |= pgm_read_byte(mask + (a * w) + iCol) >> (8 - yOffset);
-              this->sBuffer[ ((bRow + 1)*WIDTH) + x + iCol  ] &= ~(pgm_read_byte(bitmap + (a * w) + iCol) >> (8 - yOffset));
-            }
-          }
-        }
-      }
-    }
-  }
-}
 
 
 typedef struct CSESSION {
@@ -957,101 +741,9 @@ void Arduboy::drawCompressed(int16_t sx, int16_t sy, const uint8_t *bitmap, uint
   }
 }
 
-// Draw images that are bit-oriented horizontally
-//
-// This requires a lot of additional CPU power and will draw images much
-// more slowly than drawBitmap where the images are stored in a format that
-// allows them to be directly written to the screen hardware fast. It is
-// recommended you use drawBitmap when possible.
-void Arduboy::drawSlowXYBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t color) {
-  // no need to dar at all of we're offscreen
-  if (x + w < 0 || x > WIDTH - 1 || y + h < 0 || y > HEIGHT - 1)
-    return;
-
-  int16_t xi, yi, byteWidth = (w + 7) / 8;
-  for (yi = 0; yi < h; yi++) {
-    for (xi = 0; xi < w; xi++ ) {
-      if (pgm_read_byte(bitmap + yi * byteWidth + xi / 8) & (128 >> (xi & 7))) {
-        drawPixel(x + xi, y + yi, color);
-      }
-    }
-  }
-}
-
-
-void Arduboy::drawChar
-(int16_t x, int16_t y, unsigned char c, uint8_t color, uint8_t bg, uint8_t size)
-{
-
-  if ((x >= WIDTH) ||         // Clip right
-      (y >= HEIGHT) ||        // Clip bottom
-      ((x + 5 * size - 1) < 0) ||   // Clip left
-      ((y + 8 * size - 1) < 0)    // Clip top
-     )
-  {
-    return;
-  }
-
-  for (int8_t i = 0; i < 6; i++ )
-  {
-    uint8_t line;
-    if (i == 5)
-    {
-      line = 0x0;
-    }
-    else
-    {
-      // line = pgm_read_byte(font+(c*5)+i);
-    }
-
-    for (int8_t j = 0; j < 8; j++)
-    {
-      if (line & 0x1)
-      {
-        if (size == 1) // default size
-        {
-          drawPixel(x + i, y + j, color);
-        }
-        else  // big size
-        {
-          fillRect(x + (i * size), y + (j * size), size, size, color);
-        }
-      }
-      else if (bg != color)
-      {
-        if (size == 1) // default size
-        {
-          drawPixel(x + i, y + j, bg);
-        }
-        else
-        { // big size
-          fillRect(x + i * size, y + j * size, size, size, bg);
-        }
-      }
-
-      line >>= 1;
-    }
-  }
-}
-
-void Arduboy::setCursor(int16_t x, int16_t y)
-{
-  cursor_x = x;
-  cursor_y = y;
-}
-
-void Arduboy::setTextSize(uint8_t s)
-{
-  textsize = (s > 0) ? s : 1;
-}
-
-void Arduboy::setTextWrap(boolean w)
-{
-  wrap = w;
-}
 
 size_t Arduboy::write(uint8_t c)
-{
+{/*
   if (c == '\n')
   {
     cursor_y += textsize * 8;
@@ -1063,7 +755,7 @@ size_t Arduboy::write(uint8_t c)
   }
   else
   {
-    drawChar(cursor_x, cursor_y, c, 1, 0, textsize);
+    //drawChar(cursor_x, cursor_y, c, 1, 0, textsize);
     cursor_x += textsize * 6;
     if (wrap && (cursor_x > (WIDTH - textsize * 6)))
     {
@@ -1071,6 +763,7 @@ size_t Arduboy::write(uint8_t c)
       cursor_x = 0;
     }
   }
+  */
 }
 
 void Arduboy::display()
@@ -1106,6 +799,13 @@ uint8_t Arduboy::height() {
   return HEIGHT;
 }
 
+
+void Arduboy::poll()
+{
+  previousButtonState = currentButtonState;
+  currentButtonState = getInput();
+}
+
 // returns true if the button mask passed in is pressed
 //
 //   if (pressed(LEFT_BUTTON + A_BUTTON))
@@ -1118,11 +818,21 @@ boolean Arduboy::pressed(uint8_t buttons)
 // returns true if the button mask passed in not pressed
 //
 //   if (not_pressed(LEFT_BUTTON))
-boolean Arduboy::not_pressed(uint8_t buttons)
+boolean Arduboy::notPressed(uint8_t buttons)
 {
   uint8_t button_state = getInput();
   return (button_state & buttons) == 0;
 }
+
+// returns true if a button has just been pressed
+// if the button has been held down for multiple frames this will return
+// false.  You should only use this to poll a single button.
+boolean Arduboy::justPressed(uint8_t button)
+{
+  uint8_t button_state = getInput();
+  return (!(previousButtonState & button) && (currentButtonState & button));
+}
+
 
 
 uint8_t Arduboy::getInput()
@@ -1157,34 +867,11 @@ void Arduboy::swap(int16_t& a, int16_t& b) {
 }
 
 
-void SimpleButtons::poll()
-{
-  previousButtonState = currentButtonState;
-  currentButtonState = arduboy->getInput();
-}
-// returns true if a button has just been pressed
-// if the button has been held down for multiple frames this will return
-// false.  You should only use this to poll a single button.
-boolean SimpleButtons::justPressed(uint8_t button)
-{
-  return (!(previousButtonState & button) && (currentButtonState & button));
-}
-
-boolean SimpleButtons::pressed(uint8_t buttons)
-{
-  return (currentButtonState & buttons) == buttons;
-}
-
-boolean SimpleButtons::notPressed(uint8_t buttons)
-{
-  return (currentButtonState & buttons) == 0;
-}
-
 /* AUDIO */
 
 void ArduboyAudio::on() {
-  power_timer1_enable();
-  power_timer3_enable();
+  pinMode(PIN_SPEAKER_1, OUTPUT);
+  //pinMode(PIN_SPEAKER_2, OUTPUT);
   audio_enabled = true;
 }
 
@@ -1193,9 +880,9 @@ bool ArduboyAudio::enabled() {
 }
 
 void ArduboyAudio::off() {
+  pinMode(PIN_SPEAKER_1, INPUT);
+  //pinMode(PIN_SPEAKER_2, INPUT);
   audio_enabled = false;
-  power_timer1_disable();
-  power_timer3_disable();
 }
 
 void ArduboyAudio::saveOnOff() {
@@ -1203,289 +890,25 @@ void ArduboyAudio::saveOnOff() {
 }
 
 void ArduboyAudio::setup() {
-  tune_playing = false;
   if (EEPROM.read(EEPROM_AUDIO_ON_OFF))
     on();
 }
 
-void ArduboyAudio::tone(uint8_t channel, unsigned int frequency, unsigned long duration)
+void ArduboyAudio::tone(unsigned int frequency, unsigned long duration)
 {
-  // if (audio_enabled)
-  // ::tone(channel, frequency, duration);
-}
-
-
-/* TUNES */
-
-void ArduboyTunes::initChannel(byte pin) {
-  byte timer_num;
-
-  // we are all out of timers
-  if (_tune_num_chans == AVAILABLE_TIMERS)
-    return;
-
-  timer_num = pgm_read_byte(tune_pin_to_timer_PGM + _tune_num_chans);
-  _tune_pins[_tune_num_chans] = pin;
-  _tune_num_chans++;
-  pinMode(pin, OUTPUT);
-  switch (timer_num) {
-    case 1: // 16 bit timer
-      TCCR1A = 0;
-      TCCR1B = 0;
-      bitWrite(TCCR1B, WGM12, 1);
-      bitWrite(TCCR1B, CS10, 1);
-      _tunes_timer1_pin_port = portOutputRegister(digitalPinToPort(pin));
-      _tunes_timer1_pin_mask = digitalPinToBitMask(pin);
-      break;
-    case 3: // 16 bit timer
-      TCCR3A = 0;
-      TCCR3B = 0;
-      bitWrite(TCCR3B, WGM32, 1);
-      bitWrite(TCCR3B, CS30, 1);
-      _tunes_timer3_pin_port = portOutputRegister(digitalPinToPort(pin));
-      _tunes_timer3_pin_mask = digitalPinToBitMask(pin);
-      playNote(0, 60);  /* start and stop channel 0 (timer 3) on middle C so wait/delay works */
-      stopNote(0);
-      break;
-  }
-}
-
-
-void ArduboyTunes::playNote(byte chan, byte note) {
-  byte timer_num;
-  byte prescalar_bits;
-  unsigned int frequency2; /* frequency times 2 */
-  unsigned long ocr;
-
-  // we can't plan on a channel that does not exist
-  if (chan >= _tune_num_chans)
-    return;
-
-  // we only have frequencies for 128 notes
-  if (note > 127)
-    note = 127;
-
-  timer_num = pgm_read_byte(tune_pin_to_timer_PGM + chan);
-  //frequency2 = pgm_read_word(_midi_note_frequencies + note);
-
-  //******  16-bit timer  *********
-  // two choices for the 16 bit timers: ck/1 or ck/64
-  ocr = F_CPU / frequency2 - 1;
-  prescalar_bits = 0b001;
-  if (ocr > 0xffff) {
-    ocr = F_CPU / frequency2 / 64 - 1;
-    prescalar_bits = 0b011;
-  }
-  // Set the OCR for the given timer, then turn on the interrupts
-  switch (timer_num) {
-    case 1:
-      TCCR1B = (TCCR1B & 0b11111000) | prescalar_bits;
-      OCR1A = ocr;
-      bitWrite(TIMSK1, OCIE1A, 1);
-      break;
-    case 3:
-      TCCR3B = (TCCR3B & 0b11111000) | prescalar_bits;
-      OCR3A = ocr;
-      wait_timer_frequency2 = frequency2;  // for "tune_delay" function
-      wait_timer_playing = true;
-      bitWrite(TIMSK3, OCIE3A, 1);
-      break;
-  }
-}
-
-void ArduboyTunes::stopNote(byte chan) {
-  byte timer_num;
-  timer_num = pgm_read_byte(tune_pin_to_timer_PGM + chan);
-  switch (timer_num) {
-    case 1:
-      TIMSK1 &= ~(1 << OCIE1A);                 // disable the interrupt
-      *_tunes_timer1_pin_port &= ~(_tunes_timer1_pin_mask);   // keep pin low after stop
-      break;
-    case 3:
-      wait_timer_playing = false;
-      *_tunes_timer3_pin_port &= ~(_tunes_timer3_pin_mask);   // keep pin low after stop
-      break;
-  }
-}
-
-void ArduboyTunes::playScore(const byte *score) {
-  score_start = score;
-  score_cursor = score_start;
-  step();  /* execute initial commands */
-  tune_playing = true;  /* release the interrupt routine */
+  if (audio_enabled)
+  ::tone(PIN_SPEAKER_1, frequency, duration);
 }
 
 
 
-bool ArduboyTunes::playing()
-{
-  return tune_playing;
-}
-
-
-/* Do score commands until a "wait" is found, or the score is stopped.
-This is called initially from tune_playcore, but then is called
-from the interrupt routine when waits expire.
-*/
-/* if CMD < 0x80, then the other 7 bits and the next byte are a 15-bit big-endian number of msec to wait */
-void ArduboyTunes::step() {
-  byte command, opcode, chan;
-  unsigned duration;
-
-  while (1) {
-    command = pgm_read_byte(score_cursor++);
-    opcode = command & 0xf0;
-    chan = command & 0x0f;
-    if (opcode == TUNE_OP_STOPNOTE) { /* stop note */
-      stopNote(chan);
-    }
-    else if (opcode == TUNE_OP_PLAYNOTE) { /* play note */
-      playNote(chan, pgm_read_byte(score_cursor++));
-    }
-    else if (opcode == TUNE_OP_RESTART) { /* restart score */
-      score_cursor = score_start;
-    }
-    else if (opcode == TUNE_OP_STOP) { /* stop score */
-      tune_playing = false;
-      break;
-    }
-    else if (opcode < 0x80) { /* wait count in msec. */
-      duration = ((unsigned)command << 8) | (pgm_read_byte(score_cursor++));
-      wait_toggle_count = ((unsigned long) wait_timer_frequency2 * duration + 500) / 1000;
-      if (wait_toggle_count == 0) wait_toggle_count = 1;
-      break;
-    }
-  }
-}
-
-void ArduboyTunes::delay (unsigned duration) {
-  boolean notdone;
-  noInterrupts();
-  delay_toggle_count = ((unsigned long) wait_timer_frequency2 * duration + 500) / 1000;
-  doing_delay = true;
-  interrupts();
-  do { // wait until the interrupt routines decrements the toggle count to zero
-    noInterrupts();
-    notdone = delay_toggle_count != 0;  /* interrupt-safe test */
-    interrupts();
-  }
-  while (notdone);
-  doing_delay = false;
-}
-
-void ArduboyTunes::closeChannels(void) {
-  byte timer_num;
-  for (uint8_t chan = 0; chan < _tune_num_chans; chan++) {
-    timer_num = pgm_read_byte(tune_pin_to_timer_PGM + chan);
-    switch (timer_num) {
-      case 1:
-        TIMSK1 &= ~(1 << OCIE1A);
-        break;
-      case 3:
-        TIMSK3 &= ~(1 << OCIE3A);
-        break;
-    }
-    digitalWrite(_tune_pins[chan], 0);
-  }
-  _tune_num_chans = 0;
-  tune_playing = false;
-}
-
-void ArduboyTunes::soundOutput()
-{
-  if (wait_timer_playing) { // toggle the pin if we're sounding a note
-    *_tunes_timer3_pin_port ^= _tunes_timer3_pin_mask;
-  }
-  if (tune_playing && wait_toggle_count && --wait_toggle_count == 0) {
-    // end of a score wait, so execute more score commands
-    wait_timer_old_frequency2 = wait_timer_frequency2;  // save this timer's frequency
-    ArduboyTunes::step();  // execute commands
-    // If this timer's frequency has changed and we're using it for a tune_delay(),
-    // recompute the number of toggles to wait for
-    if (doing_delay && wait_timer_old_frequency2 != wait_timer_frequency2) {
-      if (delay_toggle_count >= 0x20000UL && wait_timer_frequency2 >= 0x4000U) {
-        // Need to avoid 32-bit overflow...
-        delay_toggle_count = ( (delay_toggle_count + 4 >> 3) * (wait_timer_frequency2 + 2 >> 2) / wait_timer_old_frequency2 ) << 5;
-      }
-      else {
-        delay_toggle_count = delay_toggle_count * wait_timer_frequency2 / wait_timer_old_frequency2;
-      }
-    }
-  }
-  if (doing_delay && delay_toggle_count) --delay_toggle_count;  // countdown for tune_delay()
-}
-void ArduboyTunes::tone(unsigned int frequency, unsigned long duration) {
-  tonePlaying = true;
-  uint8_t prescalarbits = 0b001;
-  int32_t toggle_count = 0;
-  uint32_t ocr = 0;
-
-  // two choices for the 16 bit timers: ck/1 or ck/64
-  ocr = F_CPU / frequency / 2 - 1;
-  prescalarbits = 0b001;
-  if (ocr > 0xffff) {
-    ocr = F_CPU / frequency / 2 / 64 - 1;
-    prescalarbits = 0b011;
-  }
-  TCCR1B = (TCCR1B & 0b11111000) | prescalarbits;
-
-  // Calculate the toggle count
-  if (duration > 0) {
-    toggle_count = 2 * frequency * duration / 1000;
-  }
-  else {
-    toggle_count = -1;
-  }
-  // Set the OCR for the given timer,
-  // set the toggle count,
-  // then turn on the interrupts
-  OCR1A = ocr;
-  timer1_toggle_count = toggle_count;
-  bitWrite(TIMSK1, OCIE1A, 1);
-}
-
-ISR(TIMER1_COMPA_vect) {  // TIMER 1
-  if (tonePlaying) {
-    if (timer1_toggle_count != 0) {
-      // toggle the pin
-      *_tunes_timer1_pin_port ^= _tunes_timer1_pin_mask;
-      if (timer1_toggle_count > 0) timer1_toggle_count--;
-    }
-    else {
-      tonePlaying = false;
-      TIMSK1 &= ~(1 << OCIE1A);                 // disable the interrupt
-      *_tunes_timer1_pin_port &= ~(_tunes_timer1_pin_mask);   // keep pin low after stop
-    }
-  }
-  else {
-    *_tunes_timer1_pin_port ^= _tunes_timer1_pin_mask;  // toggle the pin
-  }
-}
-ISR(TIMER3_COMPA_vect) {  // TIMER 3
-  // Timer 3 is the one assigned first, so we keep it running always
-  // and use it to time score waits, whether or not it is playing a note.
-  ArduboyTunes::soundOutput();
-}
-
-
-///////////////
+/////////////////////////
+// Sprites by Dreamer3 //
+/////////////////////////
 Sprites::Sprites(Arduboy &a)
 {
   arduboy = &a;
   sBuffer = arduboy->getBuffer();
-}
-
-SimpleSprite::SimpleSprite(int x, int y, const uint8_t *bitmap) :
-  x(x), y(y), bitmap(bitmap)
-{
-}
-
-Sprite::Sprite(int x, int y, const uint8_t *bitmap) :
-  SimpleSprite(x, y, bitmap) {
-}
-
-Sprite::Sprite(int x, int y, const uint8_t *bitmap, const uint8_t *mask) :
-  SimpleSprite(x, y, bitmap), mask(mask) {
 }
 
 // new API
@@ -1517,40 +940,7 @@ void Sprites::drawPlusMask(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t 
 }
 
 
-// older api and common functions
-
-void Sprites::draw(Sprite sprite)
-{
-  draw(sprite.x, sprite.y,
-       sprite.bitmap, sprite.frame,
-       sprite.mask, sprite.maskFrame,
-       sprite.drawMode);
-}
-
-void Sprites::draw(SimpleSprite sprite)
-{
-  draw(sprite.x, sprite.y,
-       sprite.bitmap, sprite.frame,
-       NULL, 0,
-       sprite.drawMode);
-}
-
-void Sprites::draw(int16_t x, int16_t y, const uint8_t *bitmap)
-{
-  draw(x, y, bitmap, 0, NULL, 0, SPRITE_AUTO_MODE);
-}
-
-void Sprites::draw(int16_t x, int16_t y, const uint8_t *bitmap, const uint8_t *mask)
-{
-  draw(x, y, bitmap, 0, mask, 0, SPRITE_AUTO_MODE);
-}
-
-void Sprites::draw(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t frame)
-{
-  draw(x, y, bitmap, frame, NULL, 0, SPRITE_AUTO_MODE);
-}
-
-
+//common functions
 void Sprites::draw(int16_t x, int16_t y,
                    const uint8_t *bitmap, uint8_t frame,
                    const uint8_t *mask, uint8_t sprite_frame,
@@ -1584,11 +974,6 @@ void Sprites::draw(int16_t x, int16_t y,
 
   drawBitmap(x, y, bitmap, mask, width, height, drawMode);
 }
-
-// should we still even support these modes?
-// void Sprites::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint8_t color) {
-// drawComplexBitmap(x, y, bitmap, NULL, w, h, color ? SPRITE_IS_MASK : SPRITE_IS_MASK_ERASE);
-// }
 
 void Sprites::drawBitmap(int16_t x, int16_t y,
                          const uint8_t *bitmap, const uint8_t *mask,
@@ -1869,7 +1254,6 @@ void Sprites::drawBitmap(int16_t x, int16_t y,
         [sprite_ofs_jump] "r" ((w-rendered_width)*2),
         [yOffset] "r" (yOffset),
         [mul_amt] "r" (mul_amt)
-
         :
       );
       break;
@@ -1877,18 +1261,18 @@ void Sprites::drawBitmap(int16_t x, int16_t y,
   }
 }
 
+
 /////////////////////////////////
 // Basic Collision by Dreamer3 //
 /////////////////////////////////
-
-bool Physics::collide(Point point, Rect rect)
+bool Arduboy::collide(Point point, Rect rect)
 {
   // does point fall within the bounds of rect
   return ((point.x >= rect.x) && (point.x < rect.x + rect.width) &&
       (point.y >= rect.y) && (point.y < rect.y + rect.height));
 }
 
-bool Physics::collide(Rect rect1, Rect rect2)
+bool Arduboy::collide(Rect rect1, Rect rect2)
 {
   return !( rect2.x                 >=  rect1.x + rect1.width    ||
             rect2.x + rect2.width   <=  rect1.x                ||
