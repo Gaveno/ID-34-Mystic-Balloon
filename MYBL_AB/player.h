@@ -4,9 +4,19 @@
 #include <Arduino.h>
 #include "globals.h"
 
+#define PLAYER_SPEED 64
+#define GRAVITY 12
+
+struct Camera {
+  // x and y are 9.6 signed fixed point values
+  int x;
+  int y;
+}
+
 struct Players
 {
   public:
+    // x and y are 9.6 signed fixed point values
     int x;
     int y;
     boolean isActive;

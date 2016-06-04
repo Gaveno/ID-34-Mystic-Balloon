@@ -15,6 +15,7 @@ void stateGamePrepareLevel()
   scorePlayer = 0;
   setKid();
   gameState = STATE_GAME_NEXT_LEVEL;
+  levelLoad(level);
 };
 
 void stateGameNextLevel()
