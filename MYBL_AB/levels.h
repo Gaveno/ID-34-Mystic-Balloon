@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include "globals.h"
 #include "enemies.h"
+#include "vec2.h"
+#include "player.h"
 
 #define LEVEL_WIDTH 384    // 24 * 16
 #define LEVEL_HEIGHT 384   // 24 * 16
@@ -11,6 +13,7 @@
 #define LEVEL_WIDTH_CELLS 24
 #define LEVEL_HEIGHT_CELLS 24
 #define LEVEL_ARRAY_SIZE 576
+
 
 char gameGrid[LEVEL_ARRAY_SIZE]; // grid with cell information
 // upper byte tile xxxx ____
@@ -55,8 +58,8 @@ const uint8_t * levels[] = {
 void levelLoad(byte level) {
   // Set Solid Cells
   for (byte i = 0; i < LEVEL_ARRAY_SIZE; ++i) {
-    pgm_read_byte(rm + i)
-    gameGrid[i] = (pgm_read_byte(levels[level] + (i / 8)) >> (i % 8)) & 0x01);
+    //pgm_read_byte(rm + i)
+    gameGrid[i] = (pgm_read_byte(levels[level] + (i / 8)) >> (i % 8)) & 0x01;
   }
 
   // Set Tiles
@@ -92,6 +95,23 @@ void levelLoad(byte level) {
   }
 
   // TO-DO Objects
+}
+
+void drawGrid() {
+  vec2 i(cam.pos.x >> (FIXED_POINT + 4), cam.pos.y >> (FIXED_POINT + 4));
+  for ( ; i.x <= i.x + 8; ++i.x)
+  {
+    for ( ; i.y <= i.y + 8; ++i.y) {
+      if (i.x >= 0 && i.x < LEVEL_WIDTH_CELLS
+      && i.y >= 0 && i.y < LEVEL_HEIGHT_CELLS)
+      {
+        int index = (i.y * LEVEL_WIDTH_CELLS) + i.x;
+        i = i << 4;
+        i -= cam.pos >> FIXED_POINT;
+        sprites.drawErase(i.x, i.y, sprTileset, gameGrid[index] >> 4);
+      }
+    }
+  }
 }
 
 void checkCollisions()

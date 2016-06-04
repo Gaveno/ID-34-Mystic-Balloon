@@ -14,6 +14,8 @@ void stateGamePrepareLevel()
   level = 0;
   scorePlayer = 0;
   setKid();
+  cam.pos = vec2(0, 0);
+  cam.offset = vec2(0, 0);
   gameState = STATE_GAME_NEXT_LEVEL;
   levelLoad(level);
 };
@@ -28,7 +30,9 @@ void stateGamePlaying()
 {
   checkInputs();
   checkKid();
+  updateCamera();
 
+  drawGrid();
   drawKid();
   
   checkCollisions();
