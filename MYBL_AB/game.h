@@ -11,23 +11,30 @@
 
 void stateGamePrepareLevel()
 {
-  level = 0;
+  //level = 0;
   scorePlayer = 0;
   setKid();
-  gameState = STATE_GAME_NEXT_LEVEL;
+  cam.pos = vec2(0, 0);
+  cam.offset = vec2(0, 0);
+  //gameState = STATE_GAME_NEXT_LEVEL;
+  gameState = STATE_GAME_PLAYING;
+  levelLoad();
 };
 
 void stateGameNextLevel()
 {
   level++;
-  gameState = STATE_GAME_PLAYING;
+  //gameState = STATE_GAME_PLAYING;
+  gameState = STATE_GAME_PREPARE_LEVEL;
 };
 
 void stateGamePlaying()
 {
   checkInputs();
   checkKid();
+  updateCamera();
 
+  drawGrid();
   drawKid();
   
   checkCollisions();
