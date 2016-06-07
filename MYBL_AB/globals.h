@@ -28,15 +28,16 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
+#define FIRST_LEVEL                  1
+
 
 Arduboy arduboy;
 Sprites sprites(arduboy);
 
-unsigned char gameState;
-boolean soundYesNo;
-int menuSelection;
-byte counter = 0;
-byte level;
+byte gameState = STATE_MENU_INTRO;   // start the game with the TEAM a.r.g. logo
+byte menuSelection = STATE_MENU_PLAY; // PLAY menu item is pre-selected
+byte globalCounter = 0;
+byte level = FIRST_LEVEL;
 unsigned long scorePlayer; 
 
 #endif

@@ -23,10 +23,10 @@ void drawTitleScreen()
 
 void stateMenuIntro()
 {
-  counter++;
-  if (counter < 46) arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
-  if (counter > 45) drawTitleScreen();
-  if ((counter > 90) || arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+  globalCounter++;
+  if (globalCounter < 46) arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
+  if (globalCounter > 45) drawTitleScreen();
+  if ((globalCounter > 90) || arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
 
 void stateMenuMain()
@@ -68,17 +68,15 @@ void stateMenuSoundfx()
   drawTitleScreen();
   arduboy.drawCompressed(51, 9, soundMenuMask, BLACK);
   arduboy.drawCompressed(51, 9, soundMenu, WHITE);
-  if (arduboy.justPressed(DOWN_BUTTON)) soundYesNo = true;
-  if (arduboy.justPressed(UP_BUTTON)) soundYesNo = false;
-  arduboy.drawCompressed(54, 18 + 9 * soundYesNo, selectorMask, BLACK);
-  arduboy.drawCompressed(54, 18 + 9 * soundYesNo, selector, WHITE);
+  if (arduboy.justPressed(DOWN_BUTTON)) arduboy.audio.on();
+  if (arduboy.justPressed(UP_BUTTON)) arduboy.audio.off();
+  arduboy.drawCompressed(54, 18 + 9 * arduboy.audio.enabled(), selectorMask, BLACK);
+  arduboy.drawCompressed(54, 18 + 9 * arduboy.audio.enabled(), selector, WHITE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     arduboy.audio.saveOnOff();
     gameState = STATE_MENU_MAIN;
   }
-  if (soundYesNo == true) arduboy.audio.on();
-  else arduboy.audio.off();
 }
 
 

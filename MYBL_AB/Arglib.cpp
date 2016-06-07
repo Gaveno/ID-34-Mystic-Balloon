@@ -871,7 +871,7 @@ void Arduboy::swap(int16_t& a, int16_t& b) {
 
 void ArduboyAudio::on() {
   pinMode(PIN_SPEAKER_1, OUTPUT);
-  //pinMode(PIN_SPEAKER_2, OUTPUT);
+  pinMode(PIN_SPEAKER_2, OUTPUT);
   audio_enabled = true;
 }
 
@@ -881,7 +881,7 @@ bool ArduboyAudio::enabled() {
 
 void ArduboyAudio::off() {
   pinMode(PIN_SPEAKER_1, INPUT);
-  //pinMode(PIN_SPEAKER_2, INPUT);
+  pinMode(PIN_SPEAKER_2, INPUT);
   audio_enabled = false;
 }
 
