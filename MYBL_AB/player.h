@@ -143,6 +143,7 @@ void checkKid()
   if (kid.speed.y <= 0 && (solidV || solidbelow))
   {
     kid.speed.y = 0;
+    kid.speed.x = 0;
     kid.isLanding = false;
     kid.isJumping = false;
     kid.actualpos.y = (((kid.actualpos.y >> FIXED_POINT) + 8) >> 4) << (FIXED_POINT + 4);
@@ -203,19 +204,19 @@ void checkKid()
 
 void updateCamera()
 {
-  /*vec2 kp, cp;
-  kp = kid.pos >> FIXED_POINT;
+  vec2 kp, cp;
+  kp = kid.pos;
   cp = (cam.pos + cam.offset);
 
   vec2 V;
-  //V.x = kp.x - cp.x - 58;
-  //V.y = kp.y - cp.y - 24;
-  V = kp - vec2(58, 24);
-  //V = V >> 2;
+  V.x = kp.x - cp.x - 58;
+  V.y = kp.y - cp.y - 24;
+  //V = kp - vec2(58, 24);
+  V = V >> 3;
 
-  cam.pos += V;*/
-  cam.pos.x = kid.pos.x - 64;
-  cam.pos.y = kid.pos.y - 32;
+  cam.pos += V;
+  //cam.pos.x = kid.pos.x - 64;
+  //cam.pos.y = kid.pos.y - 32;
 }
 
 void drawKid()

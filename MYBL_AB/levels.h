@@ -70,8 +70,9 @@ bool gridGetSolid(int8_t x, int8_t y) {
 }
 
 byte gridGetTile(int8_t x, int8_t y) {
-  if (x < 0 || x >= LEVEL_WIDTH || y < 0 || y >= LEVEL_HEIGHT || !gridGetSolid(x, y))
-    return 0;
+  if (!gridGetSolid(x, y)) return 0;
+  //if (x < 0 || x >= LEVEL_WIDTH || y < 0 || y >= LEVEL_HEIGHT || !gridGetSolid(x, y))
+    //return 0;
   //return gameGrid[x + (y * LEVEL_WIDTH_CELLS)] >> 4;
   byte l, r, t, b, f, i;
   l = gridGetSolid(x - 1, y);
@@ -149,8 +150,8 @@ void drawGrid() {
   for ( int x = (cam.pos.x >> 4); x <= (cam.pos.x >> 4) + 8; ++x)
   {
     for ( int y = (cam.pos.y >> 4); y <= (cam.pos.y >> 4) + 4; ++y) {
-      if (x >= 0 && x < LEVEL_WIDTH
-      && y >= 0 && y < LEVEL_HEIGHT)
+      //if (x >= 0 && x < LEVEL_WIDTH
+      //&& y >= 0 && y < LEVEL_HEIGHT)
       {
         /*int index = (i.y * LEVEL_WIDTH_CELLS) + i.x;
         i = i << 4;
