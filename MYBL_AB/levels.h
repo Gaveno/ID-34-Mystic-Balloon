@@ -58,8 +58,11 @@ const uint8_t * levels[] = {
 
 // Cell based grid checking
 bool gridGetSolid(int8_t x, int8_t y) {
-  if (x < 0 || x >= LEVEL_WIDTH_CELLS || y < 0 || y >= LEVEL_HEIGHT_CELLS)
+  if (x < 0 || x >= LEVEL_WIDTH_CELLS || y >= LEVEL_HEIGHT_CELLS)
     return 1;
+
+  if (y < 0)
+    return 0;
 
   const uint8_t *lvl = levels[level];
   byte b = pgm_read_byte(lvl + (x >> 3) + (y * (LEVEL_WIDTH_CELLS >> 3)));

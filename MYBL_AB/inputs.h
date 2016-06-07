@@ -17,7 +17,7 @@ kid.isWalking = false;
     kid.direction = FACING_LEFT;
     if (kid.speed.y == 0)
     {
-      if (!gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 8) >> 4))
+      if (!gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
       kid.isWalking = true;
     }
@@ -36,7 +36,7 @@ kid.isWalking = false;
     kid.direction = FACING_RIGHT;
     if (kid.speed.y == 0)
     {
-      if (!gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 8) >> 4))
+      if (!gridGetSolid((kid.pos.x + 12) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x += PLAYER_SPEED_WALKING;
       kid.isWalking = true;
     }
@@ -55,8 +55,10 @@ kid.isWalking = false;
       kid.isWalking = false;
       kid.isJumping = true;
       kid.jumpLetGo = false;
-      kid.jumpTimer = 12;
-      kid.speed.y = -PLAYER_JUMP_VELOCITY;
+      kid.jumpTimer = 6;
+      kid.speed.y = PLAYER_JUMP_VELOCITY;
+      if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = (PLAYER_SPEED_WALKING);
+      if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -(PLAYER_SPEED_WALKING);
     }
   }
   if (kid.isJumping && !arduboy.pressed(B_BUTTON))

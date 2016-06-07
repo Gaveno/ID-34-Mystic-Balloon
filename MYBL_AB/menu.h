@@ -50,7 +50,7 @@ void stateMenuHelp()
 
 void stateMenuPlay()
 {
-  level = 0;
+  level = 1;
   gameState = STATE_GAME_PREPARE_LEVEL;
 }
 

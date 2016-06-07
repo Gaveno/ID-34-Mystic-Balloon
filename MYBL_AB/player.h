@@ -6,13 +6,13 @@
 //#include "levels.h"
 #include "vec2.h"
 
-#define PLAYER_SPEED_WALKING 8
-#define PLAYER_SPEED_AIR 5
+#define PLAYER_SPEED_WALKING 16
+#define PLAYER_SPEED_AIR 2
 #define PLAYER_JUMP_VELOCITY 32
 #define GRAVITY 2
 #define FRICTION 1 // for horizontal speed
 #define FIXED_POINT 4
-#define MAX_XSPEED 2 * (1 << FIXED_POINT)
+#define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
 
 extern bool gridGetSolid(int8_t x, int8_t y);
@@ -94,7 +94,7 @@ void checkKid()
     kid.isJumping = true;
     if (!kid.jumpLetGo && kid.jumpTimer > 0)
     {
-      kid.speed.y -= GRAVITY << 1;
+      kid.speed.y += GRAVITY << 1;
       kid.jumpTimer--;
     }
   }
@@ -108,10 +108,18 @@ void checkKid()
 
   // Update position---
   // -Solid checking
-  boolean solidbelow = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 16 + min(0, kid.speed.y >> FIXED_POINT)) >> 4);
-  boolean solidabove = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y - 1 - max(0, kid.speed.y >> FIXED_POINT)) >> 4);
-  boolean solidleft = gridGetSolid((kid.pos.x - min(kid.speed.x >> FIXED_POINT, 0) - 1) >> 4, (kid.pos.y + 8) >> 4);
-  boolean solidright = gridGetSolid((kid.pos.x + max(kid.speed.x >> FIXED_POINT, 0) + 13) >> 4, (kid.pos.y + 8) >> 4);
+  boolean solidbelow = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 16) >> 4);
+  boolean solidabove = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y - 1) >> 4);
+  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4);
+  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 8) >> 4);
+  boolean solidH = gridGetSolid(
+    (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4,
+    (((kid.actualpos.y) >> FIXED_POINT) + 8) >> 4
+  );
+  boolean solidV = gridGetSolid(
+    (((kid.actualpos.x) >> FIXED_POINT) + 6) >> 4,
+    (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) - 1 + (kid.speed.y < 0) * 17) >> 4
+  );
 
   // Gravity
   if (kid.speed.y > 0 || !solidbelow)
@@ -132,24 +140,44 @@ void checkKid()
   }
 
   // Kid on ground
-  if (kid.speed.y <= 0 && solidbelow)
+  if (kid.speed.y <= 0 && (solidV || solidbelow))
   {
     kid.speed.y = 0;
     kid.isLanding = false;
     kid.isJumping = false;
+    kid.actualpos.y = (((kid.actualpos.y >> FIXED_POINT) + 8) >> 4) << (FIXED_POINT + 4);
   }
   
   // -Y Position
-  if ((kid.speed.y > 0 && !solidabove)
-  || (kid.speed.y < 0 && !solidbelow))
+  //if ((kid.speed.y > 0 && !solidV)
+  //|| (kid.speed.y < 0 && !solidV))
+  if (!solidV && kid.speed.y != 0)
   {
     kid.actualpos.y -= kid.speed.y;
   }
+  else
+  {
+    if (solidabove)
+    {
+      kid.actualpos.y = (kid.actualpos.y >> (FIXED_POINT + 4)) << (FIXED_POINT + 4);
+    }
+  }
 
   // -X Position
-  if ((kid.speed.x < 0 && !solidleft) || (kid.speed.x > 0 && !solidright))
+  //if ((kid.speed.x < 0 && !solidH) || (kid.speed.x > 0 && !solidH))
+  if (kid.speed.x != 0)
   {
-    kid.actualpos.x += kid.speed.x;
+    if (!solidH)
+    {
+      kid.actualpos.x += kid.speed.x;
+    }
+    else
+    {
+      //if (kid.speed.x < 0)
+      kid.speed.x = 0;
+      kid.actualpos.x = (((((kid.actualpos.x >> FIXED_POINT) + 8) >> 4) << 4) + ((!kid.direction) * 4)) << (FIXED_POINT);
+      //kid.actualpos.x += ((kid.speed.x > 0) * 4) << FIXED_POINT;
+    }
   }
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
@@ -185,9 +213,9 @@ void updateCamera()
   V = kp - vec2(58, 24);
   //V = V >> 2;
 
-  cam.pos += V;
-  //cam.pos.x = kid.pos.x - 64;
-  //cam.pos.y = kid.pos.y - 32;*/
+  cam.pos += V;*/
+  cam.pos.x = kid.pos.x - 64;
+  cam.pos.y = kid.pos.y - 32;
 }
 
 void drawKid()
