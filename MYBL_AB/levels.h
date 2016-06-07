@@ -15,24 +15,9 @@
 #define LEVEL_ARRAY_SIZE 576
 
 
-char gameGrid[LEVEL_ARRAY_SIZE]; // grid with cell information
+//char gameGrid[LEVEL_ARRAY_SIZE]; // grid with cell information
 // upper byte tile xxxx ____
 // LSB solid ____ ___x
-
-// Cell based grid checking
-bool gridGetSolid(int16_t x, int16_t y) {
-  if (x < 0 || x > LEVEL_WIDTH_CELLS || y < 0 || y > LEVEL_HEIGHT_CELLS)
-    return true;
-
-  return gameGrid[x + (y * LEVEL_WIDTH_CELLS)] & 0x01;
-}
-
-char gridGetTile(int16_t x, int16_t y) {
-  if (x < 0 || x > LEVEL_WIDTH || y < 0 || y > LEVEL_HEIGHT)
-    return 0;
-
-  return gameGrid[x + (y * LEVEL_WIDTH_CELLS)] >> 4;
-}
 
 const uint8_t level1 [] PROGMEM = {
 // Tiles
@@ -50,16 +35,75 @@ const uint8_t level1 [] PROGMEM = {
 0xFF
 };
 
-const uint8_t * levels[] = {
-  level1
+const uint8_t levelTest [] PROGMEM = {
+// Tiles
+0x31, 0x00, 0x00, 0x31, 0x00, 0x00, 0x39, 0x00, 0x00, 
+0x0F, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+// Objects
+
+// EoL
+0xFF
 };
+
+const uint8_t * levels[] = {
+  levelTest, level1,
+};
+
+
+// Cell based grid checking
+bool gridGetSolid(int8_t x, int8_t y) {
+  if (x < 0 || x >= LEVEL_WIDTH_CELLS || y < 0 || y >= LEVEL_HEIGHT_CELLS)
+    return 1;
+
+  const uint8_t *lvl = levels[level];
+  byte b = pgm_read_byte(lvl + (x >> 3) + (y * (LEVEL_WIDTH_CELLS >> 3)));
+  return ((b >> (x % 8)) & 0x01);
+}
+
+byte gridGetTile(int8_t x, int8_t y) {
+  if (x < 0 || x >= LEVEL_WIDTH || y < 0 || y >= LEVEL_HEIGHT || !gridGetSolid(x, y))
+    return 0;
+  //return gameGrid[x + (y * LEVEL_WIDTH_CELLS)] >> 4;
+  byte l, r, t, b, f, i;
+  l = gridGetSolid(x - 1, y);
+  t = gridGetSolid(x, y - 1);
+  r = gridGetSolid(x + 1, y);
+  b = gridGetSolid(x, y + 1);
+
+  f = 0;
+  f |= t << 3;
+  f |= l << 2;
+  f |= r << 1;
+  f |= b;
+
+  switch (f) {
+    case 3: i = 1; break;
+    case 7: i = 2; break;
+    case 5: i = 3; break;
+    case 11: i = 4; break;
+    case 15: i = 5; break; // solid all around
+    case 13: i = 6; break;
+    case 10: i = 7; break;
+    case 14: i = 8; break;
+    case 12: i = 9; break;
+    default: i = 0;
+  }
+
+  return i;
+}
 
 
 void levelLoad(byte level) {
   // Set Solid Cells
-  for (byte i = 0; i < LEVEL_ARRAY_SIZE; ++i) {
+  /*for (int i = 0; i < LEVEL_ARRAY_SIZE; ++i) {
     //pgm_read_byte(rm + i)
-    gameGrid[i] = (pgm_read_byte(levels[level] + (i / 8)) >> (i % 8)) & 0x01;
+    gameGrid[i] = (pgm_read_byte(levels[level] + (byte)(i / 8)) >> (i % 8)) & 0x01;
   }
 
   // Set Tiles
@@ -92,26 +136,34 @@ void levelLoad(byte level) {
 
       gameGrid[x + (y * LEVEL_WIDTH_CELLS)] |= i << 4;
     }
-  }
+  }*/
 
   // TO-DO Objects
 }
 
 void drawGrid() {
-  vec2 i(cam.pos.x >> (FIXED_POINT + 4), cam.pos.y >> (FIXED_POINT + 4));
-  for ( ; i.x <= i.x + 8; ++i.x)
+  //Serial.println("Start of tile drawing");
+  for ( int x = (cam.pos.x >> 4); x <= (cam.pos.x >> 4) + 8; ++x)
   {
-    for ( ; i.y <= i.y + 8; ++i.y) {
-      if (i.x >= 0 && i.x < LEVEL_WIDTH_CELLS
-      && i.y >= 0 && i.y < LEVEL_HEIGHT_CELLS)
+    for ( int y = (cam.pos.y >> 4); y <= (cam.pos.y >> 4) + 4; ++y) {
+      if (x >= 0 && x < LEVEL_WIDTH
+      && y >= 0 && y < LEVEL_HEIGHT)
       {
-        int index = (i.y * LEVEL_WIDTH_CELLS) + i.x;
+        /*int index = (i.y * LEVEL_WIDTH_CELLS) + i.x;
         i = i << 4;
-        i -= cam.pos >> FIXED_POINT;
-        sprites.drawErase(i.x, i.y, sprTileset, gameGrid[index] >> 4);
+        i -= cam.pos >> FIXED_POINT;*/
+//        Serial.print("Pos: ");
+//        Serial.print(x);
+//        Serial.print(", ");
+//        Serial.print(y);
+//        Serial.print(" Tile: ");
+//        Serial.print(gridGetTile(x, y));
+//        Serial.print("\n");
+        sprites.drawErase((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, sprTileset, gridGetTile(x, y));
       }
     }
   }
+  //Serial.println("End of tile drawing");
 }
 
 void checkCollisions()

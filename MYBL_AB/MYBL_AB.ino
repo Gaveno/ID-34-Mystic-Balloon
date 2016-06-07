@@ -44,6 +44,14 @@ FunctionPointer mainGameLoop[] = {
 
 void setup()
 {
+  // Serial testing
+//  Serial.begin(9600);
+//  delay(2000);
+//  Serial.println(gridGetSolid(0,0));
+//  Serial.println(gridGetSolid(1,0));
+//  Serial.println(gridGetSolid(0,1));
+//  Serial.println(gridGetTile(0,0));
+  
   arduboy.start();
   arduboy.setFrameRate(60);                                 // set the frame rate of the game at 60 fps
   gameState = STATE_MENU_INTRO;                             // start the game with the TEAM a.r.g. logo
