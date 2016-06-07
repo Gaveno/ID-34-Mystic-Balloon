@@ -18,7 +18,7 @@ void stateGamePrepareLevel()
   cam.offset = vec2(0, 0);
   //gameState = STATE_GAME_NEXT_LEVEL;
   gameState = STATE_GAME_PLAYING;
-  levelLoad(level);
+  levelLoad();
 };
 
 void stateGameNextLevel()

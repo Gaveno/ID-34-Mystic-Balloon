@@ -14,6 +14,7 @@
 #define FIXED_POINT 4
 #define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
+#define CAMERA_OFFSET 20
 
 extern bool gridGetSolid(int8_t x, int8_t y);
 
@@ -94,7 +95,7 @@ void checkKid()
     kid.isJumping = true;
     if (!kid.jumpLetGo && kid.jumpTimer > 0)
     {
-      kid.speed.y += GRAVITY << 1;
+      kid.speed.y += GRAVITY;
       kid.jumpTimer--;
     }
   }
@@ -147,7 +148,18 @@ void checkKid()
     kid.isLanding = false;
     kid.isJumping = false;
     kid.actualpos.y = (((kid.actualpos.y >> FIXED_POINT) + 8) >> 4) << (FIXED_POINT + 4);
+
+    if (!gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4))
+      kid.actualpos.x -= 8;
+    if (!gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4))
+      kid.actualpos.x += 8;
   }
+
+  // Move out of walls
+  if (gridGetSolid((kid.pos.x) >> 4, (kid.pos.y + 8) >> 4))
+    kid.actualpos.x += 8;
+  if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
+    kid.actualpos.x -= 8;
   
   // -Y Position
   //if ((kid.speed.y > 0 && !solidV)
@@ -182,36 +194,24 @@ void checkKid()
   }
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
-  /*if (kid.isJumping && kid.speed.y <= 0 //kid.jumpTimer < 20)
-  {
-    kid.jumpTimer++;
-    kid.pos.y += kid.speed.y;
-  }
-  if (kid.jumpTimer > 19)
-  {
-    kid.isJumping = false;
-    kid.isLanding = true;
-    kid.jumpTimer++;
-    kid.pos.y += 64;
-  }
-  if (kid.jumpTimer > 39)
-  {
-    kid.isLanding = false;
-    kid.jumpTimer = 0;
-
-  }*/
 }
 
 void updateCamera()
 {
+  // Camera offset
+  if (cam.offset.x > 0) cam.offset.x--;
+  if (cam.offset.x < 0) cam.offset.x++;
+  if (cam.offset.y > 0) cam.offset.y--;
+  if (cam.offset.y < 0) cam.offset.y++;
+  
   vec2 kp, cp;
   kp = kid.pos;
   cp = (cam.pos + cam.offset);
 
   vec2 V;
+  //vec2 V = (kid.pos - cam.pos + cam.offset) >> 3; // more bytes
   V.x = kp.x - cp.x - 58;
   V.y = kp.y - cp.y - 24;
-  //V = kp - vec2(58, 24);
   V = V >> 3;
 
   cam.pos += V;

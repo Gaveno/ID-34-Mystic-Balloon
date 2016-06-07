@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "globals.h"
+#include "vec2.h"
 
 
 

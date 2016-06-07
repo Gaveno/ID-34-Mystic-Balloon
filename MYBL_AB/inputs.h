@@ -10,10 +10,11 @@ void checkInputs()
 kid.isWalking = false;
   if (arduboy.pressed(DOWN_BUTTON))
   {
-
+    cam.offset.y = -CAMERA_OFFSET;
   }
   if (arduboy.pressed(LEFT_BUTTON))
   {
+    cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_LEFT;
     if (kid.speed.y == 0)
     {
@@ -29,10 +30,11 @@ kid.isWalking = false;
   }
   if (arduboy.pressed(UP_BUTTON))
   {
-
+    cam.offset.y = CAMERA_OFFSET;
   }
   if (arduboy.pressed(RIGHT_BUTTON))
   {
+    cam.offset.x = -CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
     if (kid.speed.y == 0)
     {
@@ -55,7 +57,7 @@ kid.isWalking = false;
       kid.isWalking = false;
       kid.isJumping = true;
       kid.jumpLetGo = false;
-      kid.jumpTimer = 6;
+      kid.jumpTimer = 12;
       kid.speed.y = PLAYER_JUMP_VELOCITY;
       if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = (PLAYER_SPEED_WALKING);
       if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -(PLAYER_SPEED_WALKING);
