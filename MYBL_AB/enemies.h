@@ -5,18 +5,22 @@
 #include "globals.h"
 #include "vec2.h"
 
-#define MAX_PER_TYPE 5
-#define MAX_FAN_PARTICLES 5
+#define MAX_PER_TYPE 6
+#define MAX_FAN_PARTICLES 4
 
-struct Fan
+struct ActiveObject
 {
   vec2 pos;
-  vec2 particles[5];
-  byte height;
   bool active;
 };
 
-Fan fans[MAX_FANS];
+struct Fan : public ActiveObject
+{
+  vec2 particles[5];
+  byte height;
+};
+
+Fan fans[MAX_PER_TYPE];
 
 void fansInit()
 {
@@ -62,7 +66,7 @@ void fansUpdate()
     }
 
     // Draw fan
-    // TO-DO
+    sprites.drawErase(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, millis() % 2);
   }
 }
 
