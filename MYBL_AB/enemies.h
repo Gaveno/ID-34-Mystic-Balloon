@@ -5,7 +5,7 @@
 #include "globals.h"
 #include "vec2.h"
 
-#define MAX_FANS 5
+#define MAX_PER_TYPE 5
 #define MAX_FAN_PARTICLES 5
 
 struct Fan
@@ -20,7 +20,7 @@ Fan fans[MAX_FANS];
 
 void fansInit()
 {
-  for (byte i = 0; i < MAX_FANS; ++i)
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     fans[i].pos = vec2(0, 0);
     for (byte a = 0; a < MAX_FAN_PARTICLES; ++a)
@@ -32,7 +32,7 @@ void fansInit()
 
 void fansCreate(vec2 pos, byte height)
 {
-  for (byte i = 0; i < MAX_FANS; ++i)
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     if (!fans[i].active)
     {
@@ -46,7 +46,7 @@ void fansCreate(vec2 pos, byte height)
 
 void fansUpdate()
 {
-  for (byte i = 0; i < MAX_FANS; ++i)
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     // Update
     if (arduboy.everyXFrames(2))
