@@ -114,20 +114,22 @@ void checkKid()
 
   // Update position---
   // -Solid checking
-  boolean solidbelow = gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4)
-  | gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4);
-  boolean solidabove = gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y - 1) >> 4)
-  | gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y - 1) >> 4);
-  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 15) >> 4)
-  | gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 1) >> 4);
-  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 15) >> 4)
-  | gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 1) >> 4);
+  boolean solidbelow = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 16) >> 4);
+  boolean solidabove = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y - 1) >> 4);
+  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4);
+  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 8) >> 4);
   boolean solidH = gridGetSolid(
     (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4,
-    (((kid.actualpos.y) >> FIXED_POINT) + 8) >> 4
+    (((kid.actualpos.y) >> FIXED_POINT) + 2) >> 4
+  ) || gridGetSolid(
+    (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4,
+    (((kid.actualpos.y) >> FIXED_POINT) + 13) >> 4
   );
   boolean solidV = gridGetSolid(
-    (((kid.actualpos.x) >> FIXED_POINT) + 6) >> 4,
+    (((kid.actualpos.x) >> FIXED_POINT) + 2) >> 4,
+    (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4
+  ) || gridGetSolid(
+    (((kid.actualpos.x) >> FIXED_POINT) + 10) >> 4,
     (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4
   );
 
