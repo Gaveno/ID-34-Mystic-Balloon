@@ -20,6 +20,7 @@ void stateGamePrepareLevel()
   gameState = STATE_GAME_PLAYING;
   fansInit();
   levelLoad();
+  fansCreate(vec2(8, 12), 3);
 };
 
 void stateGameNextLevel()

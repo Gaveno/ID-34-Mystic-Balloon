@@ -14,13 +14,13 @@
 #define FIXED_POINT 4
 #define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
-#define CAMERA_OFFSET 20
+#define CAMERA_OFFSET 5
 
 extern bool gridGetSolid(int8_t x, int8_t y);
 
 struct Camera
 {
-  // x and y are 9.6 signed fixed point values
+  // x and y are 9.6 signed fixed vec2 values
   vec2 pos;
   vec2 offset;
 };
@@ -28,7 +28,7 @@ struct Camera
 struct Players
 {
   public:
-    // x and y are 9.6 signed fixed point values
+    // x and y are 9.6 signed fixed vec2 values
     vec2 pos;
     vec2 actualpos;
     vec2 speed;
@@ -45,6 +45,8 @@ struct Players
     byte jumpTimer;
     byte HP;
     byte frame;
+    byte balloons;
+    byte balloonOffset;
 };
 
 Players kid;
@@ -70,6 +72,8 @@ void setKid()
   kid.isFloating = false;
   kid.isBalloon = false;
   kid.jumpLetGo = true;
+  kid.balloons = 2;
+  kid.balloonOffset = 0;
 }
 
 void checkKid()
@@ -90,9 +94,10 @@ void checkKid()
   if (kid.frame > 3 || !kid.isWalking) kid.frame = 0;
 
   // Kid is moving up
-  if (kid.speed.y > 0)
+  if (kid.speed.y > 0 && !kid.isBalloon)
   {
     kid.isJumping = true;
+    kid.isLanding = false;
     if (!kid.jumpLetGo && kid.jumpTimer > 0)
     {
       kid.speed.y += GRAVITY;
@@ -109,17 +114,21 @@ void checkKid()
 
   // Update position---
   // -Solid checking
-  boolean solidbelow = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 16) >> 4);
-  boolean solidabove = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y - 1) >> 4);
-  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4);
-  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 8) >> 4);
+  boolean solidbelow = gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4)
+  | gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4);
+  boolean solidabove = gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y - 1) >> 4)
+  | gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y - 1) >> 4);
+  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 15) >> 4)
+  | gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 1) >> 4);
+  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 15) >> 4)
+  | gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 1) >> 4);
   boolean solidH = gridGetSolid(
     (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4,
     (((kid.actualpos.y) >> FIXED_POINT) + 8) >> 4
   );
   boolean solidV = gridGetSolid(
     (((kid.actualpos.x) >> FIXED_POINT) + 6) >> 4,
-    (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) - 1 + (kid.speed.y < 0) * 17) >> 4
+    (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4
   );
 
   // Gravity
@@ -127,6 +136,13 @@ void checkKid()
   {
     //kid.speed.y += GRAVITY;
     kid.speed.y = (kid.speed.y > -MAX_YSPEED) ? kid.speed.y - GRAVITY : -MAX_YSPEED;
+    if (kid.isBalloon)
+    {
+      if (kid.balloonOffset > 0)
+        kid.balloonOffset -= 2;
+      else
+        kid.speed.y = max(-((10/kid.balloons) >> 1), kid.speed.y);
+    }
   }
 
   // Friction
@@ -147,6 +163,7 @@ void checkKid()
     kid.speed.x = 0;
     kid.isLanding = false;
     kid.isJumping = false;
+    kid.isBalloon = false;
     kid.actualpos.y = (((kid.actualpos.y >> FIXED_POINT) + 8) >> 4) << (FIXED_POINT + 4);
 
     if (!gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4))
@@ -156,7 +173,7 @@ void checkKid()
   }
 
   // Move out of walls
-  if (gridGetSolid((kid.pos.x) >> 4, (kid.pos.y + 8) >> 4))
+  if (gridGetSolid((kid.pos.x + 1) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x += 8;
   if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x -= 8;
@@ -172,7 +189,8 @@ void checkKid()
   {
     if (solidabove)
     {
-      kid.actualpos.y = (kid.actualpos.y >> (FIXED_POINT + 4)) << (FIXED_POINT + 4);
+      kid.actualpos.y = ((kid.actualpos.y + 2) >> (FIXED_POINT + 4)) << (FIXED_POINT + 4);
+      kid.speed.y = 0;
     }
   }
 
@@ -188,8 +206,8 @@ void checkKid()
     {
       //if (kid.speed.x < 0)
       kid.speed.x = 0;
-      kid.actualpos.x = (((((kid.actualpos.x >> FIXED_POINT) + 8) >> 4) << 4) + ((!kid.direction) * 4)) << (FIXED_POINT);
-      //kid.actualpos.x += ((kid.speed.x > 0) * 4) << FIXED_POINT;
+      kid.actualpos.x = (((((kid.actualpos.x >> FIXED_POINT) + 6) >> 4) << 4) + ((!kid.direction) * 4)) << (FIXED_POINT);
+      //kid.actualpos.x += ((kid.speed.x > 0) * 4) << FIXED_vec2;
     }
   }
 
@@ -225,20 +243,22 @@ void drawKid()
   {
     if (kid.isBalloon)
     {
+      if (kid.balloons > 1) {
+        sprites.drawPlusMask
+            (
+                kid.pos.x - cam.pos.x  + (1 * kid.direction), kid.pos.y - cam.pos.y - 13 + kid.balloonOffset, balloon_plus_mask, kid.direction
+            );
+      }
       sprites.drawPlusMask
-          (
-              kid.pos.x - cam.pos.x  + (1 * kid.direction), kid.pos.x - cam.pos.y - 13, balloon_plus_mask, kid.direction
-          );
-      sprites.drawPlusMask
-          (
-              kid.pos.x - cam.pos.x + 4 - (7 * kid.direction), kid.pos.x - cam.pos.y - 12, balloon_plus_mask, kid.direction
-          );
+        (
+            kid.pos.x - cam.pos.x + 4 - (7 * kid.direction), kid.pos.y - cam.pos.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
+        );
     }
     sprites.drawPlusMask
         (
             kid.pos.x - cam.pos.x,
               kid.pos.y - cam.pos.y, kidWalking_plus_mask,
-              kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * kid.isLanding
+              kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
         );
   }
 }

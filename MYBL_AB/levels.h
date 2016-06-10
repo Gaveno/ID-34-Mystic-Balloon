@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "globals.h"
 #include "enemies.h"
-#include "vec2.h"
+//#include "Point.h"
 #include "player.h"
 
 #define LEVEL_WIDTH 384    // 24 * 16
@@ -140,5 +140,19 @@ void checkCollisions()
   Rect enemyRect = {.x = enemy[i].x, .y = enemy[i].y, .width = 16, .height = 16};
   if (physics.collide(playerRect, enemyRect)
   */
+  Rect playerRect = {.x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12};
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  {
+    if (fans[i].active)
+    {
+      Rect fanrect = {.x = fans[i].pos.x, .y = fans[i].pos.y - (fans[i].height << 4),
+      .width = 16, .height = fans[i].height << 4};
+      if (kid.isBalloon && arduboy.collide(playerRect, fanrect))
+      {
+        kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
+        //kid.actualpos.y -= FAN_POWER;
+      }
+    }
+  }
 }
 #endif
