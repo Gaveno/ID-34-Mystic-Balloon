@@ -18,9 +18,10 @@ void stateGamePrepareLevel()
   cam.offset = vec2(0, 0);
   //gameState = STATE_GAME_NEXT_LEVEL;
   gameState = STATE_GAME_PLAYING;
-  fansInit();
+  enemiesInit();
   levelLoad();
   fansCreate(vec2(8, 12), 3);
+  spikesCreate(vec2(7, 14));
 };
 
 void stateGameNextLevel()
@@ -37,7 +38,7 @@ void stateGamePlaying()
   updateCamera();
 
   drawGrid();
-  fansUpdate();
+  enemiesUpdate();
   
   drawKid();
   
