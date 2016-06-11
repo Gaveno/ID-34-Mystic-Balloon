@@ -168,8 +168,8 @@ void checkCollisions()
         kid.balloons--;
         kid.isImune = true;
         kid.imuneTimer = 0;
-        kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
-        kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
+        //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
+        //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
       }
     }
   }
