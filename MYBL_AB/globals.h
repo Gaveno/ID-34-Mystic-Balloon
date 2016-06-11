@@ -41,6 +41,7 @@ byte level = LEVEL_TO_START_WITH;
 unsigned long scorePlayer; 
 
 byte walkerFrame = 0;
+Point levelExit = {.x = 2 << 4, .y = 10 << 4};
 //vec2 fanParticles[5];
 
 #endif

@@ -150,7 +150,7 @@ void fansCreate(vec2 pos, byte height)
 
 void enemiesUpdate()
 {
-  if (arduboy.everyXFrames(4))
+  if (arduboy.everyXFrames(8))
     walkerFrame = (++walkerFrame) % 2;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {

@@ -130,6 +130,8 @@ void drawGrid() {
       }
     }
   }
+
+  sprites.drawPlusMask(levelExit.x - cam.pos.x, levelExit.y - cam.pos.y, sprExit, walkerFrame);
   //Serial.println("End of tile drawing");
 }
 
@@ -141,6 +143,10 @@ void checkCollisions()
   if (physics.collide(playerRect, enemyRect)
   */
   Rect playerRect = {.x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12};
+  if (arduboy.collide(levelExit, playerRect))
+  {
+    gameState = STATE_GAME_NEXT_LEVEL;
+  }
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     // Fans
