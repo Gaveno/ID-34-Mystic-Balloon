@@ -7,16 +7,16 @@
 
 void checkInputs()
 {
-kid.isWalking = false;
+  kid.isWalking = false;
   if (arduboy.pressed(DOWN_BUTTON))
   {
-    cam.offset.y = -CAMERA_OFFSET;
+    cam.offset.y = CAMERA_OFFSET;
   }
   if (arduboy.pressed(LEFT_BUTTON))
   {
-    cam.offset.x = CAMERA_OFFSET;
+    cam.offset.x = -CAMERA_OFFSET;
     kid.direction = FACING_LEFT;
-    if (kid.speed.y == 0)
+    if (kid.speed.y == 0 && !kid.isBalloon)
     {
       if (!gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
@@ -30,13 +30,13 @@ kid.isWalking = false;
   }
   if (arduboy.pressed(UP_BUTTON))
   {
-    cam.offset.y = CAMERA_OFFSET;
+    cam.offset.y = -CAMERA_OFFSET;
   }
   if (arduboy.pressed(RIGHT_BUTTON))
   {
-    cam.offset.x = -CAMERA_OFFSET;
+    cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
-    if (kid.speed.y == 0)
+    if (kid.speed.y == 0 && !kid.isBalloon)
     {
       if (!gridGetSolid((kid.pos.x + 12) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x += PLAYER_SPEED_WALKING;
@@ -52,7 +52,7 @@ kid.isWalking = false;
   if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
   if (arduboy.justPressed(B_BUTTON))
   {
-    if (kid.speed.y == 0)
+    if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)
     {
       kid.isWalking = false;
       kid.isJumping = true;
@@ -62,10 +62,22 @@ kid.isWalking = false;
       if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = (PLAYER_SPEED_WALKING);
       if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -(PLAYER_SPEED_WALKING);
     }
+    else
+    {
+      if (kid.balloons > 0)
+      {
+        kid.isBalloon = true;
+        kid.balloonOffset = 16;
+        kid.isJumping = false;
+        kid.isLanding = true;
+        //kid.speed.y = GRAVITY;
+      }
+    }
   }
-  if (kid.isJumping && !arduboy.pressed(B_BUTTON))
+  if (!arduboy.pressed(B_BUTTON))
   {
-    kid.jumpLetGo = true;
+    kid.isBalloon = false;
+    if (kid.isJumping) kid.jumpLetGo = true;
   }
 }
 

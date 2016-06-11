@@ -1,5 +1,5 @@
-#ifndef _VEC2.h
-#define _VEC2.h
+#ifndef _VEC2_ 
+#define _VEC2_ 
 
 struct vec2
 {
@@ -30,18 +30,18 @@ struct vec2
   }
 };
 
-vec2 operator+(const vec2 &lhs, const vec2 &rhs)
+vec2 operator+(vec2 &lhs, const vec2 &rhs)
 {
-    vec2 t = lhs;
-    t += rhs;
-    return t;
+    //vec2 t = lhs;
+    //t += rhs;
+    return (lhs += rhs);
 }
 
-vec2 operator-(const vec2 &lhs, const vec2 &rhs)
+vec2 operator-(vec2 &lhs, const vec2 &rhs)
 {
-    vec2 t = lhs;
-    t -= rhs;
-    return t;
+    //vec2 t = lhs;
+    //t -= rhs;
+    return (lhs += rhs);
 }
 
 vec2 operator<<(vec2 lhs, const int &rhs)

@@ -18,7 +18,11 @@ void stateGamePrepareLevel()
   cam.offset = vec2(0, 0);
   //gameState = STATE_GAME_NEXT_LEVEL;
   gameState = STATE_GAME_PLAYING;
+  enemiesInit();
   levelLoad();
+  fansCreate(vec2(8, 12), 3);
+  spikesCreate(vec2(7, 14));
+  walkersCreate(vec2(12, 5));
 };
 
 void stateGameNextLevel()
@@ -35,6 +39,8 @@ void stateGamePlaying()
   updateCamera();
 
   drawGrid();
+  enemiesUpdate();
+  
   drawKid();
   
   checkCollisions();
@@ -54,7 +60,7 @@ void stateGameOver()
 {
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
-    gameState = STATE_GAME_PLAYING;
+    gameState = STATE_MENU_INTRO;
   }
 }
 
