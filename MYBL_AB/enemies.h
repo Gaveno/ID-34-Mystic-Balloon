@@ -10,10 +10,20 @@
 #define MAX_FAN_PARTICLES 4
 #define FAN_POWER 3
 
+struct Walker
+{
+  vec2 pos;
+  int8_t direction;
+  byte HP;
+  bool hurt;
+  bool active;
+};
+
+Walker walkers[MAX_PER_TYPE];
+
 struct Spike
 {
   Rect pos;
-  vec2 center;
   bool active;
   const uint8_t * sprite;
   byte image;
@@ -48,10 +58,30 @@ void enemiesInit()
     spikes[i].pos.width = 16;
     spikes[i].pos.height = 16;
     spikes[i].active = false;
-    spikes[i].center.x = 8;
-    spikes[i].center.y = 8;
     spikes[i].sprite = sprSpikes_vertical;
     spikes[i].image = 0;
+
+    // Walkers
+    walkers[i].pos.x = 0;
+    walkers[i].pos.y = 0;
+    walkers[i].active = false;
+    walkers[i].HP = 10;
+    walkers[i].direction = 1;
+    walkers[i].hurt = false;
+  }
+}
+
+void walkersCreate(vec2 pos)
+{
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  {
+    if (!walkers[i].active)
+    {
+      walkers[i].pos = pos << 4;
+      walkers[i].pos.y += 8;
+      walkers[i].active = true;
+      return;
+    }
   }
 }
 
@@ -99,6 +129,7 @@ void spikesCreate(vec2 pos)
         spikes[i].pos.height = 16;
         spikes[i].pos.x += 8;
       }
+      return;
     }
   }
 }
@@ -119,6 +150,8 @@ void fansCreate(vec2 pos, byte height)
 
 void enemiesUpdate()
 {
+  if (arduboy.everyXFrames(4))
+    walkerFrame = (++walkerFrame) % 2;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     // Fans
@@ -146,6 +179,25 @@ void enemiesUpdate()
     if (spikes[i].active)
     {
       sprites.drawErase(spikes[i].pos.x - cam.pos.x, spikes[i].pos.y - cam.pos.y, spikes[i].sprite, spikes[i].image);
+    }
+
+    // Walkers
+    if (walkers[i].active)
+    {
+      if (arduboy.everyXFrames(2))
+      {
+        if (!gridGetSolid((walkers[i].pos.x + 4 + (walkers[i].direction * 5)) >> 4, walkers[i].pos.y >> 4)
+        && gridGetSolid((walkers[i].pos.x + 4 + (walkers[i].direction * 5)) >> 4, (walkers[i].pos.y >> 4) + 1))
+        {
+          walkers[i].pos.x += walkers[i].direction;
+        }
+        else
+        {
+          walkers[i].direction = -walkers[i].direction;
+        }
+      }
+      
+      sprites.drawPlusMask(walkers[i].pos.x - cam.pos.x + walkers[i].hurt, walkers[i].pos.y - cam.pos.y, sprWalker, walkerFrame);
     }
   }
 }

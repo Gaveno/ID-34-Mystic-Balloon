@@ -143,6 +143,7 @@ void checkCollisions()
   Rect playerRect = {.x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12};
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
+    // Fans
     if (fans[i].active)
     {
       Rect fanrect = {.x = fans[i].pos.x, .y = fans[i].pos.y - (fans[i].height << 4),
@@ -151,6 +152,24 @@ void checkCollisions()
       {
         kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
         //kid.actualpos.y -= FAN_POWER;
+      }
+    }
+
+    // Spikes
+    if (!kid.isImune && spikes[i].active && arduboy.collide(playerRect, spikes[i].pos))
+    {
+      if (kid.balloons == 0)
+      {
+        // dead
+        gameState = STATE_GAME_OVER;
+      }
+      else
+      {
+        kid.balloons--;
+        kid.isImune = true;
+        kid.imuneTimer = 0;
+        kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
+        kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
       }
     }
   }

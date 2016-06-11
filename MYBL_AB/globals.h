@@ -40,4 +40,7 @@ byte globalCounter = 0;
 byte level = LEVEL_TO_START_WITH;
 unsigned long scorePlayer; 
 
+byte walkerFrame = 0;
+//vec2 fanParticles[5];
+
 #endif

@@ -114,24 +114,18 @@ void checkKid()
 
   // Update position---
   // -Solid checking
-  boolean solidbelow = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 16) >> 4);
-  boolean solidabove = gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y - 1) >> 4);
-  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4);
-  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, (kid.pos.y + 8) >> 4);
-  boolean solidH = gridGetSolid(
-    (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4,
-    (((kid.actualpos.y) >> FIXED_POINT) + 2) >> 4
-  ) || gridGetSolid(
-    (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4,
-    (((kid.actualpos.y) >> FIXED_POINT) + 13) >> 4
-  );
-  boolean solidV = gridGetSolid(
-    (((kid.actualpos.x) >> FIXED_POINT) + 2) >> 4,
-    (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4
-  ) || gridGetSolid(
-    (((kid.actualpos.x) >> FIXED_POINT) + 10) >> 4,
-    (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4
-  );
+  int tx = (kid.pos.x + 6) >> 4;
+  int ty = (kid.pos.y + 8) >> 4;
+  boolean solidbelow = gridGetSolid(tx, (kid.pos.y + 16) >> 4);
+  boolean solidabove = gridGetSolid(tx, (kid.pos.y - 1) >> 4);
+  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, ty);
+  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, ty);
+  int tx2 = (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4;
+  boolean solidH = gridGetSolid(tx2, (kid.pos.y + 2) >> 4)
+    || gridGetSolid(tx2, (kid.pos.y + 13) >> 4);
+  int ty2 = (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4;
+  boolean solidV = gridGetSolid((kid.pos.x + 2) >> 4, ty2)
+    || gridGetSolid((kid.pos.x + 10) >> 4, ty2);
 
   // Gravity
   if (kid.speed.y > 0 || !solidbelow)
@@ -208,7 +202,8 @@ void checkKid()
     {
       //if (kid.speed.x < 0)
       kid.speed.x = 0;
-      kid.actualpos.x = (((((kid.actualpos.x >> FIXED_POINT) + 6) >> 4) << 4) + ((!kid.direction) * 4)) << (FIXED_POINT);
+      kid.actualpos.x = ((((kid.pos.x + 6) >> 4) << 4) + ((!kid.direction) * 4)) << (FIXED_POINT);
+      //kid.actualpos.x = (((kid.pos.x + 6) & 0xFFF0) + ((!kid.direction) * 4)) << FIXED_POINT;
       //kid.actualpos.x += ((kid.speed.x > 0) * 4) << FIXED_vec2;
     }
   }
@@ -220,46 +215,51 @@ void updateCamera()
 {
   // Camera offset
   if (cam.offset.x > 0) cam.offset.x--;
-  if (cam.offset.x < 0) cam.offset.x++;
+  else if (cam.offset.x < 0) cam.offset.x++;
   if (cam.offset.y > 0) cam.offset.y--;
-  if (cam.offset.y < 0) cam.offset.y++;
+  else if (cam.offset.y < 0) cam.offset.y++;
   
-  vec2 kp, cp;
-  kp = kid.pos;
+  vec2 cp;
+  //kp = kid.pos;
   cp = (cam.pos + cam.offset);
 
   vec2 V;
   //vec2 V = (kid.pos - cam.pos + cam.offset) >> 3; // more bytes
-  V.x = kp.x - cp.x - 58;
-  V.y = kp.y - cp.y - 24;
+  V.x = kid.pos.x - cp.x - 58;
+  V.y = kid.pos.y - cp.y - 24;
   V = V >> 3;
 
   cam.pos += V;
-  //cam.pos.x = kid.pos.x - 64;
-  //cam.pos.y = kid.pos.y - 32;
 }
 
 void drawKid()
 {
   if (kid.isActive)
   {
+    vec2 kidcam;
+    kidcam.x = kid.pos.x - cam.pos.x;
+    kidcam.y = kid.pos.y - cam.pos.y;
     if (kid.isBalloon)
     {
       if (kid.balloons > 1) {
         sprites.drawPlusMask
             (
-                kid.pos.x - cam.pos.x  + (1 * kid.direction), kid.pos.y - cam.pos.y - 13 + kid.balloonOffset, balloon_plus_mask, kid.direction
+              kidcam.x  + (1 * kid.direction), kidcam.y - 13 + kid.balloonOffset, balloon_plus_mask, kid.direction
+                //kid.pos.x - cam.pos.x  + (1 * kid.direction), kid.pos.y - cam.pos.y - 13 + kid.balloonOffset, balloon_plus_mask, kid.direction
             );
       }
       sprites.drawPlusMask
         (
-            kid.pos.x - cam.pos.x + 4 - (7 * kid.direction), kid.pos.y - cam.pos.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
+          kidcam.x + 4 - (7 * kid.direction), kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
+            //kid.pos.x - cam.pos.x + 4 - (7 * kid.direction), kid.pos.y - cam.pos.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
         );
     }
     sprites.drawPlusMask
         (
-            kid.pos.x - cam.pos.x,
-              kid.pos.y - cam.pos.y, kidWalking_plus_mask,
+            //kid.pos.x - cam.pos.x,
+              //kid.pos.y - cam.pos.y,
+              kidcam.x, kidcam.y,
+              kidWalking_plus_mask,
               kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
         );
   }

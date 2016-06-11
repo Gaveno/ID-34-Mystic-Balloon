@@ -22,6 +22,7 @@ void stateGamePrepareLevel()
   levelLoad();
   fansCreate(vec2(8, 12), 3);
   spikesCreate(vec2(7, 14));
+  walkersCreate(vec2(12, 5));
 };
 
 void stateGameNextLevel()
@@ -59,7 +60,7 @@ void stateGameOver()
 {
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
-    gameState = STATE_GAME_PLAYING;
+    gameState = STATE_MENU_INTRO;
   }
 }
 
