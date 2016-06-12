@@ -19,10 +19,10 @@ void stateGamePrepareLevel()
   //gameState = STATE_GAME_NEXT_LEVEL;
   gameState = STATE_GAME_PLAYING;
   enemiesInit();
-  levelLoad();
-  fansCreate(vec2(8, 12), 3);
-  spikesCreate(vec2(7, 14));
-  walkersCreate(vec2(12, 5));
+  levelLoad(levels[level]);
+  //fansCreate(vec2(8, 12), 3);
+  //spikesCreate(vec2(7, 14));
+  //walkersCreate(vec2(12, 5));
 };
 
 void stateGameNextLevel()
