@@ -96,7 +96,12 @@ void checkKid()
     }
   }
   if (kid.HP < 2) gameState = STATE_GAME_OVER;
-  if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking)) kid.frame++;
+  if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
+  {
+    ++kid.frame;
+    if (kid.frame % 2 == 1)
+      arduboy.audio.tone(150, 20);
+  }
   if (kid.frame > 3 || (!kid.isWalking && !kid.isSucking)) kid.frame = 0;
 
   // Kid is moving up
@@ -161,6 +166,7 @@ void checkKid()
   // Kid on ground
   if (kid.speed.y <= 0 && (solidV || solidbelow))
   {
+    if (kid.isLanding) arduboy.audio.tone(80, 30);
     kid.speed.y = 0;
     kid.speed.x = 0;
     kid.isLanding = false;
@@ -215,6 +221,8 @@ void checkKid()
   }
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
+
+  if (kid.isSucking && arduboy.everyXFrames(3)) arduboy.audio.tone(320 + random(20), 20);
 }
 
 void updateCamera()

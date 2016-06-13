@@ -90,7 +90,7 @@ const uint8_t levelTest [] PROGMEM = {
 };
 
 const uint8_t * levels[] = {
-  0x00, level1, level2, levelTest, level4,
+  level1, level2, levelTest, level4,
 };
 
 
@@ -236,6 +236,7 @@ void checkCollisions()
     }
     else
     {
+      arduboy.audio.tone(300, 100);
       kid.actualpos = startPos;
       kid.balloons--;
       kid.isImune = true;
@@ -269,13 +270,25 @@ void checkCollisions()
           {
             ++walkers[i].pos.x;
             if (walkers[i].pos.x > kid.pos.x - 8)
+            {
               walkers[i].active = false;
+              if (kid.balloons < 2) ++kid.balloons;
+              else scorePlayer += 100;
+              scorePlayer += 50;
+              arduboy.audio.tone(200, 100);
+            }
           }
           else
           {
             --walkers[i].pos.x;
             if (walkers[i].pos.x < kid.pos.x + 16)
+            {
               walkers[i].active = false;
+              if (kid.balloons < 2) ++kid.balloons;
+              else scorePlayer += 100;
+              scorePlayer += 50;
+              arduboy.audio.tone(200, 100);
+            }
           }
         }
       }
@@ -295,8 +308,9 @@ void checkCollisions()
           kid.balloons--;
           kid.isImune = true;
           kid.imuneTimer = 0;
+          arduboy.audio.tone(300, 100);
           kid.speed.y = PLAYER_JUMP_VELOCITY;
-          kid.speed.x = (kid.pos.x - walkers[i].pos.x - 4) << FIXED_POINT;
+          kid.speed.x = min((kid.pos.x - walkers[i].pos.x - 4), 3) << FIXED_POINT;
           //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
           //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
         }
@@ -310,6 +324,7 @@ void checkCollisions()
       if (kid.isBalloon && arduboy.collide(playerRect, fanrect))
       {
         kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
+        if (arduboy.everyXFrames(3)) arduboy.audio.tone(330 + random(20), 30);
         //kid.actualpos.y -= FAN_POWER;
       }
     }
@@ -325,8 +340,10 @@ void checkCollisions()
       else
       {
         kid.balloons--;
+        arduboy.audio.tone(300, 100);
         kid.isImune = true;
         kid.imuneTimer = 0;
+        if (kid.pos.y < spikes[i].pos.y) kid.speed.y = PLAYER_JUMP_VELOCITY;
         //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
         //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
       }
