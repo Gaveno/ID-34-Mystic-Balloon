@@ -8,6 +8,7 @@
 
 #define PLAYER_SPEED_WALKING 16
 #define PLAYER_SPEED_AIR 2
+#define PLAYER_PARTICLES 3
 #define PLAYER_JUMP_VELOCITY 32
 #define GRAVITY 2
 #define FRICTION 1 // for horizontal speed
@@ -41,12 +42,14 @@ struct Players
     boolean isFloating;
     boolean isBalloon;
     boolean jumpLetGo;
+    boolean isSucking;
     byte imuneTimer;
     byte jumpTimer;
     byte HP;
     byte frame;
     byte balloons;
     byte balloonOffset;
+    vec2 particles[PLAYER_PARTICLES];
 };
 
 Players kid;
@@ -72,8 +75,11 @@ void setKid()
   kid.isFloating = false;
   kid.isBalloon = false;
   kid.jumpLetGo = true;
+  kid.isSucking = false;
   kid.balloons = 2;
   kid.balloonOffset = 0;
+  for (byte i = 0; i < PLAYER_PARTICLES; ++i)
+    kid.particles[i] = vec2(random(16), random(16));
 }
 
 void checkKid()
@@ -90,8 +96,13 @@ void checkKid()
     }
   }
   if (kid.HP < 2) gameState = STATE_GAME_OVER;
-  if (arduboy.everyXFrames(8) && kid.isWalking) kid.frame++;
-  if (kid.frame > 3 || !kid.isWalking) kid.frame = 0;
+  if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
+  {
+    ++kid.frame;
+    if (kid.frame % 2 == 1)
+      arduboy.audio.tone(150, 20);
+  }
+  if (kid.frame > 3 || (!kid.isWalking && !kid.isSucking)) kid.frame = 0;
 
   // Kid is moving up
   if (kid.speed.y > 0 && !kid.isBalloon)
@@ -155,6 +166,7 @@ void checkKid()
   // Kid on ground
   if (kid.speed.y <= 0 && (solidV || solidbelow))
   {
+    if (kid.isLanding) arduboy.audio.tone(80, 30);
     kid.speed.y = 0;
     kid.speed.x = 0;
     kid.isLanding = false;
@@ -209,6 +221,8 @@ void checkKid()
   }
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
+
+  if (kid.isSucking && arduboy.everyXFrames(3)) arduboy.audio.tone(320 + random(20), 20);
 }
 
 void updateCamera()
@@ -254,7 +268,9 @@ void drawKid()
             //kid.pos.x - cam.pos.x + 4 - (7 * kid.direction), kid.pos.y - cam.pos.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
         );
     }
-    sprites.drawPlusMask
+    if (!kid.isSucking)
+    {
+      sprites.drawPlusMask
         (
             //kid.pos.x - cam.pos.x,
               //kid.pos.y - cam.pos.y,
@@ -262,6 +278,34 @@ void drawKid()
               kidWalking_plus_mask,
               kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
         );
+    }
+    else
+    {
+      sprites.drawPlusMask
+        (
+              kidcam.x, kidcam.y,
+              kidSuck_plus_mask,
+              (kid.frame % 2) + (2 * kid.direction)
+        );
+      for (byte i = 0; i < PLAYER_PARTICLES; ++i)
+      {
+        // Update
+        if (kid.particles[i].y > 2) --kid.particles[i].y;
+        else if (kid.particles[i].y < -2) ++kid.particles[i].y;
+        kid.particles[i].x -= 2;
+        if (kid.particles[i].x < 0)
+        {
+          kid.particles[i].x = 16;
+          kid.particles[i].y = -4 + random(13);
+        }
+
+        // Draw
+        if (kid.direction)
+          arduboy.drawPixel(kidcam.x - kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, 0);
+        else
+          arduboy.drawPixel(kidcam.x + 15 + kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, 0);
+      }
+    }
   }
 }
 

@@ -12,28 +12,29 @@
 void stateGamePrepareLevel()
 {
   //level = 0;
-  scorePlayer = 0;
+  timeBonus = 254;
   setKid();
   cam.pos = vec2(0, 0);
   cam.offset = vec2(0, 0);
   //gameState = STATE_GAME_NEXT_LEVEL;
   gameState = STATE_GAME_PLAYING;
   enemiesInit();
-  levelLoad();
-  fansCreate(vec2(8, 12), 3);
-  spikesCreate(vec2(7, 14));
-  walkersCreate(vec2(12, 5));
+  levelLoad(levels[level]);
 };
 
 void stateGameNextLevel()
 {
+  scorePlayer += (kid.balloons * 100) + timeBonus;
   level++;
-  //gameState = STATE_GAME_PLAYING;
-  gameState = STATE_GAME_PREPARE_LEVEL;
+  if (level >= TOTAL_LEVELS)
+    gameState = STATE_GAME_OVER;
+  else
+    gameState = STATE_GAME_PREPARE_LEVEL;
 };
 
 void stateGamePlaying()
 {
+  if (timeBonus > 0 && arduboy.everyXFrames(30)) --timeBonus;
   checkInputs();
   checkKid();
   updateCamera();
@@ -42,6 +43,8 @@ void stateGamePlaying()
   enemiesUpdate();
   
   drawKid();
+  drawBalloonLives();
+  drawScore(86, 0, 0);
   
   checkCollisions();
 }
@@ -58,6 +61,7 @@ void stateGamePause()
 
 void stateGameOver()
 {
+  drawScore(32, 36, 1);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_MENU_INTRO;
