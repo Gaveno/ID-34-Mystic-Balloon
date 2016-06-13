@@ -14,7 +14,7 @@ struct Walker
 {
   vec2 pos;
   int8_t direction;
-  byte HP;
+  int8_t HP;
   bool hurt;
   bool active;
 };
@@ -35,7 +35,7 @@ struct Fan
 {
   vec2 pos;
   vec2 particles[5];
-  byte height;
+  int8_t height;
   bool active;
 };
 
@@ -65,7 +65,7 @@ void enemiesInit()
     walkers[i].pos.x = 0;
     walkers[i].pos.y = 0;
     walkers[i].active = false;
-    walkers[i].HP = 10;
+    walkers[i].HP = 40;
     walkers[i].direction = 1;
     walkers[i].hurt = false;
   }
@@ -184,7 +184,7 @@ void enemiesUpdate()
     // Walkers
     if (walkers[i].active)
     {
-      if (arduboy.everyXFrames(2))
+      if (arduboy.everyXFrames(2) && walkers[i].HP > 0 && !walkers[i].hurt)
       {
         if (!gridGetSolid((walkers[i].pos.x + 4 + (walkers[i].direction * 5)) >> 4, walkers[i].pos.y >> 4)
         && gridGetSolid((walkers[i].pos.x + 4 + (walkers[i].direction * 5)) >> 4, (walkers[i].pos.y >> 4) + 1))
@@ -197,7 +197,8 @@ void enemiesUpdate()
         }
       }
       
-      sprites.drawPlusMask(walkers[i].pos.x - cam.pos.x + walkers[i].hurt, walkers[i].pos.y - cam.pos.y, sprWalker, walkerFrame);
+      sprites.drawPlusMask(walkers[i].pos.x - cam.pos.x + walkers[i].hurt,
+          walkers[i].pos.y - cam.pos.y, sprWalker, walkerFrame + (walkers[i].HP <= 0) * 2);
     }
   }
 }

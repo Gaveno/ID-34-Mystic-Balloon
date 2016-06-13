@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "Arglib.h"
+#include "vec2.h"
 #include "bitmaps.h"
 
 //define menu states (on main menu)
@@ -42,6 +43,7 @@ unsigned long scorePlayer;
 
 byte walkerFrame = 0;
 Rect levelExit = {.x = 2 << 4, .y = 10 << 4, .width = 16, .height = 16};
+vec2 startPos;
 //vec2 fanParticles[5];
 
 #endif

@@ -12,7 +12,7 @@ void checkInputs()
   {
     cam.offset.y = CAMERA_OFFSET;
   }
-  if (arduboy.pressed(LEFT_BUTTON))
+  if (arduboy.pressed(LEFT_BUTTON) && !kid.isSucking)
   {
     cam.offset.x = -CAMERA_OFFSET;
     kid.direction = FACING_LEFT;
@@ -32,7 +32,7 @@ void checkInputs()
   {
     cam.offset.y = -CAMERA_OFFSET;
   }
-  if (arduboy.pressed(RIGHT_BUTTON))
+  if (arduboy.pressed(RIGHT_BUTTON) && !kid.isSucking)
   {
     cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
@@ -49,7 +49,11 @@ void checkInputs()
     //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
 
-  if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
+  //if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
+  if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
+    kid.isSucking = true;
+  else
+    kid.isSucking = false;
   if (arduboy.justPressed(B_BUTTON))
   {
     if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)

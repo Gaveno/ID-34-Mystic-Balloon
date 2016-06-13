@@ -135,7 +135,7 @@ struct Rect
     int x;
     int y;
     uint8_t width;
-    uint8_t height;
+    int height;
 };
 
 struct Point
