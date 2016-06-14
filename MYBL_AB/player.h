@@ -76,7 +76,7 @@ void setKid()
   kid.isBalloon = false;
   kid.jumpLetGo = true;
   kid.isSucking = false;
-  kid.balloons = 2;
+  kid.balloons = 3;
   kid.balloonOffset = 0;
   for (byte i = 0; i < PLAYER_PARTICLES; ++i)
     kid.particles[i] = vec2(random(16), random(16));
@@ -133,10 +133,10 @@ void checkKid()
   boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, ty);
   int tx2 = (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4;
   boolean solidH = gridGetSolid(tx2, (kid.pos.y + 2) >> 4)
-    || gridGetSolid(tx2, (kid.pos.y + 13) >> 4);
+                   || gridGetSolid(tx2, (kid.pos.y + 13) >> 4);
   int ty2 = (((kid.actualpos.y - kid.speed.y) >> FIXED_POINT) + (kid.speed.y < 0) * 17) >> 4;
   boolean solidV = gridGetSolid((kid.pos.x + 2) >> 4, ty2)
-    || gridGetSolid((kid.pos.x + 10) >> 4, ty2);
+                   || gridGetSolid((kid.pos.x + 10) >> 4, ty2);
 
   // Gravity
   if (kid.speed.y > 0 || !solidbelow)
@@ -148,12 +148,12 @@ void checkKid()
       if (kid.balloonOffset > 0)
         kid.balloonOffset -= 2;
       else
-        kid.speed.y = max(-((10/kid.balloons) >> 1), kid.speed.y);
+        kid.speed.y = max(-((10 / kid.balloons) >> 1), kid.speed.y);
     }
   }
 
   // Friction
-  if (abs(kid.speed.x) > FRICTION) 
+  if (abs(kid.speed.x) > FRICTION)
   {
     if (kid.speed.x > 0) kid.speed.x -= FRICTION;
     if (kid.speed.x < 0) kid.speed.x += FRICTION;
@@ -185,7 +185,7 @@ void checkKid()
     kid.actualpos.x += 8;
   if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x -= 8;
-  
+
   // -Y Position
   //if ((kid.speed.y > 0 && !solidV)
   //|| (kid.speed.y < 0 && !solidV))
@@ -232,7 +232,7 @@ void updateCamera()
   else if (cam.offset.x < 0) cam.offset.x++;
   if (cam.offset.y > 0) cam.offset.y--;
   else if (cam.offset.y < 0) cam.offset.y++;
-  
+
   vec2 cp;
   //kp = kid.pos;
   cp = (cam.pos + cam.offset);
@@ -255,38 +255,29 @@ void drawKid()
     kidcam.y = kid.pos.y - cam.pos.y;
     if (kid.isBalloon)
     {
-      if (kid.balloons > 1) {
-        sprites.drawPlusMask
-            (
-              kidcam.x  + (1 * kid.direction), kidcam.y - 13 + kid.balloonOffset, balloon_plus_mask, kid.direction
-                //kid.pos.x - cam.pos.x  + (1 * kid.direction), kid.pos.y - cam.pos.y - 13 + kid.balloonOffset, balloon_plus_mask, kid.direction
-            );
-      }
-      sprites.drawPlusMask
-        (
-          kidcam.x + 4 - (7 * kid.direction), kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
-            //kid.pos.x - cam.pos.x + 4 - (7 * kid.direction), kid.pos.y - cam.pos.y - 12 + kid.balloonOffset, balloon_plus_mask, kid.direction
-        );
+      if (kid.balloons > 2) sprites.drawPlusMask(kidcam.x + 7 - 6 * kid.direction, kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, 1);
+      if (kid.balloons > 1) sprites.drawPlusMask(kidcam.x + 1 - 6 * kid.direction, kidcam.y - 11 + kid.balloonOffset, balloon_plus_mask, 0);
+      sprites.drawPlusMask(kidcam.x + 4 - 6 * kid.direction, kidcam.y - 9 + kid.balloonOffset, balloon_plus_mask, 1);
     }
     if (!kid.isSucking)
     {
       sprites.drawPlusMask
-        (
-            //kid.pos.x - cam.pos.x,
-              //kid.pos.y - cam.pos.y,
-              kidcam.x, kidcam.y,
-              kidWalking_plus_mask,
-              kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
-        );
+      (
+        //kid.pos.x - cam.pos.x,
+        //kid.pos.y - cam.pos.y,
+        kidcam.x, kidcam.y,
+        kidWalking_plus_mask,
+        kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
+      );
     }
     else
     {
       sprites.drawPlusMask
-        (
-              kidcam.x, kidcam.y,
-              kidSuck_plus_mask,
-              (kid.frame % 2) + (2 * kid.direction)
-        );
+      (
+        kidcam.x, kidcam.y,
+        kidSuck_plus_mask,
+        (kid.frame % 2) + (2 * kid.direction)
+      );
       for (byte i = 0; i < PLAYER_PARTICLES; ++i)
       {
         // Update
