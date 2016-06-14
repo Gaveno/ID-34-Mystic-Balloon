@@ -99,7 +99,7 @@ void checkKid()
   if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
   {
     ++kid.frame;
-    if (kid.frame % 2 == 1)
+    if (kid.frame % 2 == 0)
       arduboy.audio.tone(150, 20);
   }
   if (kid.frame > 3 || (!kid.isWalking && !kid.isSucking)) kid.frame = 0;
