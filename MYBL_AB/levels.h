@@ -224,6 +224,14 @@ void drawGrid() {
   //Serial.println("End of tile drawing");
 }
 
+void kidHurt()
+{
+  kid.balloons--;
+  arduboy.audio.tone(300, 100);
+  kid.isImune = true;
+  kid.imuneTimer = 0;
+}
+
 void checkCollisions()
 {
   // Fall off earth
@@ -236,11 +244,12 @@ void checkCollisions()
     }
     else
     {
-      arduboy.audio.tone(300, 100);
+      //arduboy.audio.tone(300, 100);
       kid.actualpos = startPos;
-      kid.balloons--;
-      kid.isImune = true;
-      kid.imuneTimer = 0;
+//      kid.balloons--;
+//      kid.isImune = true;
+//      kid.imuneTimer = 0;
+        kidHurt();
     }
   }
   // Level exit
@@ -305,12 +314,13 @@ void checkCollisions()
         }
         else
         {
-          kid.balloons--;
-          kid.isImune = true;
-          kid.imuneTimer = 0;
-          arduboy.audio.tone(300, 100);
+          //kid.balloons--;
+          //kid.isImune = true;
+          //kid.imuneTimer = 0;
+          //arduboy.audio.tone(300, 100);
+          kidHurt();
           kid.speed.y = PLAYER_JUMP_VELOCITY;
-          kid.speed.x = min((kid.pos.x - walkers[i].pos.x - 4), 3) << FIXED_POINT;
+          kid.speed.x = max(min((kid.pos.x - walkers[i].pos.x - 2), 3), -3) << FIXED_POINT;
           //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
           //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
         }
@@ -339,10 +349,11 @@ void checkCollisions()
       }
       else
       {
-        kid.balloons--;
-        arduboy.audio.tone(300, 100);
-        kid.isImune = true;
-        kid.imuneTimer = 0;
+//        kid.balloons--;
+//        arduboy.audio.tone(300, 100);
+//        kid.isImune = true;
+//        kid.imuneTimer = 0;
+        kidHurt();
         if (kid.pos.y < spikes[i].pos.y) kid.speed.y = PLAYER_JUMP_VELOCITY;
         //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
         //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;

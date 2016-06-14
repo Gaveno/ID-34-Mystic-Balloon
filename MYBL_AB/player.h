@@ -176,7 +176,7 @@ void checkKid()
 
     if (!gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4))
       kid.actualpos.x -= 8;
-    if (!gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4))
+    else if (!gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4))
       kid.actualpos.x += 8;
   }
 
