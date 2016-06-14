@@ -25,7 +25,7 @@ void stateGamePrepareLevel()
 void stateGameNextLevel()
 {
   scorePlayer += (kid.balloons * 100) + timeBonus;
-  level++;
+  ++level;
   if (level >= TOTAL_LEVELS)
     gameState = STATE_GAME_OVER;
   else

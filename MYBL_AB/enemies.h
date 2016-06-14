@@ -152,6 +152,8 @@ void enemiesUpdate()
 {
   if (arduboy.everyXFrames(8))
     walkerFrame = (++walkerFrame) % 2;
+  if (arduboy.everyXFrames(2))
+    fanFrame = (++fanFrame) % 2;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     // Fans
@@ -172,7 +174,8 @@ void enemiesUpdate()
       }
   
       // Draw fan
-      sprites.drawErase(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, millis() % 2);
+      //sprites.drawErase(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, millis() % 2);
+      sprites.drawPlusMask(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, fanFrame);
     }
 
     // Spikes

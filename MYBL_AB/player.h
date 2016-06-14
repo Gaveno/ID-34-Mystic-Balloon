@@ -99,7 +99,7 @@ void checkKid()
   if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
   {
     ++kid.frame;
-    if (kid.frame % 2 == 1)
+    if (kid.frame % 2 == 0)
       arduboy.audio.tone(150, 20);
   }
   if (kid.frame > 3 || (!kid.isWalking && !kid.isSucking)) kid.frame = 0;
@@ -148,7 +148,7 @@ void checkKid()
       if (kid.balloonOffset > 0)
         kid.balloonOffset -= 2;
       else
-        kid.speed.y = max(-((10 / kid.balloons) >> 1), kid.speed.y);
+        kid.speed.y = max(-((8 / kid.balloons) >> 1), kid.speed.y);
     }
   }
 
@@ -176,7 +176,7 @@ void checkKid()
 
     if (!gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4))
       kid.actualpos.x -= 8;
-    if (!gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4))
+    else if (!gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4))
       kid.actualpos.x += 8;
   }
 

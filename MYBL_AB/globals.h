@@ -47,6 +47,7 @@ unsigned long scorePlayer;
 byte timeBonus;
 
 byte walkerFrame = 0;
+byte fanFrame = 0;
 Rect levelExit = {.x = 2 << 4, .y = 10 << 4, .width = 16, .height = 16};
 vec2 startPos;
 //vec2 fanParticles[5];

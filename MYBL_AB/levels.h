@@ -84,7 +84,8 @@ const uint8_t levelTest [] PROGMEM = {
 0x33, 0x00, 0x00, 0x03, 0x00, 0x00, 0x03, 0x00, 0xC0, 
 0x83, 0xC1, 0xC0, 0xFF, 0xC1, 0xFF, 0xFF, 0xC1, 0xFF, 
 // Objects
-0x35,0xC9,0x08,0x15,0x54,0x43,0x87,0x43,0x86,0x42,0x97,0x22,0x4E,0x21,0x4F,0x21,0x4C,0x41,0x17,0x00,0x81,
+0x35,0xC9,0x08,0x15,0x54,0x43,0x87,0x43,0x86,0x42,0x97,
+0x22,0x4E,0x21,0x4F,0x21,0x4C,0x41,0x17,0x00,0x81,
 // EoL
 0xFF
 };
@@ -224,24 +225,41 @@ void drawGrid() {
   //Serial.println("End of tile drawing");
 }
 
+void kidHurt()
+{
+  if (kid.balloons == 1)
+  {
+    // dead
+    gameState = STATE_GAME_OVER;
+  }
+  else
+  {
+    kid.balloons--;
+    arduboy.audio.tone(300, 100);
+    kid.isImune = true;
+    kid.imuneTimer = 0;
+  }
+}
+
 void checkCollisions()
 {
   // Fall off earth
   if (kid.pos.y > LEVEL_HEIGHT)
   {
-    if (kid.balloons == 0)
-    {
-      // dead
-      gameState = STATE_GAME_OVER;
-    }
-    else
-    {
-      arduboy.audio.tone(300, 100);
-      kid.actualpos = startPos;
-      kid.balloons--;
-      kid.isImune = true;
-      kid.imuneTimer = 0;
-    }
+//    if (kid.balloons == 1)
+//    {
+//      // dead
+//      gameState = STATE_GAME_OVER;
+//    }
+//    else
+//    {
+      //arduboy.audio.tone(300, 100);
+        kid.actualpos = startPos;
+//      kid.balloons--;
+//      kid.isImune = true;
+//      kid.imuneTimer = 0;
+        kidHurt();
+    //}
   }
   // Level exit
   Rect playerRect = {.x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12};
@@ -284,7 +302,7 @@ void checkCollisions()
             if (walkers[i].pos.x < kid.pos.x + 16)
             {
               walkers[i].active = false;
-              if (kid.balloons < 2) ++kid.balloons;
+              if (kid.balloons < 3) ++kid.balloons;
               else scorePlayer += 100;
               scorePlayer += 50;
               arduboy.audio.tone(200, 100);
@@ -298,22 +316,23 @@ void checkCollisions()
       // Hurt player
       if (walkers[i].HP > 0 && !kid.isImune && arduboy.collide(playerRect, walkerrect))
       {
-        if (kid.balloons == 0)
-        {
-          // dead
-          gameState = STATE_GAME_OVER;
-        }
-        else
-        {
-          kid.balloons--;
-          kid.isImune = true;
-          kid.imuneTimer = 0;
-          arduboy.audio.tone(300, 100);
+//        if (kid.balloons == 1)
+//        {
+//          // dead
+//          gameState = STATE_GAME_OVER;
+//        }
+//        else
+//        {
+          //kid.balloons--;
+          //kid.isImune = true;
+          //kid.imuneTimer = 0;
+          //arduboy.audio.tone(300, 100);
+          kidHurt();
           kid.speed.y = PLAYER_JUMP_VELOCITY;
-          kid.speed.x = min((kid.pos.x - walkers[i].pos.x - 4), 3) << FIXED_POINT;
+          kid.speed.x = max(min((kid.pos.x - walkers[i].pos.x - 2), 3), -3) << FIXED_POINT;
           //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
           //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
-        }
+        //}
       }
     }
     // Fans
@@ -332,21 +351,22 @@ void checkCollisions()
     // Spikes
     if (!kid.isImune && spikes[i].active && arduboy.collide(playerRect, spikes[i].pos))
     {
-      if (kid.balloons == 0)
-      {
-        // dead
-        gameState = STATE_GAME_OVER;
-      }
-      else
-      {
-        kid.balloons--;
-        arduboy.audio.tone(300, 100);
-        kid.isImune = true;
-        kid.imuneTimer = 0;
+//      if (kid.balloons == 1)
+//      {
+//        // dead
+//        gameState = STATE_GAME_OVER;
+//      }
+//      else
+//      {
+//        kid.balloons--;
+//        arduboy.audio.tone(300, 100);
+//        kid.isImune = true;
+//        kid.imuneTimer = 0;
+        kidHurt();
         if (kid.pos.y < spikes[i].pos.y) kid.speed.y = PLAYER_JUMP_VELOCITY;
         //kid.speed.x = (kid.pos.x - spikes[i].pos.x - (spikes[i].pos.width >> 1) - 6);// << FIXED_POINT;
         //kid.speed.y = (kid.pos.y - spikes[i].pos.y - (spikes[i].pos.height >> 1) - 8);// << FIXED_POINT;
-      }
+      //}
     }
   }
 }
