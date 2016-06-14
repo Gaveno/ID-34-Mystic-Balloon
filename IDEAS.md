@@ -6,7 +6,7 @@
 - shouldn't we need 3 balloons, 3 balloons pop = death
 
 ## game elements ideas
-- coins with extra points
+- coins with extra points: 5 coins to collect in each level
 - power ups?
     - maybe the sprint idea, so it is only temporary
     - invincibility
