@@ -229,7 +229,7 @@ void checkCollisions()
   // Fall off earth
   if (kid.pos.y > LEVEL_HEIGHT)
   {
-    if (kid.balloons == 0)
+    if (kid.balloons == 1)
     {
       // dead
       gameState = STATE_GAME_OVER;
@@ -284,7 +284,7 @@ void checkCollisions()
             if (walkers[i].pos.x < kid.pos.x + 16)
             {
               walkers[i].active = false;
-              if (kid.balloons < 2) ++kid.balloons;
+              if (kid.balloons < 3) ++kid.balloons;
               else scorePlayer += 100;
               scorePlayer += 50;
               arduboy.audio.tone(200, 100);
@@ -298,7 +298,7 @@ void checkCollisions()
       // Hurt player
       if (walkers[i].HP > 0 && !kid.isImune && arduboy.collide(playerRect, walkerrect))
       {
-        if (kid.balloons == 0)
+        if (kid.balloons == 1)
         {
           // dead
           gameState = STATE_GAME_OVER;
@@ -332,7 +332,7 @@ void checkCollisions()
     // Spikes
     if (!kid.isImune && spikes[i].active && arduboy.collide(playerRect, spikes[i].pos))
     {
-      if (kid.balloons == 0)
+      if (kid.balloons == 1)
       {
         // dead
         gameState = STATE_GAME_OVER;

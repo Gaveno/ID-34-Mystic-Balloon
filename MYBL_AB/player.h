@@ -148,7 +148,7 @@ void checkKid()
       if (kid.balloonOffset > 0)
         kid.balloonOffset -= 2;
       else
-        kid.speed.y = max(-((10 / kid.balloons) >> 1), kid.speed.y);
+        kid.speed.y = max(-((8 / kid.balloons) >> 1), kid.speed.y);
     }
   }
 
