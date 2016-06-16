@@ -49,6 +49,7 @@ Fan fans[MAX_PER_TYPE];
 
 void enemiesInit()
 {
+  coinsActive = 0;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     // Fans

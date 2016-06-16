@@ -45,6 +45,7 @@ void stateGamePlaying()
   drawKid();
   drawBalloonLives();
   drawScore(86, 0, 0);
+  drawCoinHUD();
   
   checkCollisions();
 }

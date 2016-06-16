@@ -12,6 +12,17 @@ void drawBalloonLives()
   }
 }
 
+void drawCoinHUD()
+{
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  {
+    if (i >= MAX_PER_TYPE - coinsActive)
+      sprites.drawPlusMask(35 + (i * 7), 1, sprCoin, 4);
+    else
+      sprites.drawPlusMask(35 + (i * 7), 1, sprCoin, coinFrame);
+  }
+}
+
 void drawScore(byte scoreX, byte scoreY, byte fontType)
 {
   char buf[10];
