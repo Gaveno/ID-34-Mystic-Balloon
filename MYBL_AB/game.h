@@ -46,6 +46,12 @@ void stateGamePlaying()
   drawBalloonLives();
   drawScore(86, 0, 0);
   drawCoinHUD();
+  drawMiniMap(mapTimer);
+  if (mapTimer > 0) mapTimer--;
+  /*if (mapTimer == 0)
+    drawMiniMap();
+  else
+    mapTimer--;*/
   
   checkCollisions();
 }

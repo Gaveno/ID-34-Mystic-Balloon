@@ -7,13 +7,13 @@
 //#include "Point.h"
 #include "player.h"
 
-#define LEVEL_WIDTH 384    // 24 * 16
-#define LEVEL_HEIGHT 384   // 24 * 16
-#define LEVEL_CELLSIZE 16
-#define LEVEL_WIDTH_CELLS 24
-#define LEVEL_HEIGHT_CELLS 24
-#define LEVEL_CELL_BYTES (LEVEL_WIDTH_CELLS * LEVEL_HEIGHT_CELLS) >> 3
-#define LEVEL_ARRAY_SIZE 576
+//#define LEVEL_WIDTH 384    // 24 * 16
+//#define LEVEL_HEIGHT 384   // 24 * 16
+//#define LEVEL_CELLSIZE 16
+//#define LEVEL_WIDTH_CELLS 24
+//#define LEVEL_HEIGHT_CELLS 24
+//#define LEVEL_CELL_BYTES (LEVEL_WIDTH_CELLS * LEVEL_HEIGHT_CELLS) >> 3
+//#define LEVEL_ARRAY_SIZE 576
 
 
 //char gameGrid[LEVEL_ARRAY_SIZE]; // grid with cell information
