@@ -245,7 +245,7 @@ void drawGrid() {
 //        Serial.print(" Tile: ");
 //        Serial.print(gridGetTile(x, y));
 //        Serial.print("\n");
-        sprites.drawSelfMasked((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSet, gridGetTile(x, y));
+        sprites.drawSelfMasked((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSetAlternative, gridGetTile(x, y));
       }
     }
   }
