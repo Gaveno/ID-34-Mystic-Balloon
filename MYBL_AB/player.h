@@ -6,13 +6,13 @@
 //#include "levels.h"
 #include "vec2.h"
 
-#define PLAYER_SPEED_WALKING 16
+#define FIXED_POINT 5
+#define PLAYER_SPEED_WALKING 1 << FIXED_POINT
 #define PLAYER_SPEED_AIR 2
 #define PLAYER_PARTICLES 3
-#define PLAYER_JUMP_VELOCITY 32
-#define GRAVITY 2
+#define PLAYER_JUMP_VELOCITY 2 << FIXED_POINT
+#define GRAVITY 4
 #define FRICTION 1 // for horizontal speed
-#define FIXED_POINT 4
 #define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
 #define CAMERA_OFFSET 5
@@ -145,6 +145,7 @@ void checkKid()
     kid.speed.y = (kid.speed.y > -MAX_YSPEED) ? kid.speed.y - GRAVITY : -MAX_YSPEED;
     if (kid.isBalloon)
     {
+      cam.offset.y += 3;
       if (kid.balloonOffset > 0)
         kid.balloonOffset -= 2;
       else
@@ -155,8 +156,11 @@ void checkKid()
   // Friction
   if (abs(kid.speed.x) > FRICTION)
   {
-    if (kid.speed.x > 0) kid.speed.x -= FRICTION;
-    if (kid.speed.x < 0) kid.speed.x += FRICTION;
+    if (arduboy.everyXFrames(3))
+    {
+      if (kid.speed.x > 0) kid.speed.x -= FRICTION;
+      else if (kid.speed.x < 0) kid.speed.x += FRICTION;
+    }
   }
   else
   {
@@ -174,10 +178,11 @@ void checkKid()
     kid.isBalloon = false;
     kid.actualpos.y = (((kid.actualpos.y >> FIXED_POINT) + 8) >> 4) << (FIXED_POINT + 4);
 
-    if (!gridGetSolid((kid.pos.x + 2) >> 4, (kid.pos.y + 16) >> 4))
-      kid.actualpos.x -= 8;
-    else if (!gridGetSolid((kid.pos.x + 10) >> 4, (kid.pos.y + 16) >> 4))
-      kid.actualpos.x += 8;
+    int8_t yy = (kid.pos.y + 16) >> 4;
+    if (!gridGetSolid((kid.pos.x + 2) >> 4, yy))
+      kid.actualpos.x -= FIXED_POINT << 2;
+    else if (!gridGetSolid((kid.pos.x + 10) >> 4, yy))
+      kid.actualpos.x += FIXED_POINT << 2;
   }
 
   // Move out of walls

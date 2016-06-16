@@ -8,7 +8,7 @@
 #define MAX_PER_TYPE 6 // total instances per enemy type
 
 #define MAX_FAN_PARTICLES 4
-#define FAN_POWER 3
+#define FAN_POWER 6
 
 struct Walker
 {

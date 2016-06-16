@@ -7,6 +7,7 @@
 
 void checkInputs()
 {
+  cam.offset = vec2(0, 0);
   kid.isWalking = false;
   if (arduboy.pressed(DOWN_BUTTON))
   {
@@ -22,7 +23,7 @@ void checkInputs()
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
       kid.isWalking = true;
     }
-    else
+    else //if (arduboy.everyXFrames(3))
     {
       kid.speed.x = (kid.speed.x > -MAX_XSPEED) ? kid.speed.x - PLAYER_SPEED_AIR : kid.speed.x = -MAX_XSPEED;
     }
@@ -42,7 +43,7 @@ void checkInputs()
         kid.actualpos.x += PLAYER_SPEED_WALKING;
       kid.isWalking = true;
     }
-    else
+    else //if (arduboy.everyXFrames(3))
     {
       kid.speed.x = (kid.speed.x < MAX_XSPEED) ? kid.speed.x + PLAYER_SPEED_AIR : kid.speed.x = MAX_XSPEED;
     }
