@@ -50,9 +50,9 @@ void stateMenuHelp()
 
 void stateMenuPlay()
 {
-  scorePlayer = 123456;
   level = LEVEL_TO_START_WITH;
   gameState = STATE_GAME_PREPARE_LEVEL;
+  scorePlayer = 0;
 }
 
 void stateMenuInfo()

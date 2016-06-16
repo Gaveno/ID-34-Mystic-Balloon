@@ -5,8 +5,11 @@
 #include "globals.h"
 #include "player.h"
 
+#define TIMER_AMOUNT 48
+
 void checkInputs()
 {
+  cam.offset = vec2(0, 0);
   kid.isWalking = false;
   if (arduboy.pressed(DOWN_BUTTON))
   {
@@ -14,6 +17,7 @@ void checkInputs()
   }
   if (arduboy.pressed(LEFT_BUTTON) && !kid.isSucking)
   {
+    mapTimer = TIMER_AMOUNT;
     cam.offset.x = -CAMERA_OFFSET;
     kid.direction = FACING_LEFT;
     if (kid.speed.y == 0 && !kid.isBalloon)
@@ -22,7 +26,7 @@ void checkInputs()
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
       kid.isWalking = true;
     }
-    else
+    else //if (arduboy.everyXFrames(3))
     {
       kid.speed.x = (kid.speed.x > -MAX_XSPEED) ? kid.speed.x - PLAYER_SPEED_AIR : kid.speed.x = -MAX_XSPEED;
     }
@@ -34,6 +38,7 @@ void checkInputs()
   }
   if (arduboy.pressed(RIGHT_BUTTON) && !kid.isSucking)
   {
+    mapTimer = TIMER_AMOUNT;
     cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
     if (kid.speed.y == 0 && !kid.isBalloon)
@@ -42,7 +47,7 @@ void checkInputs()
         kid.actualpos.x += PLAYER_SPEED_WALKING;
       kid.isWalking = true;
     }
-    else
+    else //if (arduboy.everyXFrames(3))
     {
       kid.speed.x = (kid.speed.x < MAX_XSPEED) ? kid.speed.x + PLAYER_SPEED_AIR : kid.speed.x = MAX_XSPEED;
     }
@@ -51,11 +56,15 @@ void checkInputs()
 
   //if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
   if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
+  {
     kid.isSucking = true;
+    mapTimer = TIMER_AMOUNT;
+  }
   else
     kid.isSucking = false;
   if (arduboy.justPressed(B_BUTTON))
   {
+    mapTimer = TIMER_AMOUNT;
     if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)
     {
       arduboy.audio.tone(200, 100);

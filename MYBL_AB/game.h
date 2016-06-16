@@ -34,7 +34,7 @@ void stateGameNextLevel()
 
 void stateGamePlaying()
 {
-  if (timeBonus > 0 && arduboy.everyXFrames(30)) --timeBonus;
+  if (timeBonus > 0 && arduboy.everyXFrames(45)) --timeBonus;
   checkInputs();
   checkKid();
   updateCamera();
@@ -44,7 +44,14 @@ void stateGamePlaying()
   
   drawKid();
   drawBalloonLives();
-  drawScore(80, 0, 0);
+  drawScore(86, 0, 0);
+  drawCoinHUD();
+  drawMiniMap(mapTimer);
+  if (mapTimer > 0) mapTimer--;
+  /*if (mapTimer == 0)
+    drawMiniMap();
+  else
+    mapTimer--;*/
   
   checkCollisions();
 }
