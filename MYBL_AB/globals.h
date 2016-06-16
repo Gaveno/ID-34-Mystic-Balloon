@@ -33,8 +33,9 @@
 #define FACING_LEFT                  1
 
 #define LEVEL_TO_START_WITH          0
-#define TOTAL_LEVELS                 4
+#define TOTAL_LEVELS                 5
 
+#define MAX_PER_TYPE                 6 // total instances per enemy type
 
 Arduboy arduboy;
 Sprites sprites(arduboy);
@@ -48,6 +49,8 @@ byte timeBonus;
 
 byte walkerFrame = 0;
 byte fanFrame = 0;
+byte coinFrame = 0;
+byte coinsActive = 0;
 Rect levelExit = {.x = 2 << 4, .y = 10 << 4, .width = 16, .height = 16};
 vec2 startPos;
 //vec2 fanParticles[5];

@@ -26,7 +26,7 @@ void drawScore(byte scoreX, byte scoreY, byte fontType)
     switch (fontType)
     {
       case SCORE_SMALL_FONT:
-        sprites.drawPlusMask(scoreX + (8 * i), scoreY, numbersSmall_plus_mask, 0);
+        sprites.drawPlusMask(scoreX + (7 * i), scoreY, numbersSmall_plus_mask, 0);
         break;
       case SCORE_BIG_FONT:
         sprites.drawSelfMasked(scoreX + (10 * i), scoreY, numbersBig, 0);
@@ -54,7 +54,7 @@ void drawScore(byte scoreX, byte scoreY, byte fontType)
     switch (fontType)
     {
       case SCORE_SMALL_FONT:
-        sprites.drawPlusMask(scoreX + (pad * 8) + (8 * i), scoreY, numbersSmall_plus_mask, digit);
+        sprites.drawPlusMask(scoreX + (pad * 7) + (7 * i), scoreY, numbersSmall_plus_mask, digit);
         break;
       case SCORE_BIG_FONT:
         sprites.drawSelfMasked(scoreX + (pad * 10) + (10 * i), scoreY, numbersBig, digit);

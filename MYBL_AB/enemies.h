@@ -5,10 +5,16 @@
 #include "globals.h"
 //#include "vec2.h"
 
-#define MAX_PER_TYPE 6 // total instances per enemy type
-
 #define MAX_FAN_PARTICLES 4
 #define FAN_POWER 6
+
+struct Coin
+{
+  vec2 pos;
+  bool active;
+};
+
+Coin coins[MAX_PER_TYPE];
 
 struct Walker
 {
@@ -68,6 +74,27 @@ void enemiesInit()
     walkers[i].HP = 40;
     walkers[i].direction = 1;
     walkers[i].hurt = false;
+
+    // Coins
+    coins[i].pos.x = 0;
+    coins[i].pos.y = 0;
+    coins[i].active = false;
+  }
+}
+
+void coinsCreate(vec2 pos)
+{
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  {
+    if (!coins[i].active)
+    {
+      ++coinsActive;
+      coins[i].pos = pos << 4;
+      coins[i].pos.y += 4;
+      coins[i].pos.x += 4;
+      coins[i].active = true;
+      return;
+    }
   }
 }
 
@@ -151,7 +178,10 @@ void fansCreate(vec2 pos, byte height)
 void enemiesUpdate()
 {
   if (arduboy.everyXFrames(8))
+  {
     walkerFrame = (++walkerFrame) % 2;
+    coinFrame = (++coinFrame) % 4;
+  }
   if (arduboy.everyXFrames(2))
     fanFrame = (++fanFrame) % 2;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
@@ -200,8 +230,14 @@ void enemiesUpdate()
         }
       }
       
-      sprites.drawPlusMask(walkers[i].pos.x - cam.pos.x + walkers[i].hurt,
+      sprites.drawPlusMask(walkers[i].pos.x - cam.pos.x,
           walkers[i].pos.y - cam.pos.y, sprWalker, walkerFrame + (walkers[i].HP <= 0) * 2);
+    }
+
+    // Coins
+    if (coins[i].active)
+    {
+      sprites.drawPlusMask(coins[i].pos.x - cam.pos.x, coins[i].pos.y - cam.pos.y, sprCoin, coinFrame);
     }
   }
 }
