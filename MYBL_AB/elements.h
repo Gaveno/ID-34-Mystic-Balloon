@@ -8,7 +8,7 @@ void drawBalloonLives()
 {
   for (byte i = 0; i < kid.balloons; ++i)
   {
-    sprites.drawPlusMask((i * 7) + 2, 2, sprBalloonSmall, 0);
+    sprites.drawErase((i * 7) + 2, 0, elementsHUD, 10);
   }
 }
 
@@ -38,9 +38,9 @@ void drawCoinHUD()
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     if (i >= MAX_PER_TYPE - coinsActive)
-      sprites.drawPlusMask(35 + (i * 7), 1, sprCoin, 4);
+      sprites.drawErase(40 + (i * 6), 0, elementsHUD, 11);
     else
-      sprites.drawPlusMask(35 + (i * 7), 1, sprCoin, coinFrame);
+      sprites.drawErase(40 + (i * 6), 0, elementsHUD, 12);
   }
 }
 
@@ -58,7 +58,7 @@ void drawScore(byte scoreX, byte scoreY, byte fontType)
     switch (fontType)
     {
       case SCORE_SMALL_FONT:
-        sprites.drawPlusMask(scoreX + (7 * i), scoreY, numbersSmall_plus_mask, 0);
+        sprites.drawErase(scoreX + (6 * i), scoreY, elementsHUD, 0);
         break;
       case SCORE_BIG_FONT:
         sprites.drawSelfMasked(scoreX + (10 * i), scoreY, numbersBig, 0);
@@ -86,7 +86,7 @@ void drawScore(byte scoreX, byte scoreY, byte fontType)
     switch (fontType)
     {
       case SCORE_SMALL_FONT:
-        sprites.drawPlusMask(scoreX + (pad * 7) + (7 * i), scoreY, numbersSmall_plus_mask, digit);
+        sprites.drawErase(scoreX + (pad * 6) + (6 * i), scoreY, elementsHUD, digit);
         break;
       case SCORE_BIG_FONT:
         sprites.drawSelfMasked(scoreX + (pad * 10) + (10 * i), scoreY, numbersBig, digit);

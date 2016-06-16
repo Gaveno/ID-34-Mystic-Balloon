@@ -51,7 +51,7 @@ void setup()
 void loop() {
   if (!(arduboy.nextFrame())) return;
   arduboy.poll();
-  arduboy.fillScreen((byte)(gameState == STATE_GAME_PLAYING));
+  arduboy.clearDisplay();
   ((FunctionPointer) pgm_read_word (&mainGameLoop[gameState]))();
   arduboy.display();
 }
