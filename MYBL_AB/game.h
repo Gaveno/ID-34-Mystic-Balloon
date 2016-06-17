@@ -32,6 +32,17 @@ void stateGameNextLevel()
     gameState = STATE_GAME_PREPARE_LEVEL;
 };
 
+void drawHUD()
+{
+  for (byte i = 0; i< 16; i++)
+  {
+    sprites.drawSelfMasked(i*8, 0, smallMask, 0);
+  }
+  drawBalloonLives();
+  drawScore(91, 0, 0);
+  drawCoinHUD();
+}
+
 void stateGamePlaying()
 {
   if (timeBonus > 0 && arduboy.everyXFrames(45)) --timeBonus;
@@ -43,11 +54,9 @@ void stateGamePlaying()
   enemiesUpdate();
   
   drawKid();
-  drawBalloonLives();
-  drawScore(86, 0, 0);
-  drawCoinHUD();
-  drawMiniMap(mapTimer);
-  if (mapTimer > 0) mapTimer--;
+  drawHUD();
+  //drawMiniMap(mapTimer);
+  //if (mapTimer > 0) mapTimer--;
   /*if (mapTimer == 0)
     drawMiniMap();
   else
