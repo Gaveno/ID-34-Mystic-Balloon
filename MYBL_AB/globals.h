@@ -33,7 +33,7 @@
 #define FACING_LEFT                  1
 
 #define LEVEL_TO_START_WITH          0
-#define TOTAL_LEVELS                 6
+#define TOTAL_LEVELS                 12
 
 #define MAX_PER_TYPE                 6 // total instances per enemy type
 
