@@ -453,7 +453,7 @@ void checkCollisions()
     // Coins
     if (coins[i].active)
     {
-      Rect coinrect = {.x = coins[i].pos.x + 1, .y = coins[i].pos.y, .width = 6, .height = 8};
+      Rect coinrect = {.x = coins[i].pos.x, .y = coins[i].pos.y, .width = 10, .height = 12};
       if (kid.isSucking && arduboy.collide(playerSuckRect, coinrect))
       {
         // Suck coin closer
