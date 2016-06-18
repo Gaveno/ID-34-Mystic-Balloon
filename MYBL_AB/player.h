@@ -145,7 +145,7 @@ void checkKid()
     kid.speed.y = (kid.speed.y > -MAX_YSPEED) ? kid.speed.y - GRAVITY : -MAX_YSPEED;
     if (kid.isBalloon)
     {
-      cam.offset.y += 3;
+      //cam.offset.y += 3;
       if (kid.balloonOffset > 0)
         kid.balloonOffset -= 2;
       else

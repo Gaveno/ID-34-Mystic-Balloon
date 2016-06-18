@@ -38,7 +38,7 @@ void checkInputs()
   }
   if (arduboy.pressed(RIGHT_BUTTON) && !kid.isSucking)
   {
-    mapTimer = TIMER_AMOUNT;
+    //mapTimer = TIMER_AMOUNT;
     cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
     if (kid.speed.y == 0 && !kid.isBalloon)
@@ -58,13 +58,13 @@ void checkInputs()
   if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
   {
     kid.isSucking = true;
-    mapTimer = TIMER_AMOUNT;
+    //mapTimer = TIMER_AMOUNT;
   }
   else
     kid.isSucking = false;
   if (arduboy.justPressed(B_BUTTON))
   {
-    mapTimer = TIMER_AMOUNT;
+    //mapTimer = TIMER_AMOUNT;
     if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)
     {
       arduboy.audio.tone(200, 100);
