@@ -271,7 +271,7 @@ void drawKid()
         //kid.pos.x - cam.pos.x,
         //kid.pos.y - cam.pos.y,
         kidcam.x, kidcam.y,
-        kidWalking_plus_mask,
+        kidSpriteAlternative_plus_mask,
         kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
       );
     }
