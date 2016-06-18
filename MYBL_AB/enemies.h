@@ -16,6 +16,15 @@ struct Coin
 
 Coin coins[MAX_PER_TYPE];
 
+struct Key
+{
+  vec2 pos;
+  bool active;
+  bool haveKey;
+};
+
+Key key = {.pos = vec2(0, 0), .active = false, .haveKey = false};
+
 struct Walker
 {
   vec2 pos;
@@ -91,12 +100,21 @@ void coinsCreate(vec2 pos)
     {
       ++coinsActive;
       coins[i].pos = pos << 4;
-      coins[i].pos.y += 4;
-      coins[i].pos.x += 4;
+      //coins[i].pos.y += 4;
+      coins[i].pos.x += 2;
       coins[i].active = true;
       return;
     }
   }
+}
+
+void keyCreate(vec2 pos)
+{
+    key.pos = pos << 4;
+    //coins[i].pos.y += 4;
+    //coins[i].pos.x += 4;
+    key.active = true;
+    key.haveKey = false;
 }
 
 void walkersCreate(vec2 pos)
@@ -178,6 +196,10 @@ void fansCreate(vec2 pos, byte height)
 
 void enemiesUpdate()
 {
+  if (key.active)
+  {
+    sprites.drawPlusMask(key.pos.x - cam.pos.x, key.pos.y - cam.pos.y, sprKey, 0);
+  }
   if (arduboy.everyXFrames(8))
   {
     walkerFrame = (++walkerFrame) % 2;
