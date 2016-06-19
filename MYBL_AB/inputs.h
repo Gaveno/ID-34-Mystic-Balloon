@@ -25,6 +25,7 @@ void checkInputs()
       if (!gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
       kid.isWalking = true;
+      kid.speed.x = -1;
     }
     else //if (arduboy.everyXFrames(3))
     {
@@ -46,6 +47,7 @@ void checkInputs()
       if (!gridGetSolid((kid.pos.x + 12) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x += PLAYER_SPEED_WALKING;
       kid.isWalking = true;
+      kid.speed.x = 1;
     }
     else //if (arduboy.everyXFrames(3))
     {
@@ -62,6 +64,8 @@ void checkInputs()
   }
   else
     kid.isSucking = false;
+
+  // Jump Button
   if (arduboy.justPressed(B_BUTTON))
   {
     //mapTimer = TIMER_AMOUNT;
@@ -71,7 +75,7 @@ void checkInputs()
       kid.isWalking = false;
       kid.isJumping = true;
       kid.jumpLetGo = false;
-      kid.jumpTimer = 12;
+      kid.jumpTimer = PLAYER_JUMP_TIME;
       kid.speed.y = PLAYER_JUMP_VELOCITY;
       if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = (PLAYER_SPEED_WALKING);
       if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -(PLAYER_SPEED_WALKING);

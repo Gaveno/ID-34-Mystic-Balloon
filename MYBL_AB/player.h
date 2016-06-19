@@ -10,8 +10,8 @@
 #define PLAYER_SPEED_WALKING 1 << FIXED_POINT
 #define PLAYER_SPEED_AIR 2
 #define PLAYER_PARTICLES 3
-#define PLAYER_JUMP_VELOCITY 2 << FIXED_POINT
-#define GRAVITY 4
+#define PLAYER_JUMP_VELOCITY (2 << FIXED_POINT) - 2
+#define GRAVITY 3
 #define FRICTION 1 // for horizontal speed
 #define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
@@ -154,7 +154,7 @@ void checkKid()
   }
 
   // Friction
-  if (abs(kid.speed.x) > FRICTION)
+  /*if (abs(kid.speed.x) > FRICTION)
   {
     if (arduboy.everyXFrames(3))
     {
@@ -165,7 +165,7 @@ void checkKid()
   else
   {
     kid.speed.x = 0;
-  }
+  }*/
 
   // Kid on ground
   if (kid.speed.y <= 0 && (solidV || solidbelow))
@@ -176,20 +176,65 @@ void checkKid()
     kid.isLanding = false;
     kid.isJumping = false;
     kid.isBalloon = false;
-    kid.actualpos.y = (((kid.actualpos.y >> FIXED_POINT) + 8) >> 4) << (FIXED_POINT + 4);
+    int8_t ysnap = (((kid.actualpos.y >> FIXED_POINT) + 12) >> 4);
+    //if (!gridGetSolid(ysnap, kid.pos.x >> 4))
+      kid.actualpos.y = ysnap << (FIXED_POINT + 4);
 
-    int8_t yy = (kid.pos.y + 16) >> 4;
-    if (!gridGetSolid((kid.pos.x + 2) >> 4, yy))
-      kid.actualpos.x -= FIXED_POINT << 2;
-    else if (!gridGetSolid((kid.pos.x + 10) >> 4, yy))
-      kid.actualpos.x += FIXED_POINT << 2;
+    // Fall off edge
+    //if (abs(((kid.pos.x + 6) % 16) - 8) >= 4)
+    if (!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
+    {
+      int8_t yy = (kid.pos.y + 16) >> 4;
+      if (!gridGetSolid((kid.pos.x + 2) >> 4, yy))
+        kid.actualpos.x -= FIXED_POINT << 2;
+      else if (!gridGetSolid((kid.pos.x + 10) >> 4, yy))
+        kid.actualpos.x += FIXED_POINT << 2;
+    }
+  }
+  else
+  {
+    // Friction in air
+    if (abs(kid.speed.x) > FRICTION)
+    {
+      if (arduboy.everyXFrames(3))
+      {
+        if (kid.speed.x > 0) kid.speed.x -= FRICTION;
+        else if (kid.speed.x < 0) kid.speed.x += FRICTION;
+      }
+    }
+    else
+    {
+      kid.speed.x = 0;
+    }
   }
 
   // Move out of walls
-  if (gridGetSolid((kid.pos.x + 1) >> 4, (kid.pos.y + 8) >> 4))
+  if (!gridGetSolid(tx, ty))
+  {
+    if (gridGetSolid((kid.pos.x) >> 4, ty))
+      kid.actualpos.x += 8;
+    else if (gridGetSolid((kid.pos.x + 11) >> 4, ty))
+      kid.actualpos.x -= 8;
+  }
+//  if (gridGetSolid(tx, ty))
+//  {
+//    if (!gridGetSolid((kid.pos.x - 8) >> 4, ty))
+//      kid.actualpos.x -= 8;
+//    else if (!gridGetSolid((kid.pos.x + 19) >> 4, ty))
+//      kid.actualpos.x += 8;
+//    else if (!gridGetSolid(tx, (kid.pos.y - 8) >> 4))
+//      kid.actualpos.y -= 8;
+//    else if (!gridGetSolid(tx, (kid.pos.y + 25) >> 4))
+//      kid.actualpos.y += 8;
+//  }
+  /*if (gridGetSolid((kid.pos.x) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x += 8;
-  if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
+  else if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x -= 8;
+  else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 1) >> 4))
+    kid.actualpos.y += 8;
+  else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 14) >> 4))
+    kid.actualpos.y -= 8;*/
 
   // -Y Position
   //if ((kid.speed.y > 0 && !solidV)
@@ -200,9 +245,9 @@ void checkKid()
   }
   else
   {
-    if (solidabove)
+    if (solidV && kid.speed.y > 0)
     {
-      kid.actualpos.y = ((kid.actualpos.y + 2) >> (FIXED_POINT + 4)) << (FIXED_POINT + 4);
+      kid.actualpos.y = ((kid.pos.y + 8) >> 4) << (FIXED_POINT + 4);
       kid.speed.y = 0;
     }
   }

@@ -347,7 +347,7 @@ PROGMEM const unsigned char rightGuyEyes[] = {
 ///////////////// player bitmaps //////////////////
 ///////////////////////////////////////////////////
 
-PROGMEM const unsigned char kidWalking_plus_mask[] = {
+/*PROGMEM const unsigned char kidWalking_plus_mask[] = {
   // width, height
   12, 16,
   // KID WALKING RIGHT 0
@@ -410,7 +410,7 @@ PROGMEM const unsigned char kidWalking_plus_mask[] = {
   0xCC, 0xFE, 0xBC, 0xFE, 0xFC, 0xFE, 0xFC, 0xFE, 0x38, 0xFE, 0x00, 0x38,
   0x00, 0x00, 0x00, 0x01, 0x00, 0x79, 0x30, 0xF9, 0x60, 0xFB, 0x71, 0xFF,
   0x3D, 0x7F, 0x3D, 0x7F, 0x3F, 0x7F, 0x00, 0x3F, 0x00, 0x00, 0x00, 0x00,
-};
+};*/
 
 PROGMEM const unsigned char kidSpriteAlternative_plus_mask[] = {
   // width, height
