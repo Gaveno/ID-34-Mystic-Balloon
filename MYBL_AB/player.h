@@ -198,8 +198,8 @@ void checkKid()
     {
       if (arduboy.everyXFrames(3))
       {
-        if (kid.speed.x > 0) kid.speed.x -= FRICTION;
-        else if (kid.speed.x < 0) kid.speed.x += FRICTION;
+        if (kid.speed.x > 0) kid.speed.x = max(0, kid.speed.x - FRICTION);//kid.speed.x -= FRICTION;
+        else if (kid.speed.x < 0) kid.speed.x = min(0, kid.speed.x + FRICTION);//kid.speed.x += FRICTION;
       }
     }
     else
