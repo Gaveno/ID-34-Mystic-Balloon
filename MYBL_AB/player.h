@@ -294,6 +294,7 @@ void updateCamera()
   V = V >> 3;
 
   cam.pos += V;
+  cam.pos.y = min(320, cam.pos.y);
 }
 
 void drawKid()

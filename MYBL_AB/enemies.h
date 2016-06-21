@@ -205,7 +205,7 @@ void enemiesUpdate()
     walkerFrame = (++walkerFrame) % 2;
     coinFrame = (++coinFrame) % 4;
   }
-  if (arduboy.everyXFrames(2))
+  if (arduboy.everyXFrames(3))
     fanFrame = (++fanFrame) % 2;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
@@ -227,8 +227,12 @@ void enemiesUpdate()
       }
   
       // Draw fan
+      int _x = fans[i].pos.x - cam.pos.x;
+      int _y = fans[i].pos.y - cam.pos.y;
+      sprites.drawSelfMasked(_x, _y, largeMask, 0);
+      sprites.drawErase(_x, _y, sprFan3, fanFrame);
       //sprites.drawErase(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, millis() % 2);
-      sprites.drawPlusMask(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, fanFrame);
+      //sprites.drawPlusMask(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, fanFrame);
     }
 
     // Spikes

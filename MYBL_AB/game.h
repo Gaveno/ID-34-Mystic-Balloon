@@ -41,6 +41,7 @@ void drawHUD()
   drawBalloonLives();
   drawScore(91, 0, 0);
   drawCoinHUD();
+  if (key.haveKey) sprites.drawErase(28, 0, elementsHUD, 13);
 }
 
 void stateGamePlaying()
