@@ -25,6 +25,7 @@ void checkInputs()
       if (!gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
       kid.isWalking = true;
+      kid.speed.x = -1;
     }
     else //if (arduboy.everyXFrames(3))
     {
@@ -38,7 +39,7 @@ void checkInputs()
   }
   if (arduboy.pressed(RIGHT_BUTTON) && !kid.isSucking)
   {
-    mapTimer = TIMER_AMOUNT;
+    //mapTimer = TIMER_AMOUNT;
     cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
     if (kid.speed.y == 0 && !kid.isBalloon)
@@ -46,6 +47,7 @@ void checkInputs()
       if (!gridGetSolid((kid.pos.x + 12) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x += PLAYER_SPEED_WALKING;
       kid.isWalking = true;
+      kid.speed.x = 1;
     }
     else //if (arduboy.everyXFrames(3))
     {
@@ -58,20 +60,22 @@ void checkInputs()
   if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
   {
     kid.isSucking = true;
-    mapTimer = TIMER_AMOUNT;
+    //mapTimer = TIMER_AMOUNT;
   }
   else
     kid.isSucking = false;
+
+  // Jump Button
   if (arduboy.justPressed(B_BUTTON))
   {
-    mapTimer = TIMER_AMOUNT;
+    //mapTimer = TIMER_AMOUNT;
     if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)
     {
       arduboy.audio.tone(200, 100);
       kid.isWalking = false;
       kid.isJumping = true;
       kid.jumpLetGo = false;
-      kid.jumpTimer = 12;
+      kid.jumpTimer = PLAYER_JUMP_TIME;
       kid.speed.y = PLAYER_JUMP_VELOCITY;
       if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = (PLAYER_SPEED_WALKING);
       if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -(PLAYER_SPEED_WALKING);
