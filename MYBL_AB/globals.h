@@ -34,6 +34,7 @@
 
 #define LEVEL_TO_START_WITH          0
 #define TOTAL_LEVELS                 12
+#define TOTAL_COINS                  TOTAL_LEVELS * 6
 
 #define MAX_PER_TYPE                 6 // total instances per enemy type
 
@@ -56,6 +57,7 @@ byte globalCounter = 0;
 byte level = LEVEL_TO_START_WITH;
 unsigned long scorePlayer;
 byte timeBonus;
+byte coinsCollected = 0;
 
 byte walkerFrame = 0;
 byte fanFrame = 0;

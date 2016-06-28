@@ -51,6 +51,7 @@ void stateMenuHelp()
 void stateMenuPlay()
 {
   level = LEVEL_TO_START_WITH;
+  coinsCollected = 0;
   gameState = STATE_GAME_PREPARE_LEVEL;
   scorePlayer = 0;
 }

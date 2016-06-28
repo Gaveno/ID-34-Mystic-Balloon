@@ -17,9 +17,12 @@ void stateGamePrepareLevel()
   cam.pos = vec2(0, 0);
   cam.offset = vec2(0, 0);
   //gameState = STATE_GAME_NEXT_LEVEL;
-  gameState = STATE_GAME_PLAYING;
+  
   enemiesInit();
   levelLoad(levels[level]);
+
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+    gameState = STATE_GAME_PLAYING;
 };
 
 void stateGameNextLevel()

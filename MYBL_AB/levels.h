@@ -464,6 +464,7 @@ void checkCollisions()
         // Collect coin
         coins[i].active = false;
         --coinsActive;
+        ++coinsCollected;
         if (coinsActive == 0)
         {
           scorePlayer += 500;
