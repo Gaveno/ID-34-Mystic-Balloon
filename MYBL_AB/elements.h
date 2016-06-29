@@ -21,7 +21,7 @@ void drawMiniMap(byte offset)
   {
     for (byte y = 0; y < LEVEL_HEIGHT_CELLS; ++y)
     {
-      arduboy.drawPixel(offx + x, offy + y, !gridGetSolid(x,y));
+      arduboy.drawPixel(offx + x, offy + y, !gridGetSolid(x, y));
     }
   }
   if (!walkerFrame)
@@ -46,6 +46,12 @@ void drawCoinHUD()
 
 void drawScore(byte scoreX, byte scoreY, byte fontType)
 {
+  if (fontType == SCORE_BIG_FONT)
+  {
+    sprites.drawSelfMasked(scoreX - 2, scoreY - 2, numbersBigMask00, 0);
+    for (byte i = 0; i < 6; i++)sprites.drawSelfMasked(scoreX + (7 * i), scoreY - 2, numbersBigMask01, 0);
+    sprites.drawSelfMasked(scoreX + 41, scoreY - 2, numbersBigMask02, 0);
+  }
   char buf[10];
   //scorePlayer = arduboy.cpuLoad();
   ltoa(scorePlayer, buf, 10);
@@ -61,7 +67,7 @@ void drawScore(byte scoreX, byte scoreY, byte fontType)
         sprites.drawErase(scoreX + (6 * i), scoreY, elementsHUD, 0);
         break;
       case SCORE_BIG_FONT:
-        sprites.drawSelfMasked(scoreX + (10 * i), scoreY, numbersBig, 0);
+        sprites.drawSelfMasked(scoreX + (7 * i), scoreY, numbersBig, 0);
         break;
     }
   }
@@ -89,7 +95,7 @@ void drawScore(byte scoreX, byte scoreY, byte fontType)
         sprites.drawErase(scoreX + (pad * 6) + (6 * i), scoreY, elementsHUD, digit);
         break;
       case SCORE_BIG_FONT:
-        sprites.drawSelfMasked(scoreX + (pad * 10) + (10 * i), scoreY, numbersBig, digit);
+        sprites.drawSelfMasked(scoreX + (pad * 7) + (7 * i), scoreY, numbersBig, digit);
         break;
     }
   }

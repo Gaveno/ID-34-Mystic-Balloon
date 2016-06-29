@@ -29,7 +29,7 @@ void nextLevelStart()
   }
   if (level > 0)
   {
-    scorePlayer += (kid.balloons * 100) + timeBonus;
+
     level++;
     gameOverAndStageFase++;
   }
@@ -37,6 +37,7 @@ void nextLevelStart()
 
 void nextLevelTimeBonus()
 {
+  scorePlayer += (kid.balloons * 100) + timeBonus;
   gameOverAndStageFase++;
 }
 
@@ -87,7 +88,8 @@ void stateMenuPlay()
 
 void stateGameNextLevel()
 {
-  if (nextLevelVisible) sprites.drawSelfMasked(46, 15, nextLevel, 0);
+  drawScore(43, 40, SCORE_BIG_FONT);
+  if (nextLevelVisible) sprites.drawSelfMasked(46, 15, badgeNextLevel, 0);
   ((FunctionPointer) pgm_read_word (&nextLevelFases[gameOverAndStageFase]))();
 };
 
@@ -117,6 +119,7 @@ void stateGamePlaying()
 
 void stateGamePause()
 {
+  //sprites.drawSelfMasked(46, 15, nextLevel, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_MENU_MAIN;
@@ -126,10 +129,19 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  drawScore(32, 36, 1);
+  drawScore(43, 40, SCORE_BIG_FONT);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
-    gameState = STATE_MENU_INTRO;
+    gameState = STATE_MENU_MAIN;
+  }
+}
+
+void stateGameEnd()
+{
+  drawScore(32, 36, SCORE_BIG_FONT);
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+  {
+    gameState = STATE_MENU_MAIN;
   }
 }
 

@@ -14,7 +14,7 @@ void drawTitleScreen()
   if (sparkleFrames > 4) sparkleFrames = 0;
   if (blinkingFrames > 31) blinkingFrames = 0;
   arduboy.drawCompressed(0, 0, titleScreen, WHITE);
-  arduboy.drawCompressed(85, 45, mysticBalloon, WHITE);
+  arduboy.drawCompressed(85, 45, badgeMysticBalloon, WHITE);
   sprites.drawSelfMasked(79, 43, stars, sparkleFrames);
   sprites.drawSelfMasked(9, 9, leftGuyLeftEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrames]));
   sprites.drawSelfMasked(15, 13, leftGuyRightEye, pgm_read_byte(&blinkingEyesLeftGuy[blinkingFrames]));
@@ -53,7 +53,7 @@ void stateMenuInfo()
 {
   if (arduboy.everyXFrames(10)) sparkleFrames++;
   if (sparkleFrames > 4) sparkleFrames = 0;
-  arduboy.drawCompressed(43, 23, mysticBalloon, WHITE);
+  arduboy.drawCompressed(43, 23, badgeMysticBalloon, WHITE);
   sprites.drawSelfMasked(37, 21, stars, sparkleFrames);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
