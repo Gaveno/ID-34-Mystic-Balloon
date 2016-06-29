@@ -442,6 +442,7 @@ void checkCollisions()
   if (key.haveKey && arduboy.collide(levelExit, playerRect))
   {
     gameState = STATE_GAME_NEXT_LEVEL;
+    level++;
   }
 
   // Enemies and objects
@@ -555,7 +556,7 @@ void drawHUD()
     sprites.drawSelfMasked(i * 8, 0, smallMask, 0);
   }
   drawBalloonLives();
-  drawScore(91, 0, 0);
+  drawNumbers(91, 0, FONT_SMALL, DATA_SCORE);
   drawCoinHUD();
   if (key.haveKey) sprites.drawErase(28, 0, elementsHUD, 13);
 }
