@@ -9,43 +9,88 @@
 #include "elements.h"
 #include "levels.h"
 
-void stateGamePrepareLevel()
-{
-  //level = 0;
-  timeBonus = 254;
-  setKid();
-  cam.pos = vec2(0, 0);
-  cam.offset = vec2(0, 0);
-  //gameState = STATE_GAME_NEXT_LEVEL;
-  
-  enemiesInit();
-  levelLoad(levels[level]);
+byte gameOverAndStageFase;
+boolean showBonusScore;
+boolean showScore;
+boolean showCoins;
+boolean nextLevelVisible;
 
+void nextLevelStart()
+{
+  nextLevelVisible = false;
+  if (level < 1)
+  {
+    gameOverAndStageFase = 3;
+  }
+  if (level > TOTAL_LEVELS - 1)
+  {
+    gameState = STATE_GAME_OVER;
+    return;
+  }
+  if (level > 0)
+  {
+    scorePlayer += (kid.balloons * 100) + timeBonus;
+    level++;
+    gameOverAndStageFase++;
+  }
+}
+
+void nextLevelTimeBonus()
+{
+  gameOverAndStageFase++;
+}
+
+void nextLevelCoinsBonus()
+{
+  gameOverAndStageFase++;
+}
+
+void nextLevelEnd()
+{
+  nextLevelVisible = true;
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+  {
+    //level = 0;
+    timeBonus = 254;
+    setKid();
+    cam.pos = vec2(0, 0);
+    cam.offset = vec2(0, 0);
+    //gameState = STATE_GAME_NEXT_LEVEL;
+    enemiesInit();
+    levelLoad(levels[level]);
+    gameOverAndStageFase = 0;
     gameState = STATE_GAME_PLAYING;
+  }
+}
+
+typedef void (*FunctionPointer) ();
+const FunctionPointer PROGMEM nextLevelFases[] =
+{
+  nextLevelStart,
+  nextLevelTimeBonus,
+  nextLevelCoinsBonus,
+  nextLevelEnd,
 };
+
+
+
+void stateMenuPlay()
+{
+  level = LEVEL_TO_START_WITH - 1;
+  coinsCollected = 0;
+  scorePlayer = 0;
+  gameOverAndStageFase = 0;
+  globalCounter = 0;
+  gameState = STATE_GAME_NEXT_LEVEL;
+}
+
 
 void stateGameNextLevel()
 {
-  scorePlayer += (kid.balloons * 100) + timeBonus;
-  ++level;
-  if (level >= TOTAL_LEVELS)
-    gameState = STATE_GAME_OVER;
-  else
-    gameState = STATE_GAME_PREPARE_LEVEL;
+  if (nextLevelVisible) sprites.drawSelfMasked(46, 15, nextLevel, 0);
+  ((FunctionPointer) pgm_read_word (&nextLevelFases[gameOverAndStageFase]))();
 };
 
-void drawHUD()
-{
-  for (byte i = 0; i< 16; i++)
-  {
-    sprites.drawSelfMasked(i*8, 0, smallMask, 0);
-  }
-  drawBalloonLives();
-  drawScore(91, 0, 0);
-  drawCoinHUD();
-  if (key.haveKey) sprites.drawErase(28, 0, elementsHUD, 13);
-}
 
 void stateGamePlaying()
 {
@@ -56,16 +101,16 @@ void stateGamePlaying()
 
   drawGrid();
   enemiesUpdate();
-  
+
   drawKid();
   drawHUD();
   //drawMiniMap(mapTimer);
   //if (mapTimer > 0) mapTimer--;
   /*if (mapTimer == 0)
     drawMiniMap();
-  else
+    else
     mapTimer--;*/
-  
+
   checkCollisions();
 }
 

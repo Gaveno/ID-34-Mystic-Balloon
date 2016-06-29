@@ -48,13 +48,6 @@ void stateMenuHelp()
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
 
-void stateMenuPlay()
-{
-  level = LEVEL_TO_START_WITH;
-  coinsCollected = 0;
-  gameState = STATE_GAME_PREPARE_LEVEL;
-  scorePlayer = 0;
-}
 
 void stateMenuInfo()
 {

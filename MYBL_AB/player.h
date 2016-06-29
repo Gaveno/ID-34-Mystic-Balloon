@@ -41,6 +41,7 @@ struct Players
     boolean isLanding;
     boolean isFloating;
     boolean isBalloon;
+    
     boolean jumpLetGo;
     boolean isSucking;
     byte imuneTimer;
