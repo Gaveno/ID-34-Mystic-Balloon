@@ -55,6 +55,7 @@ void stateMenuInfo()
   if (sparkleFrames > 4) sparkleFrames = 0;
   arduboy.drawCompressed(43, 23, badgeMysticBalloon, WHITE);
   sprites.drawSelfMasked(37, 21, stars, sparkleFrames);
+  //sprites.drawSelfMasked(37, 40, madeBy, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
 

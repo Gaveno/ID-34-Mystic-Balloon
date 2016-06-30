@@ -10,25 +10,30 @@
 #include "levels.h"
 
 byte gameOverAndStageFase;
-boolean showBonusScore;
-boolean showScore;
-boolean showCoins;
-boolean nextLevelVisible;
+byte balloonsLeft;
+byte coinsLeft;
+boolean balloonsIsVisible;
+boolean scoreIsVisible;
+boolean coinsIsVisible;
+boolean nextLevelIsVisible;
 
 void nextLevelStart()
 {
-  nextLevelVisible = true;
+  nextLevelIsVisible = false;
+  coinsIsVisible = false;
+  balloonsIsVisible = false;
+  nextLevelIsVisible = false;
+  
   if (level < 1)
   {
-    gameOverAndStageFase = 8;
+    gameOverAndStageFase = 4;
+    nextLevelIsVisible = true;
   }
-  if (level > TOTAL_LEVELS - 1)
+  else
   {
-    gameState = STATE_GAME_END;
-    return;
-  }
-  if (level > 0)
-  {
+    balloonsLeft = kid.balloons;
+    coinsLeft = 0;
+    scoreIsVisible = true;
     gameOverAndStageFase++;
   }
 }
@@ -43,7 +48,7 @@ void nextLevelWait()
   }
 }
 
-void nextLevelTimeBonus()
+void nextLevelBonus()
 {
   if (timeBonus > 0)
   {
@@ -52,34 +57,36 @@ void nextLevelTimeBonus()
   }
   else
   {
-    if (level < TOTAL_LEVELS) gameOverAndStageFase++;
+    if (level < TOTAL_LEVELS)
+    {
+      if (arduboy.everyXFrames(20) && coinsCollected > 0)
+      {
+        coinsIsVisible = true;
+        coinsLeft++;
+        coinsCollected--;
+        scorePlayer += 20;
+      }
+      if (arduboy.everyXFrames(20) && balloonsLeft > 0 && !coinsCollected)
+      {
+        balloonsIsVisible = true;
+        balloonsLeft--;
+        scorePlayer += 20;
+      }
+      if (!balloonsLeft && !coinsCollected) gameOverAndStageFase++;
+    }
     else
     {
-      gameState = STATE_GAME_END;
+      gameState = STATE_GAME_OVER;
       gameOverAndStageFase = 0;
     }
   }
-  gameOverAndStageFase++;
-}
-
-void nextLevelBalloonBonus()
-{
-  scorePlayer += (kid.balloons * 50);
-}
-
-void nextLevelCoinsBonus()
-{
-  if (arduboy.everyXFrames(8) && coinsCollected > 0)
-  {
-    coinsCollected--;
-    scorePlayer += 20;
-  }
-  else gameOverAndStageFase++;
 }
 
 void nextLevelEnd()
 {
-  nextLevelVisible = true;
+  balloonsIsVisible = false;
+  coinsIsVisible = false;
+  nextLevelIsVisible = true;
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     timeBonus = 254;
@@ -98,11 +105,7 @@ const FunctionPointer PROGMEM nextLevelFases[] =
 {
   nextLevelStart,
   nextLevelWait,
-  nextLevelTimeBonus,
-  nextLevelWait,
-  nextLevelBalloonBonus,
-  nextLevelWait,
-  nextLevelCoinsBonus,
+  nextLevelBonus,
   nextLevelWait,
   nextLevelEnd,
 };
@@ -122,15 +125,15 @@ void stateMenuPlay()
 
 void stateGameNextLevel()
 {
-  if (arduboy.everyXFrames(8)) sparkleFrames++;
-  if (sparkleFrames > 4) sparkleFrames = 0;
-  if (nextLevelVisible)
+  ((FunctionPointer) pgm_read_word (&nextLevelFases[gameOverAndStageFase]))();
+  if (scoreIsVisible) drawNumbers(43, 48, FONT_BIG, DATA_SCORE);
+  if (balloonsIsVisible) for(byte i=0; i< kid.balloons; i++) sprites.drawPlusMask(35+ (i*16), 20, balloon_plus_mask, 0);
+  if (coinsIsVisible) for(byte i=0; i< coinsLeft; i++) sprites.drawPlusMask(35+ (i*16), 4, sprCoin, 0);
+  if (nextLevelIsVisible)
   {
-    sprites.drawSelfMasked(29, 18, stars, sparkleFrames);
     drawNumbers(78, 22, FONT_BIG, DATA_LEVEL);
     sprites.drawSelfMasked(35, 20, badgeNextLevel, 0);
   }
-  ((FunctionPointer) pgm_read_word (&nextLevelFases[gameOverAndStageFase]))();
 };
 
 
@@ -169,18 +172,8 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  sprites.drawSelfMasked(35, 20, badgeGameOver, 0);
+  //sprites.drawSelfMasked(35, 20, badgeGameOver, 0);
   drawNumbers(43, 40, FONT_BIG, DATA_SCORE);
-  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
-  {
-    gameState = STATE_MENU_MAIN;
-  }
-}
-
-void stateGameEnd()
-{
-  sprites.drawSelfMasked(35, 20, badgeGameOver, 0);
-  drawNumbers(32, 36, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_MENU_MAIN;
