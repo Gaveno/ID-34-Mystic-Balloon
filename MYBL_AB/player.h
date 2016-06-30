@@ -301,16 +301,13 @@ void drawKid()
     kidcam.y = kid.pos.y - cam.pos.y;
     if (kid.isBalloon)
     {
-      if (kid.balloons > 2) sprites.drawPlusMask(kidcam.x + 7 - 6 * kid.direction, kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, 1);
+      if (kid.balloons > 2) sprites.drawPlusMask(kidcam.x + 7 - 6 * kid.direction, kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, 0);
       if (kid.balloons > 1) sprites.drawPlusMask(kidcam.x + 1 - 6 * kid.direction, kidcam.y - 11 + kid.balloonOffset, balloon_plus_mask, 0);
-      sprites.drawPlusMask(kidcam.x + 4 - 6 * kid.direction, kidcam.y - 9 + kid.balloonOffset, balloon_plus_mask, 1);
+      sprites.drawPlusMask(kidcam.x + 4 - 6 * kid.direction, kidcam.y - 9 + kid.balloonOffset, balloon_plus_mask, 0);
     }
     sprites.drawSelfMasked(kidcam.x, kidcam.y, kidSprite, 12 + kid.direction);
     sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon));
-    // if (!kid.isSucking)
-    // {
 
-    // }
     if (kid.isSucking)
     {
     

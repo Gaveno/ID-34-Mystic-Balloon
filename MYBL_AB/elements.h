@@ -50,7 +50,7 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
       itoa(level + 1, buf, 10);
       charLen = strlen(buf);
       pad = 2 - charLen;
-      sprites.drawSelfMasked(numbersX-2, numbersY - 2, badgeLevel, 0);
+      sprites.drawSelfMasked(numbersX-2, numbersY - 9, badgeLevel, 0);
       
       break;
   }

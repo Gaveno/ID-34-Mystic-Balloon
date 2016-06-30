@@ -131,7 +131,7 @@ void stateGameNextLevel()
   if (coinsIsVisible) for(byte i=0; i< coinsLeft; i++) sprites.drawPlusMask(35+ (i*16), 4, sprCoin, 0);
   if (nextLevelIsVisible)
   {
-    drawNumbers(78, 22, FONT_BIG, DATA_LEVEL);
+    drawNumbers(78, 29, FONT_BIG, DATA_LEVEL);
     sprites.drawSelfMasked(35, 20, badgeNextLevel, 0);
   }
 };
@@ -156,7 +156,7 @@ void stateGamePlaying()
 
 void stateGamePause()
 {
-  sprites.drawSelfMasked(46, 15, badgePause, 0);
+  sprites.drawSelfMasked(47, 15, badgePause, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_GAME_PLAYING;
@@ -166,7 +166,7 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  sprites.drawSelfMasked(35, 20, badgeGameOver, 0);
+  sprites.drawSelfMasked(47, 15, badgeGameOver, 0);
   drawNumbers(43, 40, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {

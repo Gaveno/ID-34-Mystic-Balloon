@@ -230,8 +230,6 @@ void enemiesUpdate()
       int _y = fans[i].pos.y - cam.pos.y;
       sprites.drawSelfMasked(_x, _y, largeMask, 0);
       sprites.drawErase(_x, _y, sprFan3, fanFrame);
-      //sprites.drawErase(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, millis() % 2);
-      //sprites.drawPlusMask(fans[i].pos.x - cam.pos.x, fans[i].pos.y - cam.pos.y, sprFan, fanFrame);
     }
 
     // Spikes
@@ -256,8 +254,7 @@ void enemiesUpdate()
         }
       }
       
-      sprites.drawPlusMask(walkers[i].pos.x - cam.pos.x,
-          walkers[i].pos.y - cam.pos.y, sprWalker, walkerFrame + (walkers[i].HP <= 0) * 2);
+      sprites.drawErase(walkers[i].pos.x - cam.pos.x, walkers[i].pos.y - cam.pos.y, walkerSprite, walkerFrame + (walkers[i].HP <= 0) * 2);
     }
 
     // Coins
