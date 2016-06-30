@@ -55,8 +55,7 @@ void checkInputs()
     }
     //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
-
-  //if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PAUSE;
+  if (arduboy.pressed(A_BUTTON + DOWN_BUTTON))gameState = STATE_GAME_PAUSE;
   if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
   {
     kid.isSucking = true;

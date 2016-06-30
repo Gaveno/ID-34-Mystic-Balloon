@@ -223,8 +223,6 @@ void enemiesUpdate()
   
         // Draw particles
         sprites.drawErase(fans[i].pos.x + fans[i].particles[a].x - cam.pos.x, fans[i].pos.y - fans[i].particles[a].y - cam.pos.y, particle , 0);
-        //arduboy.drawPixel(fans[i].pos.x + fans[i].particles[a].x - cam.pos.x,
-         //                 fans[i].pos.y - fans[i].particles[a].y - cam.pos.y, 0);
       }
   
       // Draw fan

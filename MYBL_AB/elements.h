@@ -20,27 +20,6 @@ void drawBalloonLives()
   }
 }
 
-void drawMiniMap(byte offset)
-{
-  byte offx, offy;
-  offx = 0;
-  offy = 40 + offset;
-  for (byte x = 0; x < LEVEL_WIDTH_CELLS; ++x)
-  {
-    for (byte y = 0; y < LEVEL_HEIGHT_CELLS; ++y)
-    {
-      arduboy.drawPixel(offx + x, offy + y, !gridGetSolid(x, y));
-    }
-  }
-  if (!walkerFrame)
-  {
-    //arduboy.drawPixel(offx + (startPos.x >> 4), offy + (startPos.y >> 4), 0);
-    arduboy.drawPixel(offx + (levelExit.x >> 4), offy + (levelExit.y >> 4), 0);
-  }
-  if (fanFrame)
-    arduboy.drawPixel(offx + ((kid.pos.x + 6) >> 4), offy + ((kid.pos.y + 8) >> 4), 0);
-}
-
 void drawCoinHUD()
 {
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
@@ -93,7 +72,6 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
   for (byte i = 0; i < charLen; i++)
   {
     char digit = buf[i];
-    byte j;
     if (digit <= 48)
     {
       digit = 0;
@@ -101,11 +79,6 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
     else {
       digit -= 48;
       if (digit > 9) digit = 0;
-    }
-
-    for (byte z = 0; z < 10; z++)
-    {
-      if (digit == z) j = z;
     }
     switch (fontType)
     {

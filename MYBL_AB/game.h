@@ -149,12 +149,6 @@ void stateGamePlaying()
 
   drawKid();
   drawHUD();
-  //drawMiniMap(mapTimer);
-  //if (mapTimer > 0) mapTimer--;
-  /*if (mapTimer == 0)
-    drawMiniMap();
-    else
-    mapTimer--;*/
 
   checkCollisions();
 }
@@ -162,17 +156,17 @@ void stateGamePlaying()
 
 void stateGamePause()
 {
-  //sprites.drawSelfMasked(46, 15, nextLevel, 0);
+  sprites.drawSelfMasked(46, 15, badgePause, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
-    gameState = STATE_MENU_MAIN;
+    gameState = STATE_GAME_PLAYING;
   }
 }
 
 
 void stateGameOver()
 {
-  //sprites.drawSelfMasked(35, 20, badgeGameOver, 0);
+  sprites.drawSelfMasked(35, 20, badgeGameOver, 0);
   drawNumbers(43, 40, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
