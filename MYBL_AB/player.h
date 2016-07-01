@@ -39,13 +39,11 @@ struct Players
     boolean isWalking;
     boolean isJumping;
     boolean isLanding;
-    boolean isFloating;
     boolean isBalloon;
     boolean jumpLetGo;
     boolean isSucking;
     byte imuneTimer;
     byte jumpTimer;
-    byte HP;
     byte frame;
     byte balloons;
     byte balloonOffset;
@@ -64,7 +62,6 @@ void setKid()
   kid.speed.x = 0;
   kid.speed.y = 0;
   kid.isActive = true;
-  kid.HP = 4;
   kid.isImune = true;
   kid.imuneTimer = 0;
   kid.jumpTimer = 0;
@@ -72,7 +69,6 @@ void setKid()
   kid.isWalking = false;
   kid.isJumping = false;
   kid.isLanding = false;
-  kid.isFloating = false;
   kid.isBalloon = false;
   kid.jumpLetGo = true;
   kid.isSucking = false;
@@ -95,7 +91,6 @@ void checkKid()
       kid.isActive = true;
     }
   }
-  if (kid.HP < 2) gameState = STATE_GAME_OVER;
   if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
   {
     ++kid.frame;
@@ -155,17 +150,17 @@ void checkKid()
 
   // Friction
   /*if (abs(kid.speed.x) > FRICTION)
-  {
+    {
     if (arduboy.everyXFrames(3))
     {
       if (kid.speed.x > 0) kid.speed.x -= FRICTION;
       else if (kid.speed.x < 0) kid.speed.x += FRICTION;
     }
-  }
-  else
-  {
+    }
+    else
+    {
     kid.speed.x = 0;
-  }*/
+    }*/
 
   // Kid on ground
   if (kid.speed.y <= 0 && (solidV || solidbelow))
@@ -178,7 +173,7 @@ void checkKid()
     kid.isBalloon = false;
     int8_t ysnap = (((kid.actualpos.y >> FIXED_POINT) + 12) >> 4);
     //if (!gridGetSolid(ysnap, kid.pos.x >> 4))
-      kid.actualpos.y = ysnap << (FIXED_POINT + 4);
+    kid.actualpos.y = ysnap << (FIXED_POINT + 4);
 
     // Fall off edge
     //if (abs(((kid.pos.x + 6) % 16) - 8) >= 4)
@@ -216,24 +211,24 @@ void checkKid()
     else if (gridGetSolid((kid.pos.x + 11) >> 4, ty))
       kid.actualpos.x -= 8;
   }
-//  if (gridGetSolid(tx, ty))
-//  {
-//    if (!gridGetSolid((kid.pos.x - 8) >> 4, ty))
-//      kid.actualpos.x -= 8;
-//    else if (!gridGetSolid((kid.pos.x + 19) >> 4, ty))
-//      kid.actualpos.x += 8;
-//    else if (!gridGetSolid(tx, (kid.pos.y - 8) >> 4))
-//      kid.actualpos.y -= 8;
-//    else if (!gridGetSolid(tx, (kid.pos.y + 25) >> 4))
-//      kid.actualpos.y += 8;
-//  }
+  //  if (gridGetSolid(tx, ty))
+  //  {
+  //    if (!gridGetSolid((kid.pos.x - 8) >> 4, ty))
+  //      kid.actualpos.x -= 8;
+  //    else if (!gridGetSolid((kid.pos.x + 19) >> 4, ty))
+  //      kid.actualpos.x += 8;
+  //    else if (!gridGetSolid(tx, (kid.pos.y - 8) >> 4))
+  //      kid.actualpos.y -= 8;
+  //    else if (!gridGetSolid(tx, (kid.pos.y + 25) >> 4))
+  //      kid.actualpos.y += 8;
+  //  }
   /*if (gridGetSolid((kid.pos.x) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x += 8;
-  else if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
+    else if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
     kid.actualpos.x -= 8;
-  else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 1) >> 4))
+    else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 1) >> 4))
     kid.actualpos.y += 8;
-  else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 14) >> 4))
+    else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 14) >> 4))
     kid.actualpos.y -= 8;*/
 
   // -Y Position
@@ -306,29 +301,17 @@ void drawKid()
     kidcam.y = kid.pos.y - cam.pos.y;
     if (kid.isBalloon)
     {
-      if (kid.balloons > 2) sprites.drawPlusMask(kidcam.x + 7 - 6 * kid.direction, kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, 1);
+      if (kid.balloons > 2) sprites.drawPlusMask(kidcam.x + 7 - 6 * kid.direction, kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, 0);
       if (kid.balloons > 1) sprites.drawPlusMask(kidcam.x + 1 - 6 * kid.direction, kidcam.y - 11 + kid.balloonOffset, balloon_plus_mask, 0);
-      sprites.drawPlusMask(kidcam.x + 4 - 6 * kid.direction, kidcam.y - 9 + kid.balloonOffset, balloon_plus_mask, 1);
+      sprites.drawPlusMask(kidcam.x + 4 - 6 * kid.direction, kidcam.y - 9 + kid.balloonOffset, balloon_plus_mask, 0);
     }
-    if (!kid.isSucking)
+    sprites.drawSelfMasked(kidcam.x, kidcam.y, kidSprite, 12 + kid.direction);
+    sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon));
+
+    if (kid.isSucking)
     {
-      sprites.drawPlusMask
-      (
-        //kid.pos.x - cam.pos.x,
-        //kid.pos.y - cam.pos.y,
-        kidcam.x, kidcam.y,
-        kidSpriteAlternative_plus_mask,
-        kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)
-      );
-    }
-    else
-    {
-      sprites.drawPlusMask
-      (
-        kidcam.x, kidcam.y,
-        kidSuck_plus_mask,
-        (kid.frame % 2) + (2 * kid.direction)
-      );
+    
+      sprites.drawPlusMask(kidcam.x-2, kidcam.y+8, kidSpriteSuck_plus_mask, kid.direction); //kidSpriteSuck
       for (byte i = 0; i < PLAYER_PARTICLES; ++i)
       {
         // Update
@@ -342,10 +325,11 @@ void drawKid()
         }
 
         // Draw
+
         if (kid.direction)
-          arduboy.drawPixel(kidcam.x - kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, 0);
+          sprites.drawErase(kidcam.x - kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, particle , 0);
         else
-          arduboy.drawPixel(kidcam.x + 15 + kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, 0);
+          sprites.drawErase(kidcam.x + 15 + kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, particle , 0);
       }
     }
   }
