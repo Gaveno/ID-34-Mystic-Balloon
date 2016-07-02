@@ -28,7 +28,7 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          2
+#define LEVEL_TO_START_WITH          1
 #define TOTAL_LEVELS                 12
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
@@ -52,8 +52,9 @@ byte menuSelection = STATE_MENU_PLAY; // PLAY menu item is pre-selected
 byte globalCounter = 0;
 byte level;
 unsigned long scorePlayer;
-byte timeBonus;
 byte coinsCollected = 0;
+byte balloonsLeft;
+boolean scoreIsVisible;
 
 byte walkerFrame = 0;
 byte fanFrame = 0;

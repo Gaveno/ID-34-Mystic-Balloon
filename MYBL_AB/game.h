@@ -9,106 +9,8 @@
 #include "elements.h"
 #include "levels.h"
 
-byte gameOverAndStageFase;
-byte balloonsLeft;
-byte coinsLeft;
-boolean balloonsIsVisible;
-boolean scoreIsVisible;
-boolean coinsIsVisible;
 boolean nextLevelIsVisible;
-
-void nextLevelStart()
-{
-  nextLevelIsVisible = false;
-  coinsIsVisible = false;
-  balloonsIsVisible = false;
-  nextLevelIsVisible = false;
-  
-  if (level < 1)
-  {
-    gameOverAndStageFase = 4;
-    nextLevelIsVisible = true;
-  }
-  else
-  {
-    balloonsLeft = kid.balloons;
-    coinsLeft = 0;
-    scoreIsVisible = true;
-    gameOverAndStageFase++;
-  }
-}
-
-void nextLevelWait()
-{
-  if (arduboy.everyXFrames(4)) globalCounter++;
-  if (globalCounter > 8)
-  {
-    gameOverAndStageFase++;
-    globalCounter = 0;
-  }
-}
-
-void nextLevelBonus()
-{
-  if (timeBonus > 0)
-  {
-    timeBonus--;
-    scorePlayer += 5;
-  }
-  else
-  {
-    if (level < TOTAL_LEVELS)
-    {
-      if (arduboy.everyXFrames(20) && coinsCollected > 0)
-      {
-        coinsIsVisible = true;
-        coinsLeft++;
-        coinsCollected--;
-        scorePlayer += 20;
-      }
-      if (arduboy.everyXFrames(20) && balloonsLeft > 0 && !coinsCollected)
-      {
-        balloonsIsVisible = true;
-        balloonsLeft--;
-        scorePlayer += 20;
-      }
-      if (!balloonsLeft && !coinsCollected) gameOverAndStageFase++;
-    }
-    else
-    {
-      gameState = STATE_GAME_OVER;
-      gameOverAndStageFase = 0;
-    }
-  }
-}
-
-void nextLevelEnd()
-{
-  balloonsIsVisible = false;
-  coinsIsVisible = false;
-  nextLevelIsVisible = true;
-  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
-  {
-    timeBonus = 254;
-    setKid();
-    cam.pos = vec2(0, 0);
-    cam.offset = vec2(0, 0);
-    enemiesInit();
-    levelLoad(levels[level]);
-    gameOverAndStageFase = 0;
-    gameState = STATE_GAME_PLAYING;
-  }
-}
-
-typedef void (*FunctionPointer) ();
-const FunctionPointer PROGMEM nextLevelFases[] =
-{
-  nextLevelStart,
-  nextLevelWait,
-  nextLevelBonus,
-  nextLevelWait,
-  nextLevelEnd,
-};
+boolean canPressButton;
 
 
 
@@ -116,30 +18,67 @@ void stateMenuPlay()
 {
   level = LEVEL_TO_START_WITH - 1;
   coinsCollected = 0;
+  balloonsLeft = 0;
   scorePlayer = 0;
-  gameOverAndStageFase = 0;
   globalCounter = 0;
   gameState = STATE_GAME_NEXT_LEVEL;
+  scoreIsVisible = false;
+  nextLevelIsVisible = true;
 }
 
 
 void stateGameNextLevel()
 {
-  ((FunctionPointer) pgm_read_word (&nextLevelFases[gameOverAndStageFase]))();
-  if (scoreIsVisible) drawNumbers(43, 48, FONT_BIG, DATA_SCORE);
-  if (balloonsIsVisible) for(byte i=0; i< kid.balloons; i++) sprites.drawPlusMask(35+ (i*16), 20, balloon_plus_mask, 0);
-  if (coinsIsVisible) for(byte i=0; i< coinsLeft; i++) sprites.drawPlusMask(35+ (i*16), 4, sprCoin, 0);
+  if (level < TOTAL_LEVELS)
+  {
+    if (arduboy.everyXFrames(20))
+    {
+      if (coinsCollected > 0)
+      {
+        coinsCollected--;
+        scorePlayer += 20;
+      }
+      if (balloonsLeft > 0 && !coinsCollected)
+      {
+        balloonsLeft--;
+        scorePlayer += 20;
+      }
+      if (!balloonsLeft && !coinsCollected)
+      {
+        canPressButton = true;
+      }
+    }
+  }
+  else gameState = STATE_GAME_OVER;
+
+
+  if (scoreIsVisible)
+  {
+    for (byte i = 0; i < coinsCollected; i++) sprites.drawPlusMask(35 + (i * 16), 0, sprCoin, 0);
+    for (byte i = 0; i < balloonsLeft; i++) sprites.drawPlusMask(35 + (i * 16), 16, balloon_plus_mask, 0);
+    drawNumbers(43, 55, FONT_BIG, DATA_SCORE);
+  }
+
   if (nextLevelIsVisible)
   {
-    drawNumbers(78, 29, FONT_BIG, DATA_LEVEL);
-    sprites.drawSelfMasked(35, 20, badgeNextLevel, 0);
+    sprites.drawSelfMasked(35, 31, badgeNextLevel, 0);
+    drawNumbers(78, 40, FONT_BIG, DATA_LEVEL);
+  }
+
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON) && canPressButton)
+  {
+    setKid();
+    cam.pos = vec2(0, 0);
+    cam.offset = vec2(0, 0);
+    enemiesInit();
+    levelLoad(levels[level]);
+    gameState = STATE_GAME_PLAYING;
   }
 };
 
 
 void stateGamePlaying()
 {
-  if (timeBonus > 0 && arduboy.everyXFrames(45)) --timeBonus;
   checkInputs();
   checkKid();
   updateCamera();

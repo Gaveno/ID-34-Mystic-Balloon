@@ -441,8 +441,10 @@ void checkCollisions()
   // Level exit
   if (key.haveKey && arduboy.collide(levelExit, playerRect))
   {
-    gameState = STATE_GAME_NEXT_LEVEL;
+    balloonsLeft = kid.balloons;
+    scoreIsVisible = true;
     level++;
+    gameState = STATE_GAME_NEXT_LEVEL;
   }
 
   // Enemies and objects
