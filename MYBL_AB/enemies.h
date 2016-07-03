@@ -6,7 +6,7 @@
 //#include "vec2.h"
 
 #define MAX_FAN_PARTICLES 4
-#define FAN_POWER 6
+#define FAN_POWER 12
 
 struct Coin
 {
