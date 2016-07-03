@@ -9,10 +9,12 @@ byte sparkleFrames = 0;
 
 void drawTitleScreen()
 {
-  if (arduboy.everyXFrames(1)) blinkingFrames++;
+  /*if (arduboy.everyXFrames(1)) blinkingFrames++;
   if (arduboy.everyXFrames(2)) sparkleFrames++;
   if (sparkleFrames > 4) sparkleFrames = 0;
-  if (blinkingFrames > 31) blinkingFrames = 0;
+  if (blinkingFrames > 31) blinkingFrames = 0;*/
+  blinkingFrames = (++blinkingFrames) % 32;
+  sparkleFrames = (++sparkleFrames) % 5;
   arduboy.drawCompressed(0, 0, titleScreen, WHITE);
   arduboy.drawCompressed(85, 45, badgeMysticBalloon, WHITE);
   sprites.drawSelfMasked(79, 43, stars, sparkleFrames);
@@ -25,8 +27,14 @@ void stateMenuIntro()
 {
   globalCounter++;
   if (globalCounter < 46) arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
+  else
+  {
+    drawTitleScreen();
+    if ((globalCounter > 90) || arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+  }
+  /*if (globalCounter < 46) arduboy.drawCompressed(0, 0, TEAMarg, WHITE);
   if (globalCounter > 45) drawTitleScreen();
-  if ((globalCounter > 90) || arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+  if ((globalCounter > 90) || arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;*/
 }
 
 void stateMenuMain()
@@ -51,8 +59,9 @@ void stateMenuHelp()
 
 void stateMenuInfo()
 {
-  if (arduboy.everyXFrames(10)) sparkleFrames++;
-  if (sparkleFrames > 4) sparkleFrames = 0;
+  //if (arduboy.everyXFrames(10)) sparkleFrames++;
+  //if (sparkleFrames > 4) sparkleFrames = 0;
+  if (arduboy.everyXFrames(10)) sparkleFrames = (++sparkleFrames) % 5;
   arduboy.drawCompressed(43, 23, badgeMysticBalloon, WHITE);
   sprites.drawSelfMasked(37, 21, stars, sparkleFrames);
   //sprites.drawSelfMasked(37, 40, madeBy, 0);
