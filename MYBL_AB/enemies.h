@@ -6,7 +6,7 @@
 //#include "vec2.h"
 
 #define MAX_FAN_PARTICLES 4
-#define FAN_POWER 12
+#define FAN_POWER 5
 
 struct Coin
 {
@@ -198,7 +198,12 @@ void enemiesUpdate()
 {
   if (key.active)
   {
-    sprites.drawPlusMask(key.pos.x - cam.pos.x, key.pos.y - cam.pos.y, sprKey, 0);
+    //sprites.drawPlusMask(key.pos.x - cam.pos.x, key.pos.y - cam.pos.y, sprKey, 0);
+    int commonx = key.pos.x - cam.pos.x;
+    int commony = key.pos.y - cam.pos.y;
+    //sprites.drawSelfMasked(commonx, commony, largeMask, 0);
+    //sprites.drawSelfMasked(commonx, commony + 8, smallMask, 0);
+    sprites.drawErase(commonx, commony, sprKey, 0);
   }
   if (arduboy.everyXFrames(8))
   {

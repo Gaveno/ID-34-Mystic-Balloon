@@ -6,12 +6,12 @@
 //#include "levels.h"
 #include "vec2.h"
 
-#define FIXED_POINT 6
+#define FIXED_POINT 5
 #define PLAYER_SPEED_WALKING 1 << FIXED_POINT
 #define PLAYER_SPEED_AIR 2
 #define PLAYER_PARTICLES 3
 #define PLAYER_JUMP_VELOCITY (2 << FIXED_POINT) - 2
-#define GRAVITY 6
+#define GRAVITY 3
 #define FRICTION 1 // for horizontal speed
 #define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
@@ -144,7 +144,10 @@ void checkKid()
       if (kid.balloonOffset > 0)
         kid.balloonOffset -= 2;
       else
-        kid.speed.y = max(-((8 / kid.balloons) >> 1), kid.speed.y);
+      {
+        //kid.speed.y = max(-((8 / kid.balloons) >> 1), kid.speed.y);
+        kid.speed.y = max(kid.balloons - 5, kid.speed.y);
+      }
     }
   }
 
