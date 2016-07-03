@@ -33,20 +33,22 @@ void stateGameNextLevel()
   {
     if (arduboy.everyXFrames(20))
     {
+      canPressButton = false;
       if (coinsCollected > 0)
       {
         coinsCollected--;
         scorePlayer += 20;
       }
-      if (balloonsLeft > 0 && !coinsCollected)
+      else if (balloonsLeft > 0)
       {
         balloonsLeft--;
         scorePlayer += 20;
       }
-      if (!balloonsLeft && !coinsCollected)
+      else canPressButton = true;
+      /*if (!balloonsLeft && !coinsCollected)
       {
         canPressButton = true;
-      }
+      }*/
     }
   }
   else gameState = STATE_GAME_OVER;

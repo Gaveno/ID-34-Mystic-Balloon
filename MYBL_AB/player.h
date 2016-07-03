@@ -6,12 +6,12 @@
 //#include "levels.h"
 #include "vec2.h"
 
-#define FIXED_POINT 5
+#define FIXED_POINT 6
 #define PLAYER_SPEED_WALKING 1 << FIXED_POINT
 #define PLAYER_SPEED_AIR 2
 #define PLAYER_PARTICLES 3
 #define PLAYER_JUMP_VELOCITY (2 << FIXED_POINT) - 2
-#define GRAVITY 3
+#define GRAVITY 6
 #define FRICTION 1 // for horizontal speed
 #define MAX_XSPEED PLAYER_SPEED_WALKING
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
@@ -191,10 +191,10 @@ void checkKid()
     // Friction in air
     if (abs(kid.speed.x) > FRICTION)
     {
-      if (arduboy.everyXFrames(3))
+      if (arduboy.everyXFrames(4))
       {
-        if (kid.speed.x > 0) kid.speed.x = max(0, kid.speed.x - FRICTION);//kid.speed.x -= FRICTION;
-        else if (kid.speed.x < 0) kid.speed.x = min(0, kid.speed.x + FRICTION);//kid.speed.x += FRICTION;
+        if (kid.speed.x > 0) kid.speed.x -= FRICTION;//kid.speed.x = max(0, kid.speed.x - FRICTION);//
+        else if (kid.speed.x < 0) kid.speed.x += FRICTION;//kid.speed.x = min(0, kid.speed.x + FRICTION);//
       }
     }
     else
@@ -301,12 +301,17 @@ void drawKid()
     kidcam.y = kid.pos.y - cam.pos.y;
     if (kid.isBalloon)
     {
-      if (kid.balloons > 2) sprites.drawPlusMask(kidcam.x + 7 - 6 * kid.direction, kidcam.y - 12 + kid.balloonOffset, balloon_plus_mask, 0);
-      if (kid.balloons > 1) sprites.drawPlusMask(kidcam.x + 1 - 6 * kid.direction, kidcam.y - 11 + kid.balloonOffset, balloon_plus_mask, 0);
-      sprites.drawPlusMask(kidcam.x + 4 - 6 * kid.direction, kidcam.y - 9 + kid.balloonOffset, balloon_plus_mask, 0);
+      int commonx = kidcam.x - (6 * kid.direction);
+      int commony = kidcam.y + kid.balloonOffset;
+      if (kid.balloons > 1)
+      {
+        sprites.drawPlusMask(commonx + 1, commony - 11, balloon_plus_mask, 0);
+        if (kid.balloons > 2) sprites.drawPlusMask(commonx + 7, commony - 12, balloon_plus_mask, 0);
+      }
+      sprites.drawPlusMask(commonx + 4, commony - 9, balloon_plus_mask, 0);
     }
     sprites.drawSelfMasked(kidcam.x, kidcam.y, kidSprite, 12 + kid.direction);
-    sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + 4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon));
+    sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + (4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)) * !kid.isSucking);
 
     if (kid.isSucking)
     {
@@ -325,7 +330,6 @@ void drawKid()
         }
 
         // Draw
-
         if (kid.direction)
           sprites.drawErase(kidcam.x - kid.particles[i].x, kidcam.y + 10 + kid.particles[i].y, particle , 0);
         else

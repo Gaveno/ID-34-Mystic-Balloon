@@ -20,7 +20,7 @@ void checkInputs()
     mapTimer = TIMER_AMOUNT;
     cam.offset.x = -CAMERA_OFFSET;
     kid.direction = FACING_LEFT;
-    if (kid.speed.y == 0 && !kid.isBalloon)
+    if (!(kid.isJumping || kid.isBalloon || kid.isLanding))
     {
       if (!gridGetSolid((kid.pos.x - 1) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x -= PLAYER_SPEED_WALKING;
@@ -42,7 +42,7 @@ void checkInputs()
     //mapTimer = TIMER_AMOUNT;
     cam.offset.x = CAMERA_OFFSET;
     kid.direction = FACING_RIGHT;
-    if (kid.speed.y == 0 && !kid.isBalloon)
+    if (!(kid.isJumping || kid.isBalloon || kid.isLanding))
     {
       if (!gridGetSolid((kid.pos.x + 12) >> 4, (kid.pos.y + 8) >> 4))
         kid.actualpos.x += PLAYER_SPEED_WALKING;
