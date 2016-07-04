@@ -10,8 +10,8 @@ byte sparkleFrames = 0;
 void drawTitleScreen()
 {
   /*if (arduboy.everyXFrames(1)) blinkingFrames++;
-  if (arduboy.everyXFrames(2)) sparkleFrames++;
-  if (sparkleFrames > 4) sparkleFrames = 0;
+  //if (arduboy.everyXFrames(2)) sparkleFrames++;
+  //if (sparkleFrames > 4) sparkleFrames = 0;
   if (blinkingFrames > 31) blinkingFrames = 0;*/
   blinkingFrames = (++blinkingFrames) % 32;
   sparkleFrames = (++sparkleFrames) % 5;
