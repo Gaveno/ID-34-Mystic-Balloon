@@ -210,7 +210,7 @@ void enemiesUpdate()
     walkerFrame = (++walkerFrame) % 2;
     coinFrame = (++coinFrame) % 4;
   }
-  if (arduboy.everyXFrames(3))
+  if (arduboy.everyXFrames(5))
     fanFrame = (++fanFrame) % 2;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {

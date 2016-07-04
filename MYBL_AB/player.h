@@ -91,13 +91,24 @@ void checkKid()
       kid.isActive = true;
     }
   }
-  if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
+  /*if (arduboy.everyXFrames(8) && (kid.isWalking || kid.isSucking))
   {
     ++kid.frame;
     if (kid.frame % 2 == 0)
       arduboy.audio.tone(150, 20);
   }
-  if (kid.frame > 3 || (!kid.isWalking && !kid.isSucking)) kid.frame = 0;
+  if (kid.frame > 3 || (!kid.isWalking && !kid.isSucking)) kid.frame = 0;*/
+  if (kid.isWalking || kid.isSucking)
+  {
+    if (arduboy.everyXFrames(8))
+    {
+      kid.frame = (++kid.frame) % 4;
+      if (kid.frame % 2 == 0)
+        arduboy.audio.tone(150, 20);
+    }
+  }
+  else
+    kid.frame = 0;
 
   // Kid is moving up
   if (kid.speed.y > 0 && !kid.isBalloon)
@@ -318,7 +329,6 @@ void drawKid()
 
     if (kid.isSucking)
     {
-    
       sprites.drawPlusMask(kidcam.x-2, kidcam.y+8, kidSpriteSuck_plus_mask, kid.direction); //kidSpriteSuck
       for (byte i = 0; i < PLAYER_PARTICLES; ++i)
       {
