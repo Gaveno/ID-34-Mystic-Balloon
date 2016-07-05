@@ -188,10 +188,12 @@ void checkKid()
     //if (abs(((kid.pos.x + 6) % 16) - 8) >= 4)
     if (!arduboy.pressed(RIGHT_BUTTON | LEFT_BUTTON))//(!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
     {
-      int8_t yy = (kid.pos.y + 16) >> 4;
-      if (!gridGetSolid((kid.pos.x + 2) >> 4, yy))
+      int yy = (kid.pos.y + 16) >> 4;
+      bool sl = gridGetSolid((kid.pos.x + 4) >> 4, yy);
+      bool sr = gridGetSolid((kid.pos.x + 8) >> 4, yy);
+      if (!sl & gridGetSolid((kid.pos.x + 11) >> 4, yy))
         kid.actualpos.x -= FIXED_POINT << 2;
-      else if (!gridGetSolid((kid.pos.x + 10) >> 4, yy))
+      else if (!sr && gridGetSolid((kid.pos.x) >> 4, yy))
         kid.actualpos.x += FIXED_POINT << 2;
     }
   }

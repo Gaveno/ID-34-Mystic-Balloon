@@ -42,7 +42,7 @@
 #define LEVEL_CELL_BYTES             (LEVEL_WIDTH_CELLS * LEVEL_HEIGHT_CELLS) >> 3
 #define LEVEL_ARRAY_SIZE             576
 
-#define PLAYER_JUMP_TIME             10
+#define PLAYER_JUMP_TIME             11
 
 Arduboy arduboy;
 Sprites sprites(arduboy);
