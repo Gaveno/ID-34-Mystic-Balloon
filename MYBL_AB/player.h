@@ -10,7 +10,8 @@
 #define PLAYER_SPEED_WALKING 1 << FIXED_POINT
 #define PLAYER_SPEED_AIR 2
 #define PLAYER_PARTICLES 3
-#define PLAYER_JUMP_VELOCITY (2 << FIXED_POINT) - 2
+//#define PLAYER_JUMP_VELOCITY (2 << FIXED_POINT) - 2
+#define PLAYER_JUMP_VELOCITY (1 << FIXED_POINT) + 8
 #define GRAVITY 3
 #define FRICTION 1 // for horizontal speed
 #define MAX_XSPEED PLAYER_SPEED_WALKING
@@ -111,7 +112,7 @@ void checkKid()
     kid.isLanding = false;
     if (!kid.jumpLetGo && kid.jumpTimer > 0)
     {
-      kid.speed.y += GRAVITY;
+      kid.speed.y += GRAVITY + 2;
       kid.jumpTimer--;
     }
   }
@@ -185,7 +186,7 @@ void checkKid()
 
     // Fall off edge
     //if (abs(((kid.pos.x + 6) % 16) - 8) >= 4)
-    if (!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
+    if (!arduboy.pressed(RIGHT_BUTTON | LEFT_BUTTON))//(!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
     {
       int8_t yy = (kid.pos.y + 16) >> 4;
       if (!gridGetSolid((kid.pos.x + 2) >> 4, yy))
@@ -201,8 +202,8 @@ void checkKid()
     {
       if (arduboy.everyXFrames(4))
       {
-        if (kid.speed.x > 0) kid.speed.x -= FRICTION;//kid.speed.x = max(0, kid.speed.x - FRICTION);//
-        else if (kid.speed.x < 0) kid.speed.x += FRICTION;//kid.speed.x = min(0, kid.speed.x + FRICTION);//
+        if (kid.speed.x > 0) kid.speed.x -= FRICTION;
+        else if (kid.speed.x < 0) kid.speed.x += FRICTION;
       }
     }
     else
