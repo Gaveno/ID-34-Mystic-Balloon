@@ -549,8 +549,9 @@ void drawGrid() {
   //sprites.drawPlusMask(levelExit.x - cam.pos.x, levelExit.y - cam.pos.y, sprDoor, (walkerFrame + 1) * (key.haveKey));
   int commonx = levelExit.x - cam.pos.x;
   int commony = levelExit.y - cam.pos.y;
-  sprites.drawSelfMasked(commonx, commony, largeMask, 0);
-  sprites.drawErase(commonx, commony, sprDoor, (walkerFrame + 1) * (key.haveKey));
+  //sprites.drawSelfMasked(commonx, commony, largeMask, 0);
+  //sprites.drawErase(commonx, commony, sprDoor, (walkerFrame + 1) * (key.haveKey));
+  sprites.drawOverwrite(commonx + 2, commony, elements, 2+(key.haveKey));
   //Serial.println("End of tile drawing");
 }
 

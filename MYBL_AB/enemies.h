@@ -203,7 +203,8 @@ void enemiesUpdate()
     int commony = key.pos.y - cam.pos.y;
     //sprites.drawSelfMasked(commonx, commony, largeMask, 0);
     //sprites.drawSelfMasked(commonx, commony + 8, smallMask, 0);
-    sprites.drawErase(commonx, commony, sprKey, 0);
+    //sprites.drawErase(commonx, commony, sprKey, 0);
+    sprites.drawOverwrite(commonx, commony, elements, 1);
   }
   if (arduboy.everyXFrames(8))
   {
