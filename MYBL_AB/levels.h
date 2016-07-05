@@ -714,6 +714,6 @@ void drawHUD()
   drawBalloonLives();
   drawNumbers(91, 0, FONT_SMALL, DATA_SCORE);
   drawCoinHUD();
-  if (key.haveKey) sprites.drawErase(28, 0, elementsHUD, 13);
+  if (key.haveKey) sprites.drawOverwrite(28, 0, elementsHUD, 13);
 }
 #endif
