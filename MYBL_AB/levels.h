@@ -698,7 +698,7 @@ void checkCollisions()
     }
 
     // Spikes
-    if (!kid.isImune && spikes[i].active && arduboy.collide(playerRect, spikes[i].pos))
+    if (!kid.isImune && bitRead(spikes[i].characteristics, 2) && arduboy.collide(playerRect, spikes[i].pos))
     {
       kidHurt();
       if (kid.pos.y < spikes[i].pos.y) kid.speed.y = PLAYER_JUMP_VELOCITY;
