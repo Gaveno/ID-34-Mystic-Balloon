@@ -28,7 +28,7 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          1
+#define LEVEL_TO_START_WITH          4
 #define TOTAL_LEVELS                 20
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
@@ -63,6 +63,6 @@ byte coinsActive = 0;
 vec2 levelExit = vec2(0, 0);
 vec2 startPos;
 byte mapTimer = 10;
-//vec2 fanParticles[5];
+
 
 #endif
