@@ -32,14 +32,14 @@ void stateGameNextLevel()
     if (arduboy.everyXFrames(30))
     {
       canPressButton = false;
-      if (balloonsLeft > 0)
-      {
-        balloonsLeft--;
-        scorePlayer += 20;
-      }
-      else if (coinsCollected > 0)
+      if (coinsCollected > 0)
       {
         coinsCollected--;
+        scorePlayer += 20;
+      }
+      else if (balloonsLeft > 0)
+      {
+        balloonsLeft--;
         scorePlayer += 20;
       }
       else canPressButton = true;
@@ -58,8 +58,13 @@ void stateGameNextLevel()
 
   if (scoreIsVisible)
   {
-    for (byte i = 0; i < coinsCollected; i++) sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 0);
-    for (byte i = 0; i < balloonsLeft; i++) sprites.drawOverwrite(82 + (i * 12), 27, nextLevelElements, 1);
+    /*for (byte i = 0; i < coinsCollected; i++) sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 0);
+    for (byte i = 0; i < balloonsLeft; i++) sprites.drawOverwrite(82 + (i * 12), 27, nextLevelElements, 1);*/
+    for (byte i = 0; i < coinsCollected + balloonsLeft; ++i)
+    {
+      if (i < coinsCollected) sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 0);
+      else sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 1);
+    }
   }
 
   if (canPressButton)
