@@ -598,6 +598,7 @@ void checkCollisions()
   {
     balloonsLeft = kid.balloons;
     scoreIsVisible = true;
+    canPressButton = false;
     level++;
     gameState = STATE_GAME_NEXT_LEVEL;
   }
