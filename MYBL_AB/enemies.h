@@ -204,7 +204,7 @@ void enemiesUpdate()
     //sprites.drawSelfMasked(commonx, commony, largeMask, 0);
     //sprites.drawSelfMasked(commonx, commony + 8, smallMask, 0);
     //sprites.drawErase(commonx, commony, sprKey, 0);
-    sprites.drawOverwrite(commonx, commony, elements, 1);
+    sprites.drawOverwrite(commonx, commony, elements, 4);
   }
   if (arduboy.everyXFrames(8))
   {
@@ -212,7 +212,7 @@ void enemiesUpdate()
     coinFrame = (++coinFrame) % 4;
   }
   if (arduboy.everyXFrames(5))
-    fanFrame = (++fanFrame) % 2;
+    fanFrame = (++fanFrame) % 3;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     // Fans
@@ -234,8 +234,9 @@ void enemiesUpdate()
       // Draw fan
       int _x = fans[i].pos.x - cam.pos.x;
       int _y = fans[i].pos.y - cam.pos.y;
-      sprites.drawSelfMasked(_x, _y, largeMask, 0);
-      sprites.drawErase(_x, _y, sprFan3, fanFrame);
+      //sprites.drawSelfMasked(_x, _y, largeMask, 0);
+      //sprites.drawErase(_x, _y, sprFan3, fanFrame);
+      sprites.drawOverwrite(_x, _y, fan, fanFrame);
     }
 
     // Spikes
@@ -260,13 +261,13 @@ void enemiesUpdate()
         }
       }
       
-      sprites.drawErase(walkers[i].pos.x - cam.pos.x, walkers[i].pos.y - cam.pos.y, walkerSprite, walkerFrame + (walkers[i].HP <= 0) * 2);
+      sprites.drawOverwrite(walkers[i].pos.x - cam.pos.x, walkers[i].pos.y - cam.pos.y, walkerSprite, walkerFrame + (walkers[i].HP <= 0) * 2);
     }
 
     // Coins
     if (coins[i].active)
     {
-      sprites.drawPlusMask(coins[i].pos.x - cam.pos.x, coins[i].pos.y - cam.pos.y, sprCoin, coinFrame);
+      sprites.drawOverwrite(coins[i].pos.x - cam.pos.x, coins[i].pos.y - cam.pos.y, elements, coinFrame);
     }
   }
 }

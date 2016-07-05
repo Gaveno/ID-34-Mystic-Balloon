@@ -539,7 +539,7 @@ void drawGrid() {
         //        Serial.print(" Tile: ");
         //        Serial.print(gridGetTile(x, y));
         //        Serial.print("\n");
-        sprites.drawSelfMasked((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSetAlternative, gridGetTile(x, y));
+        sprites.drawSelfMasked((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSetTwo, gridGetTile(x, y));
       }
     }
   }
@@ -551,7 +551,7 @@ void drawGrid() {
   int commony = levelExit.y - cam.pos.y;
   //sprites.drawSelfMasked(commonx, commony, largeMask, 0);
   //sprites.drawErase(commonx, commony, sprDoor, (walkerFrame + 1) * (key.haveKey));
-  sprites.drawOverwrite(commonx + 2, commony, elements, 2+(key.haveKey));
+  sprites.drawOverwrite(commonx, commony, door, (key.haveKey));
   //Serial.println("End of tile drawing");
 }
 
