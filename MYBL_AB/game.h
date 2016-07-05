@@ -56,7 +56,7 @@ void stateGameNextLevel()
 
   if (scoreIsVisible)
   {
-    for (byte i = 0; i < coinsCollected; i++) sprites.drawPlusMask(35 + (i * 16), 0, elements, 0);
+    for (byte i = 0; i < coinsCollected; i++) sprites.drawOverwrite(35 + (i * 16), 0, elements, 5);
     for (byte i = 0; i < balloonsLeft; i++) sprites.drawPlusMask(35 + (i * 16), 16, balloon_plus_mask, 0);
     drawNumbers(43, 55, FONT_BIG, DATA_SCORE);
   }

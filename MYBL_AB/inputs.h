@@ -55,7 +55,7 @@ void checkInputs()
     }
     //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
-  if (arduboy.pressed(A_BUTTON + DOWN_BUTTON))gameState = STATE_GAME_PAUSE;
+  if (arduboy.pressed(A_BUTTON + DOWN_BUTTON))  gameState = STATE_GAME_PAUSE;
   if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
   {
     kid.isSucking = true;
@@ -76,8 +76,8 @@ void checkInputs()
       kid.jumpLetGo = false;
       kid.jumpTimer = PLAYER_JUMP_TIME;
       kid.speed.y = PLAYER_JUMP_VELOCITY;
-      if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = (PLAYER_SPEED_WALKING);
-      if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -(PLAYER_SPEED_WALKING);
+      if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = MAX_XSPEED;//(PLAYER_SPEED_WALKING);
+      if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -MAX_XSPEED;//-(PLAYER_SPEED_WALKING);
     }
     else
     {

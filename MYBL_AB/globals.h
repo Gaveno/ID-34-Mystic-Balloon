@@ -60,7 +60,7 @@ byte walkerFrame = 0;
 byte fanFrame = 0;
 byte coinFrame = 0;
 byte coinsActive = 0;
-Rect levelExit = {.x = 2 << 4, .y = 10 << 4, .width = 16, .height = 16};
+vec2 levelExit = vec2(0, 0);
 vec2 startPos;
 byte mapTimer = 10;
 //vec2 fanParticles[5];

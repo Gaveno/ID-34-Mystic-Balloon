@@ -40,8 +40,7 @@ struct Spike
 {
   Rect pos;
   bool active;
-  const uint8_t * sprite;
-  byte image;
+  byte type;
 };
 
 Spike spikes[MAX_PER_TYPE];
@@ -50,7 +49,7 @@ struct Fan
 {
   vec2 pos;
   vec2 particles[5];
-  int8_t height;
+  int height;
   bool active;
 };
 
@@ -74,8 +73,7 @@ void enemiesInit()
     spikes[i].pos.width = 16;
     spikes[i].pos.height = 16;
     spikes[i].active = false;
-    spikes[i].sprite = sprSpikes_vertical;
-    spikes[i].image = 0;
+    spikes[i].type = 1;
 
     // Walkers
     walkers[i].pos.x = 0;
@@ -143,16 +141,14 @@ void spikesCreate(vec2 pos)
       // Solid above
       if (gridGetSolid(pos.x, pos.y - 1))
       {
-        spikes[i].sprite = sprSpikes_vertical;
-        spikes[i].image = 0;
+        spikes[i].type = 3;
         spikes[i].pos.width = 16;
         spikes[i].pos.height = 8;
       }
       // Solid below
       else if (gridGetSolid(pos.x, pos.y + 1))
       {
-        spikes[i].sprite = sprSpikes_vertical;
-        spikes[i].image = 1;
+        spikes[i].type = 1;
         spikes[i].pos.width = 16;
         spikes[i].pos.height = 8;
         spikes[i].pos.y += 8;
@@ -160,8 +156,7 @@ void spikesCreate(vec2 pos)
       // Solid left
       else if (gridGetSolid(pos.x - 1, pos.y))
       {
-        spikes[i].sprite = sprSpikes_horizontal;
-        spikes[i].image = 1;
+        spikes[i].type = 0;
         spikes[i].pos.width = 8;
         spikes[i].pos.height = 16;
         //spikes[i].pos.x += 8;
@@ -169,8 +164,7 @@ void spikesCreate(vec2 pos)
       // Solid right
       else if (gridGetSolid(pos.x + 1, pos.y))
       {
-        spikes[i].sprite = sprSpikes_horizontal;
-        spikes[i].image = 0;
+        spikes[i].type = 2;
         spikes[i].pos.width = 8;
         spikes[i].pos.height = 16;
         spikes[i].pos.x += 8;
@@ -187,7 +181,7 @@ void fansCreate(vec2 pos, byte height)
     if (!fans[i].active)
     {
       fans[i].pos = pos << 4;
-      fans[i].height = height;
+      fans[i].height = height << 4;
       fans[i].active = true;
       return;
     }
@@ -224,8 +218,8 @@ void enemiesUpdate()
       {
         // Update Particles
         fans[i].particles[a].y =
-          (fans[i].particles[a].y < (fans[i].height << 4)) ?
-          fans[i].particles[a].y + 6 : random(fans[i].height << 2);
+          (fans[i].particles[a].y < (fans[i].height)) ?
+          fans[i].particles[a].y + 6 : random(fans[i].height >> 2);
   
         // Draw particles
         sprites.drawErase(fans[i].pos.x + fans[i].particles[a].x - cam.pos.x, fans[i].pos.y - fans[i].particles[a].y - cam.pos.y, particle , 0);
@@ -242,7 +236,17 @@ void enemiesUpdate()
     // Spikes
     if (spikes[i].active)
     {
-      sprites.drawErase(spikes[i].pos.x - cam.pos.x, spikes[i].pos.y - cam.pos.y, spikes[i].sprite, spikes[i].image);
+      //sprites.drawErase(spikes[i].pos.x - cam.pos.x, spikes[i].pos.y - cam.pos.y, spikes[i].sprite, spikes[i].image);
+      int commonx = spikes[i].pos.x - cam.pos.x;
+      int commony = spikes[i].pos.y - cam.pos.y;
+      sprites.drawOverwrite(commonx, commony, sprSpikes, spikes[i].type);
+      switch (spikes[i].type)
+      {
+        case 0:
+        case 2: sprites.drawOverwrite(commonx, commony + 8, sprSpikes, spikes[i].type);
+        break;
+        default: sprites.drawOverwrite(commonx + 8, commony, sprSpikes, spikes[i].type);
+      }
     }
 
     // Walkers

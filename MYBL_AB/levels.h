@@ -585,7 +585,7 @@ void checkCollisions()
 
   // Key
   Rect keyRect = {.x = key.pos.x, .y = key.pos.y, .width = 8, .height = 16};
-  if (key.active && arduboy.collide(keyRect, playerRect))
+  if (arduboy.collide(keyRect, playerRect) && key.active)
   {
     key.active = false;
     key.haveKey = true;
@@ -593,7 +593,8 @@ void checkCollisions()
   }
 
   // Level exit
-  if (key.haveKey && arduboy.collide(levelExit, playerRect))
+  Rect exitRect = {.x = levelExit.x + 4, .y = levelExit.y, .width = 8, .height = 16};
+  if (arduboy.collide(exitRect, playerRect) && arduboy.justPressed(UP_BUTTON) && key.haveKey)
   {
     balloonsLeft = kid.balloons;
     scoreIsVisible = true;
@@ -639,7 +640,7 @@ void checkCollisions()
     if (walkers[i].active)
     {
       Rect walkerrect = {.x = walkers[i].pos.x, .y = walkers[i].pos.y, .width = 8, .height = 8};
-      if (kid.isSucking && arduboy.collide(playerSuckRect, walkerrect))
+      if (arduboy.collide(playerSuckRect, walkerrect) && kid.isSucking)
       {
         --walkers[i].HP;
         walkers[i].hurt = true;
@@ -675,7 +676,7 @@ void checkCollisions()
         walkers[i].hurt = false;
 
       // Hurt player
-      if (walkers[i].HP > 0 && !kid.isImune && arduboy.collide(playerRect, walkerrect))
+      if (arduboy.collide(playerRect, walkerrect) && walkers[i].HP > 0 && !kid.isImune)
       {
         kidHurt();
         kid.speed.y = PLAYER_JUMP_VELOCITY;
@@ -685,8 +686,8 @@ void checkCollisions()
     // Fans
     if (fans[i].active)
     {
-      Rect fanrect = {.x = fans[i].pos.x, .y = fans[i].pos.y - (fans[i].height << 4),
-                      .width = 16, .height = fans[i].height << 4
+      Rect fanrect = {.x = fans[i].pos.x, .y = fans[i].pos.y - (fans[i].height),
+                      .width = 16, .height = fans[i].height
                      };
       if (kid.isBalloon && arduboy.collide(playerRect, fanrect))
       {
