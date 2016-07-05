@@ -50,9 +50,6 @@ struct Spike
   //                      |||||||└->  0 \ these 2 bits are used to determine the spike type
   //                      ||||||└-->  1 /  
   //                      |||||└--->  2   the spike is active    (0 = false / 1 = true)
-
-  //bool active;
-  //byte type;
 };
 
   Spike spikes[MAX_PER_TYPE];

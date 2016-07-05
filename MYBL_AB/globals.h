@@ -28,7 +28,7 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          4
+#define LEVEL_TO_START_WITH          1
 #define TOTAL_LEVELS                 20
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
@@ -55,6 +55,7 @@ unsigned long scorePlayer;
 byte coinsCollected = 0;
 byte balloonsLeft;
 boolean scoreIsVisible;
+boolean canPressButton;
 
 byte walkerFrame = 0;
 byte fanFrame = 0;

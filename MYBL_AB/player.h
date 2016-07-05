@@ -92,7 +92,7 @@ void checkKid()
       kid.isActive = true;
     }
   }
-  
+
   if (kid.isWalking || kid.isSucking)
   {
     if (arduboy.everyXFrames(8))
@@ -321,12 +321,15 @@ void drawKid()
       }
       sprites.drawPlusMask(commonx + 4, commony - 9, balloon_plus_mask, 0);
     }
-    sprites.drawSelfMasked(kidcam.x, kidcam.y, kidSprite, 12 + kid.direction);
-    sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + (4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)) * !kid.isSucking);
-
-    if (kid.isSucking)
+    if (!kid.isSucking)
     {
-      sprites.drawPlusMask(kidcam.x-2, kidcam.y+8, kidSpriteSuck_plus_mask, kid.direction); //kidSpriteSuck
+      sprites.drawSelfMasked(kidcam.x, kidcam.y, kidSprite, 12 + kid.direction);
+      sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + (4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)) * !kid.isSucking);
+    }
+
+    else
+    {
+      sprites.drawPlusMask(kidcam.x - 2, kidcam.y, kidSpriteSuck_plus_mask, walkerFrame + 2*kid.direction); //kidSpriteSuck
       for (byte i = 0; i < PLAYER_PARTICLES; ++i)
       {
         // Update

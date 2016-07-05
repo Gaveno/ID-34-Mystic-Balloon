@@ -10,8 +10,6 @@
 #include "levels.h"
 
 boolean nextLevelIsVisible;
-boolean canPressButton;
-
 
 
 void stateMenuPlay()
@@ -31,7 +29,7 @@ void stateGameNextLevel()
 {
   if (level < TOTAL_LEVELS)
   {
-    if (arduboy.everyXFrames(20))
+    if (arduboy.everyXFrames(30))
     {
       canPressButton = false;
       if (coinsCollected > 0)
@@ -45,36 +43,37 @@ void stateGameNextLevel()
         scorePlayer += 20;
       }
       else canPressButton = true;
-      /*if (!balloonsLeft && !coinsCollected)
-      {
-        canPressButton = true;
-      }*/
     }
   }
   else gameState = STATE_GAME_OVER;
 
 
-  if (scoreIsVisible)
-  {
-    for (byte i = 0; i < coinsCollected; i++) sprites.drawOverwrite(35 + (i * 16), 0, elements, 5);
-    for (byte i = 0; i < balloonsLeft; i++) sprites.drawPlusMask(35 + (i * 16), 16, balloon_plus_mask, 0);
-    drawNumbers(43, 55, FONT_BIG, DATA_SCORE);
-  }
-
   if (nextLevelIsVisible)
   {
-    sprites.drawSelfMasked(35, 31, badgeNextLevel, 0);
-    drawNumbers(78, 40, FONT_BIG, DATA_LEVEL);
+    for (byte i = 0; i < 11; i++) sprites.drawSelfMasked(9 + (i * 10), 27, nextLevelElements, 2);
+    sprites.drawSelfMasked(35, 4, badgeNextLevel, 0); //33
+    drawNumbers(78, 13, FONT_BIG, DATA_LEVEL); //42
+    drawNumbers(43, 49, FONT_BIG, DATA_SCORE); //55
   }
 
-  if (arduboy.justPressed(A_BUTTON | B_BUTTON) && canPressButton)
+  if (scoreIsVisible)
   {
-    setKid();
-    cam.pos = vec2(0, 0);
-    cam.offset = vec2(0, 0);
-    enemiesInit();
-    levelLoad(levels[level]);
-    gameState = STATE_GAME_PLAYING;
+    for (byte i = 0; i < coinsCollected; i++) sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 0);
+    for (byte i = 0; i < balloonsLeft; i++) sprites.drawOverwrite(82 + (i * 12), 27, nextLevelElements, 1);
+  }
+
+  if (canPressButton)
+  {
+    sprites.drawOverwrite(39, 27, badgePressKey, 0);
+    if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+    {
+      setKid();
+      cam.pos = vec2(0, 0);
+      cam.offset = vec2(0, 0);
+      enemiesInit();
+      levelLoad(levels[level]);
+      gameState = STATE_GAME_PLAYING;
+    }
   }
 };
 
@@ -97,7 +96,7 @@ void stateGamePlaying()
 
 void stateGamePause()
 {
-  sprites.drawSelfMasked(47, 15, badgePause, 0);
+  sprites.drawSelfMasked(47, 17, badgePause, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_GAME_PLAYING;
@@ -107,8 +106,8 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  sprites.drawSelfMasked(47, 15, badgeGameOver, 0);
-  drawNumbers(43, 40, FONT_BIG, DATA_SCORE);
+  sprites.drawSelfMasked(47, 17, badgeGameOver, 0);
+  drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_MENU_MAIN;
