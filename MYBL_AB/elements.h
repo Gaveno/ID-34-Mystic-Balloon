@@ -16,7 +16,7 @@ void drawBalloonLives()
 {
   for (byte i = 0; i < kid.balloons; ++i)
   {
-    sprites.drawErase((i * 7) + 2, 0, elementsHUD, 10);
+    sprites.drawOverwrite((i * 7) + 2, 0, elementsHUD, 10);
   }
 }
 
@@ -25,9 +25,9 @@ void drawCoinHUD()
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     if (i >= MAX_PER_TYPE - coinsActive)
-      sprites.drawErase(40 + (i * 6), 0, elementsHUD, 11);
+      sprites.drawOverwrite(40 + (i * 6), 0, elementsHUD, 11);
     else
-      sprites.drawErase(40 + (i * 6), 0, elementsHUD, 12);
+      sprites.drawOverwrite(40 + (i * 6), 0, elementsHUD, 12);
   }
 }
 
@@ -42,16 +42,15 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
       ltoa(scorePlayer, buf, 10);
       charLen = strlen(buf);
       pad = 6 - charLen;
-      sprites.drawSelfMasked(numbersX - 2, numbersY - 2, numbersBigMask00, 0);
+      sprites.drawSelfMasked(numbersX - 2, numbersY - 2, numbersBigMask, 0);
       for (byte i = 0; i < 6; i++)sprites.drawSelfMasked(numbersX + (7 * i), numbersY - 2, numbersBigMask01, 0);
-      sprites.drawSelfMasked(numbersX + 41, numbersY - 2, numbersBigMask02, 0);
+      sprites.drawSelfMasked(numbersX + 41, numbersY - 2, numbersBigMask, 1);
       break;
     case DATA_LEVEL:
       itoa(level + 1, buf, 10);
       charLen = strlen(buf);
       pad = 2 - charLen;
       sprites.drawSelfMasked(numbersX-2, numbersY - 9, badgeLevel, 0);
-      
       break;
   }
 
@@ -61,7 +60,7 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
     switch (fontType)
     {
       case FONT_SMALL:
-        sprites.drawErase(numbersX + (6 * i), numbersY, elementsHUD, 0);
+        sprites.drawOverwrite(numbersX + (6 * i), numbersY, elementsHUD, 0);
         break;
       case FONT_BIG:
         sprites.drawSelfMasked(numbersX + (7 * i), numbersY, numbersBig, 0);
@@ -83,7 +82,7 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
     switch (fontType)
     {
       case FONT_SMALL:
-        sprites.drawErase(numbersX + (pad * 6) + (6 * i), numbersY, elementsHUD, digit);
+        sprites.drawOverwrite(numbersX + (pad * 6) + (6 * i), numbersY, elementsHUD, digit);
         break;
       case FONT_BIG:
         sprites.drawSelfMasked(numbersX + (pad * 7) + (7 * i), numbersY, numbersBig, digit);

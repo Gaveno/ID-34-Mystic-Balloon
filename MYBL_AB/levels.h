@@ -539,7 +539,7 @@ void drawGrid() {
         //        Serial.print(" Tile: ");
         //        Serial.print(gridGetTile(x, y));
         //        Serial.print("\n");
-        sprites.drawSelfMasked((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSetAlternative, gridGetTile(x, y));
+        sprites.drawSelfMasked((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSetTwo, gridGetTile(x, y));
       }
     }
   }
@@ -549,8 +549,9 @@ void drawGrid() {
   //sprites.drawPlusMask(levelExit.x - cam.pos.x, levelExit.y - cam.pos.y, sprDoor, (walkerFrame + 1) * (key.haveKey));
   int commonx = levelExit.x - cam.pos.x;
   int commony = levelExit.y - cam.pos.y;
-  sprites.drawSelfMasked(commonx, commony, largeMask, 0);
-  sprites.drawErase(commonx, commony, sprDoor, (walkerFrame + 1) * (key.haveKey));
+  //sprites.drawSelfMasked(commonx, commony, largeMask, 0);
+  //sprites.drawErase(commonx, commony, sprDoor, (walkerFrame + 1) * (key.haveKey));
+  sprites.drawOverwrite(commonx, commony, door, (key.haveKey));
   //Serial.println("End of tile drawing");
 }
 
@@ -713,6 +714,6 @@ void drawHUD()
   drawBalloonLives();
   drawNumbers(91, 0, FONT_SMALL, DATA_SCORE);
   drawCoinHUD();
-  if (key.haveKey) sprites.drawErase(28, 0, elementsHUD, 13);
+  if (key.haveKey) sprites.drawOverwrite(28, 0, elementsHUD, 13);
 }
 #endif
