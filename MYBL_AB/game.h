@@ -9,8 +9,6 @@
 #include "elements.h"
 #include "levels.h"
 
-boolean nextLevelIsVisible;
-
 
 void stateMenuPlay()
 {
@@ -22,6 +20,7 @@ void stateMenuPlay()
   gameState = STATE_GAME_NEXT_LEVEL;
   scoreIsVisible = false;
   nextLevelIsVisible = true;
+  pressKeyIsVisible = false;
 }
 
 
@@ -42,7 +41,12 @@ void stateGameNextLevel()
         balloonsLeft--;
         scorePlayer += 20;
       }
-      else canPressButton = true;
+      else
+      {
+        canPressButton = true;
+        scoreIsVisible = false;
+        pressKeyIsVisible = !pressKeyIsVisible;
+      }
     }
   }
   else gameState = STATE_GAME_OVER;
@@ -50,26 +54,26 @@ void stateGameNextLevel()
 
   if (nextLevelIsVisible)
   {
-    for (byte i = 0; i < 11; i++) sprites.drawSelfMasked(9 + (i * 10), 27, nextLevelElements, 2);
-    sprites.drawSelfMasked(35, 4, badgeNextLevel, 0); //33
-    drawNumbers(78, 13, FONT_BIG, DATA_LEVEL); //42
-    drawNumbers(43, 49, FONT_BIG, DATA_SCORE); //55
+    sprites.drawSelfMasked(35, 4, badgeNextLevel, 0);
+    drawNumbers(78, 13, FONT_BIG, DATA_LEVEL);
+    drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   }
 
   if (scoreIsVisible)
   {
-    /*for (byte i = 0; i < coinsCollected; i++) sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 0);
-    for (byte i = 0; i < balloonsLeft; i++) sprites.drawOverwrite(82 + (i * 12), 27, nextLevelElements, 1);*/
-    for (byte i = 0; i < coinsCollected + balloonsLeft; ++i)
+    byte totalBadges = coinsCollected + balloonsLeft;
+
+    for (byte i = 0; i < totalBadges; ++i)
     {
-      if (i < coinsCollected) sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 0);
-      else sprites.drawOverwrite(10 + (i * 12), 27, nextLevelElements, 1);
+      if (i < coinsCollected) sprites.drawOverwrite(65 - (7 * totalBadges) + (i * 14), 27, badgeElements, 0);
+      else sprites.drawOverwrite(65 - (7 * totalBadges) + (i * 14), 27, badgeElements, 1);
     }
   }
 
   if (canPressButton)
   {
-    sprites.drawOverwrite(39, 27, badgePressKey, 0);
+
+    if (pressKeyIsVisible) sprites.drawOverwrite(38, 29, badgePressKey, 0);
     if (arduboy.justPressed(A_BUTTON | B_BUTTON))
     {
       setKid();
@@ -111,7 +115,8 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  sprites.drawSelfMasked(47, 17, badgeGameOver, 0);
+  sprites.drawSelfMasked(35, 17, badgeGameOver, 0);
+  drawNumbers(78, 26, FONT_BIG, DATA_LEVEL);
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {

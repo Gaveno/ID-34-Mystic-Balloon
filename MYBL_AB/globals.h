@@ -54,8 +54,11 @@ byte level;
 unsigned long scorePlayer;
 byte coinsCollected = 0;
 byte balloonsLeft;
+
+boolean nextLevelIsVisible;
 boolean scoreIsVisible;
 boolean canPressButton;
+boolean pressKeyIsVisible;
 
 byte walkerFrame = 0;
 byte fanFrame = 0;
