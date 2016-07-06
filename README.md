@@ -1,6 +1,6 @@
 #Mystic Balloon
 ![Image]
-( )
+(http://www.team-arg.org/masterfiles/team-arg-mybl/images/banner-ID-34.png)
 
 Mystic Balloon : http://www.team-arg.org/mybl-manual.html  
 Download stable Arduboy versions : http://www.team-arg.org/mybl-downloads.html  
