@@ -324,7 +324,7 @@ void drawKid()
     if (!kid.isSucking)
     {
       sprites.drawSelfMasked(kidcam.x, kidcam.y, kidSprite, 12 + kid.direction);
-      sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + (4 * kid.isJumping + 5 * (kid.isLanding || kid.isBalloon)) * !kid.isSucking);
+      sprites.drawErase(kidcam.x, kidcam.y, kidSprite, kid.frame + 6 * kid.direction + ((kid.isJumping << 2) + 5 * (kid.isLanding || kid.isBalloon)) * !kid.isSucking);
     }
 
     else
