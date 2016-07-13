@@ -29,7 +29,8 @@ void checkInputs()
     }
     else //if (arduboy.everyXFrames(3))
     {
-      kid.speed.x = (kid.speed.x > -MAX_XSPEED) ? kid.speed.x - PLAYER_SPEED_AIR : kid.speed.x = -MAX_XSPEED;
+      //kid.speed.x = (kid.speed.x > -MAX_XSPEED) ? kid.speed.x - PLAYER_SPEED_AIR : kid.speed.x = -MAX_XSPEED;
+      kid.speed.x = max(kid.speed.x - PLAYER_SPEED_AIR, -MAX_XSPEED);
     }
     //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
@@ -51,7 +52,8 @@ void checkInputs()
     }
     else //if (arduboy.everyXFrames(3))
     {
-      kid.speed.x = (kid.speed.x < MAX_XSPEED) ? kid.speed.x + PLAYER_SPEED_AIR : kid.speed.x = MAX_XSPEED;
+      //kid.speed.x = (kid.speed.x < MAX_XSPEED) ? kid.speed.x + PLAYER_SPEED_AIR : kid.speed.x = MAX_XSPEED;
+      kid.speed.x = min(kid.speed.x + PLAYER_SPEED_AIR, MAX_XSPEED);
     }
     //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }

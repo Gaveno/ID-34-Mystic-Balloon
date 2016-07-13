@@ -135,27 +135,27 @@ void walkersCreate(vec2 pos)
   }
 }
 
-void spikesCreate(vec2 pos)
+void spikesCreate(vec2 pos, byte l)
 {
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     if (!bitRead(spikes[i].characteristics, 2))
     {
-      
+      int len = 16 * (l + 1);
       spikes[i].pos.x = pos.x << 4;
       spikes[i].pos.y = pos.y << 4;
       // Solid above
       if (gridGetSolid(pos.x, pos.y - 1))
       {
         spikes[i].characteristics = B00000111;
-        spikes[i].pos.width = 16;
+        spikes[i].pos.width = len;
         spikes[i].pos.height = 8;
       }
       // Solid below
       else if (gridGetSolid(pos.x, pos.y + 1))
       {
         spikes[i].characteristics = B00000101;
-        spikes[i].pos.width = 16;
+        spikes[i].pos.width = len;
         spikes[i].pos.height = 8;
         spikes[i].pos.y += 8;
       }
@@ -164,14 +164,14 @@ void spikesCreate(vec2 pos)
       {
         spikes[i].characteristics = B00000100;
         spikes[i].pos.width = 8;
-        spikes[i].pos.height = 16;
+        spikes[i].pos.height = len;
       }
       // Solid right
       else if (gridGetSolid(pos.x + 1, pos.y))
       {
         spikes[i].characteristics = B00000110;
         spikes[i].pos.width = 8;
-        spikes[i].pos.height = 16;
+        spikes[i].pos.height = len;
         spikes[i].pos.x += 8;
       }
       //bitSet(spikes[i].characteristics, 2);
@@ -235,13 +235,19 @@ void enemiesUpdate()
     }
 
     // Spikes
-    if (bitRead(spikes[i].characteristics, 2))
+    if (bitRead(spikes[i].characteristics, 2)) // spike active
     {
       int commonx = spikes[i].pos.x - cam.pos.x;
       int commony = spikes[i].pos.y - cam.pos.y;
       sprites.drawOverwrite(commonx, commony, sprSpikes,  spikes[i].characteristics & B00000011);
-      if (!bitRead(spikes[i].characteristics, 0)) sprites.drawOverwrite(commonx, commony + 8, sprSpikes,  spikes[i].characteristics & B00000011);
-      else sprites.drawOverwrite(commonx + 8, commony, sprSpikes,  spikes[i].characteristics & B00000011);
+      if (!bitRead(spikes[i].characteristics, 0)) {
+        for (int l = 8; l < spikes[i].pos.height; l += 8)
+          sprites.drawOverwrite(commonx, commony + l, sprSpikes,  spikes[i].characteristics & B00000011);
+      }
+      else {
+        for (int l = 8; l < spikes[i].pos.width; l += 8)
+          sprites.drawOverwrite(commonx + l, commony, sprSpikes,  spikes[i].characteristics & B00000011);
+      }
     }
 
     // Walkers

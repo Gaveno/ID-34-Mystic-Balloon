@@ -9,6 +9,12 @@
 #include "elements.h"
 #include "levels.h"
 
+#define TOTAL_TONES 10
+const int tones[] = {
+  200, 100, 250, 125, 300, 150, 350, 400, 425, 475
+};
+
+byte toneindex = 0;
 
 void stateMenuPlay()
 {
@@ -28,24 +34,31 @@ void stateGameNextLevel()
 {
   if (level < TOTAL_LEVELS)
   {
-    if (arduboy.everyXFrames(30))
+    if (arduboy.everyXFrames(20))
     {
       canPressButton = false;
       if (coinsCollected > 0)
       {
         coinsCollected--;
         scorePlayer += 20;
+        arduboy.audio.tone(tones[toneindex++], 150);
       }
       else if (balloonsLeft > 0)
       {
         balloonsLeft--;
-        scorePlayer += 20;
+        scorePlayer += 30;
+        arduboy.audio.tone(tones[toneindex++], 150);
       }
       else
       {
         canPressButton = true;
         scoreIsVisible = false;
         pressKeyIsVisible = !pressKeyIsVisible;
+        if (toneindex < TOTAL_TONES)
+        {
+          arduboy.audio.tone(tones[toneindex], 150);
+          toneindex += 10;
+        }
       }
     }
   }
@@ -76,6 +89,8 @@ void stateGameNextLevel()
     if (pressKeyIsVisible) sprites.drawOverwrite(38, 29, badgePressKey, 0);
     if (arduboy.justPressed(A_BUTTON | B_BUTTON))
     {
+      toneindex = 0;
+      arduboy.audio.tone(425, 20);
       setKid();
       cam.pos = vec2(0, 0);
       cam.offset = vec2(0, 0);
