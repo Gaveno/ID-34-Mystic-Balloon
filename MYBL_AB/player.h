@@ -186,7 +186,7 @@ void checkKid()
 
     // Fall off edge
     //if (abs(((kid.pos.x + 6) % 16) - 8) >= 4)
-    if (!arduboy.pressed(RIGHT_BUTTON | LEFT_BUTTON))//(!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
+    if (!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
     {
       int yy = (kid.pos.y + 16) >> 4;
       bool sl = gridGetSolid((kid.pos.x + 4) >> 4, yy);
@@ -255,6 +255,7 @@ void checkKid()
     {
       kid.actualpos.y = ((kid.pos.y + 8) >> 4) << (FIXED_POINT + 4);
       kid.speed.y = 0;
+      arduboy.audio.tone(80, 30);
     }
   }
 
@@ -278,7 +279,7 @@ void checkKid()
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
 
-  if (kid.isSucking && arduboy.everyXFrames(3)) arduboy.audio.tone(320 + random(20), 20);
+  if (kid.isSucking && arduboy.everyXFrames(3)) arduboy.audio.tone(300 + random(10), 20);
 }
 
 void updateCamera()
