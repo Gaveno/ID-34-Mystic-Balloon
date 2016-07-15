@@ -88,7 +88,7 @@ void enemiesInit()
     walkers[i].pos.x = 0;
     walkers[i].pos.y = 0;
     walkers[i].active = false;
-    walkers[i].HP = 40;
+    walkers[i].HP = 30;
     walkers[i].direction = 1;
     walkers[i].hurt = false;
 

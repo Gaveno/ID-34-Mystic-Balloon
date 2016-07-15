@@ -32,8 +32,8 @@ void stateMenuPlay()
 
 void stateGameNextLevel()
 {
-  if (level < TOTAL_LEVELS)
-  {
+  //if (level < TOTAL_LEVELS)
+  //{
     if (arduboy.everyXFrames(20))
     {
       canPressButton = false;
@@ -57,20 +57,29 @@ void stateGameNextLevel()
         if (toneindex < TOTAL_TONES)
         {
           arduboy.audio.tone(tones[toneindex], 150);
-          toneindex += 10;
+          toneindex = TOTAL_TONES;
         }
+        if (level >= TOTAL_LEVELS)
+          gameState = STATE_GAME_OVER;
       }
     }
-  }
-  else gameState = STATE_GAME_OVER;
+  /*}
+  else
+  {
+    gameState = STATE_GAME_OVER;
+    return;
+  }*/
 
 
-  if (nextLevelIsVisible)
+  //if (nextLevelIsVisible)
+  //{
+  if (level < TOTAL_LEVELS)
   {
     sprites.drawSelfMasked(35, 4, badgeNextLevel, 0);
     drawNumbers(78, 13, FONT_BIG, DATA_LEVEL);
-    drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   }
+  drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
+  //}
 
   if (scoreIsVisible)
   {
@@ -92,7 +101,8 @@ void stateGameNextLevel()
       toneindex = 0;
       arduboy.audio.tone(425, 20);
       setKid();
-      cam.pos = vec2(0, 0);
+      //cam.pos = vec2(0, 0);
+      cam.pos = vec2(0, LEVEL_HEIGHT - 64);
       cam.offset = vec2(0, 0);
       enemiesInit();
       levelLoad(levels[level]);
@@ -130,8 +140,13 @@ void stateGamePause()
 
 void stateGameOver()
 {
-  sprites.drawSelfMasked(35, 17, badgeGameOver, 0);
-  drawNumbers(78, 26, FONT_BIG, DATA_LEVEL);
+  byte x = 35 + 12;
+  if (level < TOTAL_LEVELS)
+  {
+    drawNumbers(78, 26, FONT_BIG, DATA_LEVEL);
+    x -= 12;
+  }
+  sprites.drawSelfMasked(x, 17, badgeGameOver, 0);
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
