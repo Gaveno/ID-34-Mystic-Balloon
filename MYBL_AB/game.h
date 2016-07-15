@@ -23,6 +23,7 @@ void stateMenuPlay()
   balloonsLeft = 0;
   scorePlayer = 0;
   globalCounter = 0;
+  kid.balloons = 3;
   gameState = STATE_GAME_NEXT_LEVEL;
   scoreIsVisible = false;
   nextLevelIsVisible = true;

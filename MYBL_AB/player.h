@@ -75,7 +75,9 @@ void setKid()
   kid.isBalloon = false;
   kid.jumpLetGo = true;
   kid.isSucking = false;
+  #ifndef HARD_MODE
   kid.balloons = 3;
+  #endif
   kid.balloonOffset = 0;
   for (byte i = 0; i < PLAYER_PARTICLES; ++i)
     kid.particles[i] = vec2(random(16), random(16));

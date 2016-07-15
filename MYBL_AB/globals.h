@@ -1,6 +1,16 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+/*-----------------------------*
+ * To turn on hard mode
+ * uncomment the below define.
+ * 
+ * Hard mode makes it so you
+ * start each level without
+ * recovering balloons.
+ *----------------------------*/
+//#define HARD_MODE
+
 #include <Arduino.h>
 #include "Arglib.h"
 #include "vec2.h"
