@@ -1,6 +1,16 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+/*-----------------------------*
+ * To turn on hard mode
+ * uncomment the below define.
+ * 
+ * Hard mode makes it so you
+ * start each level without
+ * recovering balloons.
+ *----------------------------*/
+//#define HARD_MODE
+
 #include <Arduino.h>
 #include "Arglib.h"
 #include "vec2.h"
@@ -19,11 +29,6 @@
 #define STATE_GAME_PLAYING           7
 #define STATE_GAME_PAUSE             8
 #define STATE_GAME_OVER              9
-
-#define GAME_TOP                     0
-#define GAME_BOTTOM                  64
-#define GAME_LEFT                    0
-#define GAME_RIGHT                   128
 
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1

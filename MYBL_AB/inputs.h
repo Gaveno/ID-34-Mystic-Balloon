@@ -9,6 +9,10 @@
 
 void checkInputs()
 {
+  if (kid.balloons <= 0)
+    return; // Cannot control player if dead
+
+    
   cam.offset = vec2(0, 0);
   kid.isWalking = false;
   if (arduboy.pressed(DOWN_BUTTON))

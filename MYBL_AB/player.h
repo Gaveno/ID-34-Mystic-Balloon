@@ -19,6 +19,8 @@
 #define CAMERA_OFFSET 5
 
 extern bool gridGetSolid(int8_t x, int8_t y);
+extern void kidHurt();
+extern void windNoise();
 
 struct Camera
 {
@@ -73,7 +75,9 @@ void setKid()
   kid.isBalloon = false;
   kid.jumpLetGo = true;
   kid.isSucking = false;
+  #ifndef HARD_MODE
   kid.balloons = 3;
+  #endif
   kid.balloonOffset = 0;
   for (byte i = 0; i < PLAYER_PARTICLES; ++i)
     kid.particles[i] = vec2(random(16), random(16));
@@ -106,7 +110,7 @@ void checkKid()
     kid.frame = 0;
 
   // Kid is moving up
-  if (kid.speed.y > 0 && !kid.isBalloon)
+  if (!kid.isBalloon && kid.speed.y > 0)
   {
     kid.isJumping = true;
     kid.isLanding = false;
@@ -116,10 +120,9 @@ void checkKid()
       kid.jumpTimer--;
     }
   }
-
-  // Kid is moving down
-  if (kid.speed.y < 0)
+  else if (kid.speed.y < 0)
   {
+    // Kid is moving down
     kid.isJumping = false;
     kid.isLanding = true;
   }
@@ -172,7 +175,7 @@ void checkKid()
     }*/
 
   // Kid on ground
-  if (kid.speed.y <= 0 && (solidV || solidbelow))
+  if (kid.balloons > 0 && kid.speed.y <= 0 && (solidV || solidbelow))
   {
     if (kid.isLanding) arduboy.audio.tone(80, 30);
     kid.speed.y = 0;
@@ -245,7 +248,7 @@ void checkKid()
   // -Y Position
   //if ((kid.speed.y > 0 && !solidV)
   //|| (kid.speed.y < 0 && !solidV))
-  if (!solidV && kid.speed.y != 0)
+  if (kid.balloons == 0 || (!solidV && kid.speed.y != 0))
   {
     kid.actualpos.y -= kid.speed.y;
   }
@@ -279,11 +282,13 @@ void checkKid()
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
 
-  if (kid.isSucking && arduboy.everyXFrames(3)) arduboy.audio.tone(300 + random(10), 20);
+  if (kid.isSucking) windNoise();//arduboy.audio.tone(300 + random(10), 20);
 }
 
 void updateCamera()
 {
+  if (kid.balloons == 0)
+    return;
   // Camera offset
   if (cam.offset.x > 0) cam.offset.x--;
   else if (cam.offset.x < 0) cam.offset.x++;
@@ -311,6 +316,19 @@ void drawKid()
     vec2 kidcam;
     kidcam.x = kid.pos.x - cam.pos.x;
     kidcam.y = kid.pos.y - cam.pos.y;
+    // Fall off earth
+    if (kidcam.y > 64)
+    {
+      kid.actualpos = startPos;
+      kidHurt();
+      if (kid.balloons == 0)
+      {
+        // dead
+        gameState = STATE_GAME_OVER;
+      }
+      //--kid.balloons;
+    }
+    
     if (kid.isBalloon)
     {
       int commonx = kidcam.x - (6 * kid.direction);
