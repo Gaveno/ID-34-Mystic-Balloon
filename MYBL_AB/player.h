@@ -285,6 +285,9 @@ void checkKid()
   if (kid.isSucking) windNoise();//arduboy.audio.tone(300 + random(10), 20);
 }
 
+/*  updateCamera()
+ * Positions camera to show kid
+ */
 void updateCamera()
 {
   if (kid.balloons == 0)
@@ -317,7 +320,7 @@ void drawKid()
     kidcam.x = kid.pos.x - cam.pos.x;
     kidcam.y = kid.pos.y - cam.pos.y;
     // Fall off earth
-    if (kidcam.y > 64)
+    if (kidcam.y > 64 + CAMERA_OFFSET - (cam.offset.y * 2))
     {
       kid.actualpos = startPos;
       kidHurt();
