@@ -207,7 +207,7 @@ class Arduboy : public Print
     bool static collide(Rect rect, Rect rect2);
 
   private:
-    unsigned char sBuffer[(HEIGHT * WIDTH) / 8];
+    static unsigned char sBuffer[(HEIGHT * WIDTH) / 8];
 
     void bootLCD() __attribute__((always_inline));
     void safeMode() __attribute__((always_inline));

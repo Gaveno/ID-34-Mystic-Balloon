@@ -320,7 +320,7 @@ void drawKid()
     kidcam.x = kid.pos.x - cam.pos.x;
     kidcam.y = kid.pos.y - cam.pos.y;
     // Fall off earth
-    if (kidcam.y > 64 + CAMERA_OFFSET - (cam.offset.y * 2))
+    if (kidcam.y > 64 + (CAMERA_OFFSET * 3))
     {
       kid.actualpos = startPos;
       kidHurt();
