@@ -1,5 +1,7 @@
 #include "Arglib.h"
 
+unsigned char Arduboy::sBuffer[];
+
 Arduboy::Arduboy() { }
 
 void Arduboy::start()
