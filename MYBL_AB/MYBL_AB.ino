@@ -55,7 +55,7 @@ void setup()
     id = GAME_ID;
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, id); // game id
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, (byte)LEVEL_TO_START_WITH - 1); // beginning level
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (uint16_t)0); // clear score
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (unsigned long)0); // clear score
   }
 }
 

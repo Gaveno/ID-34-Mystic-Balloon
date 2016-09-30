@@ -99,6 +99,12 @@ void stateGameNextLevel()
     sprites.drawSelfMasked(35, 4, badgeNextLevel, 0);
     drawNumbers(78, 13, FONT_BIG, DATA_LEVEL);
   }
+  else
+  {
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, (byte)LEVEL_TO_START_WITH - 1);
+    // Score remains after completing game?
+    //EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (unsigned long)0);
+  }
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   //}
 
