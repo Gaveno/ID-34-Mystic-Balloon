@@ -6,6 +6,7 @@
 
 byte blinkingFrames = 0;
 byte sparkleFrames = 0;
+byte cont = 0;
 
 void drawTitleScreen()
 {
@@ -71,6 +72,23 @@ void stateMenuSoundfx()
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     arduboy.audio.saveOnOff();
+    gameState = STATE_MENU_MAIN;
+  }
+}
+
+void stateMenuPlaySelect()
+{
+  drawTitleScreen();
+  sprites.drawOverwrite(51, 9, continueMenu, 0);
+  if (arduboy.justPressed(DOWN_BUTTON)) cont = 1;
+  if (arduboy.justPressed(UP_BUTTON)) cont = 0;
+  sprites.drawPlusMask(45, 10 + 13 * cont, selector_plus_mask, 0);
+  if (arduboy.justPressed(B_BUTTON))
+  {
+    gameState = STATE_GAME_PLAYCONTNEW + cont;
+  }
+  if (arduboy.justPressed(A_BUTTON))
+  {
     gameState = STATE_MENU_MAIN;
   }
 }

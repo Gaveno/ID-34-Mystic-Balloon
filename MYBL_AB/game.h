@@ -16,12 +16,28 @@ const int tones[] = {
 
 byte toneindex = 0;
 
-void stateMenuPlay()
+void stateMenuPlayNew()
 {
   level = LEVEL_TO_START_WITH - 1;
   coinsCollected = 0;
   balloonsLeft = 0;
   scorePlayer = 0;
+  globalCounter = 0;
+  kid.balloons = 3;
+  gameState = STATE_GAME_NEXT_LEVEL;
+  scoreIsVisible = false;
+  nextLevelIsVisible = true;
+  pressKeyIsVisible = false;
+}
+
+void stateMenuPlayContinue()
+{
+  //level = LEVEL_TO_START_WITH - 1;
+  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, level);
+  coinsCollected = 0;
+  balloonsLeft = 0;
+  //scorePlayer = 0;
+  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, scorePlayer);
   globalCounter = 0;
   kid.balloons = 3;
   gameState = STATE_GAME_NEXT_LEVEL;
@@ -70,6 +86,10 @@ void stateGameNextLevel()
     gameState = STATE_GAME_OVER;
     return;
   }*/
+
+  // Update EEPROM
+  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, level);
+  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, scorePlayer);
 
 
   //if (nextLevelIsVisible)
