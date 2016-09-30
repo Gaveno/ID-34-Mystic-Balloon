@@ -143,7 +143,7 @@ void checkKid()
                    || gridGetSolid((kid.pos.x + 10) >> 4, ty2);
 
   // Gravity
-  if (kid.speed.y > 0 || !solidbelow)
+  if (kid.balloons == 0 || kid.speed.y > 0 || !solidbelow)
   {
     //kid.speed.y += GRAVITY;
     kid.speed.y = (kid.speed.y > -MAX_YSPEED) ? kid.speed.y - GRAVITY : -MAX_YSPEED;

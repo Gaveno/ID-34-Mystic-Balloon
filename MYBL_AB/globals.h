@@ -16,6 +16,9 @@
 #include "vec2.h"
 #include "bitmaps.h"
 
+// EEPROM - change this address offset from the arduboy starting address if desired
+#define EEPROM_MYSTIC_START          16
+
 //define menu states (on main menu)
 #define STATE_MENU_INTRO             0
 #define STATE_MENU_MAIN              1
@@ -29,6 +32,7 @@
 #define STATE_GAME_PLAYING           7
 #define STATE_GAME_PAUSE             8
 #define STATE_GAME_OVER              9
+#define STATE_GAME_PLAYCONTNEW       10 // 11
 
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
@@ -56,7 +60,7 @@ byte gameState = STATE_MENU_INTRO;   // start the game with the TEAM a.r.g. logo
 byte menuSelection = STATE_MENU_PLAY; // PLAY menu item is pre-selected
 byte globalCounter = 0;
 byte level;
-unsigned long scorePlayer;
+unsigned int scorePlayer;
 byte coinsCollected = 0;
 byte balloonsLeft;
 
