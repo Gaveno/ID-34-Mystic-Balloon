@@ -79,10 +79,10 @@ void stateMenuSoundfx()
 void stateMenuPlaySelect()
 {
   drawTitleScreen();
-  sprites.drawOverwrite(51, 9, continueMenu, 0);
+  sprites.drawOverwrite(53, 18, continueMenu, 0);
   if (arduboy.justPressed(DOWN_BUTTON)) cont = 1;
   if (arduboy.justPressed(UP_BUTTON)) cont = 0;
-  sprites.drawPlusMask(45, 10 + 13 * cont, selector_plus_mask, 0);
+  sprites.drawPlusMask(48, 18 + 9 * cont, selector_plus_mask, 0);
   if (arduboy.justPressed(B_BUTTON))
   {
     gameState = STATE_GAME_PLAYCONTNEW + cont;
