@@ -25,8 +25,7 @@ void stateMenuIntro()
   globalCounter++;
   if (globalCounter < 160)
   {
-    for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 10, TEAMarg, i);
-    sprites.drawSelfMasked(43, 50, TEAM_argPart5, 0);
+    sprites.drawSelfMasked(34, 4, T_arg, 0);
   }
   else
   {
@@ -56,9 +55,10 @@ void stateMenuHelp()
 void stateMenuInfo()
 {
   if (arduboy.everyXFrames(10)) sparkleFrames = (++sparkleFrames) % 5;
-  sprites.drawSelfMasked(43, 13, badgeMysticBalloon, 0);
-  sprites.drawSelfMasked(37, 11, stars, sparkleFrames);
-  sprites.drawSelfMasked(40, 40, madeBy, 0);
+  sprites.drawSelfMasked(43, 2, badgeMysticBalloon, 0);
+  sprites.drawSelfMasked(37, 0, stars, sparkleFrames);
+  sprites.drawSelfMasked(40, 48, madeBy, 0);
+  sprites.drawSelfMasked(28, 23, dryden, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
 
@@ -68,7 +68,7 @@ void stateMenuSoundfx()
   sprites.drawOverwrite(51, 9, soundMenu, 0);
   if (arduboy.justPressed(DOWN_BUTTON)) arduboy.audio.on();
   if (arduboy.justPressed(UP_BUTTON)) arduboy.audio.off();
-  sprites.drawPlusMask(54, 18 + 9 * arduboy.audio.enabled(),selector_plus_mask, 0);
+  sprites.drawPlusMask(54, 18 + 9 * arduboy.audio.enabled(), selector_plus_mask, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     arduboy.audio.saveOnOff();
