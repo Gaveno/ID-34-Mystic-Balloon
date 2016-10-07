@@ -17,7 +17,10 @@
 #include "bitmaps.h"
 
 // EEPROM - change this address offset from the arduboy starting address if desired
-#define EEPROM_MYSTIC_START          16
+#define EEPROM_MYSTIC_START          10
+#define OFFSET_LEVEL                 1
+#define OFFSET_SCORE                 2
+#define OFFSET_HSCORE                2 + sizeof(unsigned long)
 
 //define menu states (on main menu)
 #define STATE_MENU_INTRO             0
@@ -37,8 +40,8 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          3
-#define TOTAL_LEVELS                 26
+#define LEVEL_TO_START_WITH          1
+#define TOTAL_LEVELS                 31
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
 #define MAX_PER_TYPE                 6                    // total instances per enemy type

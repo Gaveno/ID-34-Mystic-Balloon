@@ -33,11 +33,12 @@ void stateMenuPlayNew()
 void stateMenuPlayContinue()
 {
   //level = LEVEL_TO_START_WITH - 1;
-  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, level);
+  //EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 1, level);
+  level = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL);
   coinsCollected = 0;
   balloonsLeft = 0;
   //scorePlayer = 0;
-  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, scorePlayer);
+  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, scorePlayer);
   globalCounter = 0;
   kid.balloons = 3;
   gameState = STATE_GAME_NEXT_LEVEL;
@@ -88,8 +89,8 @@ void stateGameNextLevel()
   }*/
 
   // Update EEPROM
-  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, level);
-  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, scorePlayer);
+  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, level);
+  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, scorePlayer);
 
 
   //if (nextLevelIsVisible)
@@ -101,7 +102,7 @@ void stateGameNextLevel()
   }
   else
   {
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, (byte)LEVEL_TO_START_WITH - 1);
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1);
     // Score remains after completing game?
     //EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (unsigned long)0);
   }
@@ -174,8 +175,14 @@ void stateGameOver()
     x -= 12;
   }
   sprites.drawSelfMasked(x, 17, badgeGameOver, 0);
-  sprites.drawSelfMasked(25, 5, dryden2,0);
+  //sprites.drawSelfMasked(25, 5, dryden2,0);
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
+
+  unsigned long highscore = 0;
+  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, highscore);
+  if (scorePlayer > highscore)
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
+    
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     gameState = STATE_MENU_MAIN;

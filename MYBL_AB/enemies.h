@@ -209,6 +209,25 @@ void enemiesUpdate()
     sprites.drawOverwrite(commonx, commony, elements, 4);
   }
 
+  // Draw spikes first
+  for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  {
+    if (bitRead(spikes[i].characteristics, 2)) // spike active
+    {
+      int commonx = spikes[i].pos.x - cam.pos.x;
+      int commony = spikes[i].pos.y - cam.pos.y;
+      sprites.drawOverwrite(commonx, commony, sprSpikes,  spikes[i].characteristics & B00000011);
+      if (!bitRead(spikes[i].characteristics, 0)) {
+        for (int l = 8; l < spikes[i].pos.height; l += 8)
+          sprites.drawOverwrite(commonx, commony + l, sprSpikes,  spikes[i].characteristics & B00000011);
+      }
+      else {
+        for (int l = 8; l < spikes[i].pos.width; l += 8)
+          sprites.drawOverwrite(commonx + l, commony, sprSpikes,  spikes[i].characteristics & B00000011);
+      }
+    }
+  }
+
   if (arduboy.everyXFrames(5)) fanFrame = (++fanFrame) % 3;
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
@@ -235,7 +254,7 @@ void enemiesUpdate()
     }
 
     // Spikes
-    if (bitRead(spikes[i].characteristics, 2)) // spike active
+    /*if (bitRead(spikes[i].characteristics, 2)) // spike active
     {
       int commonx = spikes[i].pos.x - cam.pos.x;
       int commony = spikes[i].pos.y - cam.pos.y;
@@ -248,7 +267,7 @@ void enemiesUpdate()
         for (int l = 8; l < spikes[i].pos.width; l += 8)
           sprites.drawOverwrite(commonx + l, commony, sprSpikes,  spikes[i].characteristics & B00000011);
       }
-    }
+    }*/
 
     // Walkers
     if (walkers[i].active)
