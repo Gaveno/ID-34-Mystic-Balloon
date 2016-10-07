@@ -17,7 +17,10 @@
 #include "bitmaps.h"
 
 // EEPROM - change this address offset from the arduboy starting address if desired
-#define EEPROM_MYSTIC_START          16
+#define EEPROM_MYSTIC_START          10
+#define OFFSET_LEVEL                 1
+#define OFFSET_SCORE                 2
+#define OFFSET_HSCORE                2 + sizeof(unsigned long)
 
 //define menu states (on main menu)
 #define STATE_MENU_INTRO             0

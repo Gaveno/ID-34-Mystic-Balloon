@@ -4,9 +4,19 @@
 #include <Arduino.h>
 #include "globals.h"
 
+#define FONT_TINY                 0
+#define FONT_SMALL                1
+#define FONT_BIG                  2
+
+#define DATA_TIMER                0
+#define DATA_SCORE                1
+#define DATA_LEVEL                2
+
 byte blinkingFrames = 0;
 byte sparkleFrames = 0;
 byte cont = 0;
+
+extern void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data);
 
 void drawTitleScreen()
 {
@@ -59,6 +69,8 @@ void stateMenuInfo()
   sprites.drawSelfMasked(37, 0, stars, sparkleFrames);
   sprites.drawSelfMasked(40, 48, madeBy, 0);
   //sprites.drawSelfMasked(28, 23, dryden, 0);
+  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
+  drawNumbers(44, 30, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
 

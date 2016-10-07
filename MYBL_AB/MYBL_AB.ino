@@ -48,14 +48,15 @@ void setup()
   arduboy.start();
   arduboy.setFrameRate(60);                                 // set the frame rate of the game at 60 fps
   // EEPROM initialization
-  byte id;
-  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, id);
-  if (id != GAME_ID)
+  //byte id;
+  //EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, id);
+  if (EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START) != GAME_ID)
   {
-    id = GAME_ID;
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, id); // game id
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 2, (byte)LEVEL_TO_START_WITH - 1); // beginning level
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (unsigned long)0); // clear score
+    //id = GAME_ID;
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, (byte)GAME_ID); // game id
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1); // beginning level
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0); // clear score
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, (unsigned long)0); // clear high score
   }
 }
 
