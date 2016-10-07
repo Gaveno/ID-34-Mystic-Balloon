@@ -174,7 +174,7 @@ void stateGameOver()
     x -= 12;
   }
   sprites.drawSelfMasked(x, 17, badgeGameOver, 0);
-  sprites.drawSelfMasked(25, 5, dryden2,0);
+  //sprites.drawSelfMasked(25, 5, dryden2,0);
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
