@@ -98,6 +98,7 @@ void stateMenuPlaySelect()
   if (arduboy.justPressed(B_BUTTON))
   {
     gameState = STATE_GAME_PLAYCONTNEW + cont;
+    cont = 0;
   }
   if (arduboy.justPressed(A_BUTTON))
   {
