@@ -68,9 +68,9 @@ void stateMenuInfo()
   sprites.drawSelfMasked(43, 2, badgeMysticBalloon, 0);
   sprites.drawSelfMasked(37, 0, stars, sparkleFrames);
   sprites.drawSelfMasked(40, 48, madeBy, 0);
-  //sprites.drawSelfMasked(28, 23, dryden, 0);
   EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
-  drawNumbers(44, 30, FONT_BIG, DATA_SCORE);
+  sprites.drawSelfMasked(30, 28, badgeHighScore, 0);
+  drawNumbers(55, 30, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
 
