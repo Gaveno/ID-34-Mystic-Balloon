@@ -103,8 +103,8 @@ void stateGameNextLevel()
   else
   {
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1);
-    // Score remains after completing game?
-    //EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (unsigned long)0);
+    // Score remains after completing game? (no)
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0);
   }
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   //}
