@@ -69,7 +69,12 @@ void stateMenuInfo()
   sprites.drawSelfMasked(37, 0, stars, sparkleFrames);
   sprites.drawSelfMasked(40, 48, madeBy, 0);
   EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
+  byte cc = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS);
   sprites.drawSelfMasked(30, 28, badgeHighScore, 0);
+  if (cc == TOTAL_COINS) {
+    sprites.drawSelfMasked(10, 28, badgeHighScore, 0);
+    //sprites.drawSelfMasked(30, 38, badgeHighScore, 0);
+  }
   drawNumbers(55, 30, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }

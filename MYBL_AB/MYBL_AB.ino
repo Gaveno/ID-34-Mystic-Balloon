@@ -26,6 +26,12 @@
 #include "levels.h"
 
 
+// Uncomment to erase
+// all save data
+// for Mystic Balloon
+//#define WIPE_EEPROM
+
+
 typedef void (*FunctionPointer) ();
 
 const FunctionPointer PROGMEM  mainGameLoop[] = {
@@ -50,14 +56,26 @@ void setup()
   // EEPROM initialization
   //byte id;
   //EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, id);
+  #ifndef WIPE_EEPROM
   if (EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START) != GAME_ID)
   {
     //id = GAME_ID;
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, (byte)GAME_ID); // game id
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1); // beginning level
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS, (byte)0); // coins current run
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS, (byte)0); // coins highscore run
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0); // clear score
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, (unsigned long)0); // clear high score
   }
+  #endif
+  #ifdef WIPE_EEPROM
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, (byte)0); // game id
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)0); // beginning level
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS, (byte)0); // coins current run
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS, (byte)0); // coins highscore run
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0); // clear score
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, (unsigned long)0); // clear high score
+  #endif
 }
 
 void loop() {
