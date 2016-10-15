@@ -20,6 +20,7 @@ void stateMenuPlayNew()
 {
   level = LEVEL_TO_START_WITH - 1;
   coinsCollected = 0;
+  totalCoins = 0;
   balloonsLeft = 0;
   scorePlayer = 0;
   globalCounter = 0;
@@ -35,6 +36,7 @@ void stateMenuPlayContinue()
   //level = LEVEL_TO_START_WITH - 1;
   //EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 1, level);
   level = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL);
+  totalCoins = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS);
   coinsCollected = 0;
   balloonsLeft = 0;
   //scorePlayer = 0;
@@ -90,6 +92,7 @@ void stateGameNextLevel()
 
   // Update EEPROM
   EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, level);
+  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS, totalCoins);
   EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, scorePlayer);
 
 
@@ -103,8 +106,8 @@ void stateGameNextLevel()
   else
   {
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1);
-    // Score remains after completing game?
-    //EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 3, (unsigned long)0);
+    // Score remains after completing game? (no)
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0);
   }
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   //}
@@ -179,8 +182,10 @@ void stateGameOver()
 
   unsigned long highscore = 0;
   EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, highscore);
-  if (scorePlayer > highscore)
+  if (scorePlayer > highscore) {
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS, totalCoins);
     EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
+  }
     
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
