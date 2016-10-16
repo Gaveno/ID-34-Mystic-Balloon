@@ -21,7 +21,6 @@ extern void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data);
 void drawTitleScreen()
 {
   if (arduboy.everyXFrames(7))blinkingFrames = (++blinkingFrames) % 32;
-  if (arduboy.everyXFrames(10)) sparkleFrames = (++sparkleFrames) % 5;
   for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, titleScreen, i);
   sprites.drawSelfMasked(85, 45, badgeMysticBalloon, 0);
   sprites.drawSelfMasked(79, 43, stars, sparkleFrames);
@@ -64,17 +63,20 @@ void stateMenuHelp()
 
 void stateMenuInfo()
 {
-  if (arduboy.everyXFrames(10)) sparkleFrames = (++sparkleFrames) % 5;
   sprites.drawSelfMasked(43, 2, badgeMysticBalloon, 0);
   sprites.drawSelfMasked(37, 0, stars, sparkleFrames);
   sprites.drawSelfMasked(40, 48, madeBy, 0);
   EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
-  byte cc = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS);
-  sprites.drawSelfMasked(30, 28, badgeHighScore, 0);
-  if (cc == TOTAL_COINS) {
-    sprites.drawSelfMasked(10, 28, badgeHighScore, 0);
-    //sprites.drawSelfMasked(30, 38, badgeHighScore, 0);
+  if (EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS) == TOTAL_COINS)
+  {
+    sprites.drawSelfMasked(21, 28, badgeSuper, 0);
   }
+  else
+  {
+    sprites.drawSelfMasked(21, 28, badgeSuper, 0);
+    //sprites.drawSelfMasked(28, 28, badgeBorder, 0);
+  }
+  sprites.drawSelfMasked(30, 28, badgeHighScore, 0);
   drawNumbers(55, 30, FONT_BIG, DATA_SCORE);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 }
