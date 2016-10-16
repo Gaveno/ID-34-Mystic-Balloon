@@ -73,8 +73,7 @@ void stateMenuInfo()
   }
   else
   {
-    sprites.drawSelfMasked(21, 28, badgeSuper, 0);
-    //sprites.drawSelfMasked(28, 28, badgeBorder, 0);
+    sprites.drawSelfMasked(28, 28, badgeBorder, 0);
   }
   sprites.drawSelfMasked(30, 28, badgeHighScore, 0);
   drawNumbers(55, 30, FONT_BIG, DATA_SCORE);
