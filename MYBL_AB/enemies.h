@@ -174,7 +174,6 @@ void spikesCreate(vec2 pos, byte l)
         spikes[i].pos.height = len;
         spikes[i].pos.x += 8;
       }
-      //bitSet(spikes[i].characteristics, 2);
       return;
     }
   }
@@ -252,22 +251,6 @@ void enemiesUpdate()
       int _y = fans[i].pos.y - cam.pos.y;
       sprites.drawOverwrite(_x, _y, fan, fanFrame);
     }
-
-    // Spikes
-    /*if (bitRead(spikes[i].characteristics, 2)) // spike active
-    {
-      int commonx = spikes[i].pos.x - cam.pos.x;
-      int commony = spikes[i].pos.y - cam.pos.y;
-      sprites.drawOverwrite(commonx, commony, sprSpikes,  spikes[i].characteristics & B00000011);
-      if (!bitRead(spikes[i].characteristics, 0)) {
-        for (int l = 8; l < spikes[i].pos.height; l += 8)
-          sprites.drawOverwrite(commonx, commony + l, sprSpikes,  spikes[i].characteristics & B00000011);
-      }
-      else {
-        for (int l = 8; l < spikes[i].pos.width; l += 8)
-          sprites.drawOverwrite(commonx + l, commony, sprSpikes,  spikes[i].characteristics & B00000011);
-      }
-    }*/
 
     // Walkers
     if (walkers[i].active)

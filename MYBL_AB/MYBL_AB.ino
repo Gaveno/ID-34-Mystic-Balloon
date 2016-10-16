@@ -5,7 +5,7 @@
 
  MADE by TEAM a.r.g. : http://www.team-arg.org/more-about.html
 
- 2016 - GAVENO - CastPixel
+ 2016 - GAVENO - CastPixel -JO3RI
 
  Game License: MIT : https://opensource.org/licenses/MIT
 
@@ -24,12 +24,6 @@
 #include "enemies.h"
 #include "elements.h"
 #include "levels.h"
-
-
-// Uncomment to erase
-// all save data
-// for Mystic Balloon
-//#define WIPE_EEPROM
 
 
 typedef void (*FunctionPointer) ();
