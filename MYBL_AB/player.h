@@ -10,7 +10,6 @@
 #define PLAYER_SPEED_WALKING 1 << FIXED_POINT
 #define PLAYER_SPEED_AIR 2
 #define PLAYER_PARTICLES 3
-//#define PLAYER_JUMP_VELOCITY (2 << FIXED_POINT) - 2
 #define PLAYER_JUMP_VELOCITY (1 << FIXED_POINT) + 8
 #define GRAVITY 3
 #define FRICTION 1 // for horizontal speed
@@ -160,20 +159,6 @@ void checkKid()
     }
   }
 
-  // Friction
-  /*if (abs(kid.speed.x) > FRICTION)
-    {
-    if (arduboy.everyXFrames(3))
-    {
-      if (kid.speed.x > 0) kid.speed.x -= FRICTION;
-      else if (kid.speed.x < 0) kid.speed.x += FRICTION;
-    }
-    }
-    else
-    {
-    kid.speed.x = 0;
-    }*/
-
   // Kid on ground
   if (kid.balloons > 0 && kid.speed.y <= 0 && (solidV || solidbelow))
   {
@@ -225,29 +210,7 @@ void checkKid()
     else if (gridGetSolid((kid.pos.x + 11) >> 4, ty))
       kid.actualpos.x -= 8;
   }
-  //  if (gridGetSolid(tx, ty))
-  //  {
-  //    if (!gridGetSolid((kid.pos.x - 8) >> 4, ty))
-  //      kid.actualpos.x -= 8;
-  //    else if (!gridGetSolid((kid.pos.x + 19) >> 4, ty))
-  //      kid.actualpos.x += 8;
-  //    else if (!gridGetSolid(tx, (kid.pos.y - 8) >> 4))
-  //      kid.actualpos.y -= 8;
-  //    else if (!gridGetSolid(tx, (kid.pos.y + 25) >> 4))
-  //      kid.actualpos.y += 8;
-  //  }
-  /*if (gridGetSolid((kid.pos.x) >> 4, (kid.pos.y + 8) >> 4))
-    kid.actualpos.x += 8;
-    else if (gridGetSolid((kid.pos.x + 11) >> 4, (kid.pos.y + 8) >> 4))
-    kid.actualpos.x -= 8;
-    else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 1) >> 4))
-    kid.actualpos.y += 8;
-    else if (gridGetSolid((kid.pos.x + 6) >> 4, (kid.pos.y + 14) >> 4))
-    kid.actualpos.y -= 8;*/
 
-  // -Y Position
-  //if ((kid.speed.y > 0 && !solidV)
-  //|| (kid.speed.y < 0 && !solidV))
   if (kid.balloons == 0 || (!solidV && kid.speed.y != 0))
   {
     kid.actualpos.y -= kid.speed.y;
@@ -272,11 +235,8 @@ void checkKid()
     }
     else
     {
-      //if (kid.speed.x < 0)
       kid.speed.x = 0;
       kid.actualpos.x = ((((kid.pos.x + 6) >> 4) << 4) + ((!kid.direction) * 4)) << (FIXED_POINT);
-      //kid.actualpos.x = (((kid.pos.x + 6) & 0xFFF0) + ((!kid.direction) * 4)) << FIXED_POINT;
-      //kid.actualpos.x += ((kid.speed.x > 0) * 4) << FIXED_vec2;
     }
   }
 

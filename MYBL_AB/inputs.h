@@ -31,12 +31,10 @@ void checkInputs()
       kid.isWalking = true;
       kid.speed.x = -1;
     }
-    else //if (arduboy.everyXFrames(3))
+    else
     {
-      //kid.speed.x = (kid.speed.x > -MAX_XSPEED) ? kid.speed.x - PLAYER_SPEED_AIR : kid.speed.x = -MAX_XSPEED;
       kid.speed.x = max(kid.speed.x - PLAYER_SPEED_AIR, -MAX_XSPEED);
     }
-    //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
   if (arduboy.pressed(UP_BUTTON))
   {
@@ -54,18 +52,15 @@ void checkInputs()
       kid.isWalking = true;
       kid.speed.x = 1;
     }
-    else //if (arduboy.everyXFrames(3))
+    else
     {
-      //kid.speed.x = (kid.speed.x < MAX_XSPEED) ? kid.speed.x + PLAYER_SPEED_AIR : kid.speed.x = MAX_XSPEED;
       kid.speed.x = min(kid.speed.x + PLAYER_SPEED_AIR, MAX_XSPEED);
     }
-    //if (!kid.isJumping && !kid.isLanding)kid.isWalking = true;
   }
   if (arduboy.pressed(A_BUTTON + DOWN_BUTTON))  gameState = STATE_GAME_PAUSE;
   if (arduboy.pressed(A_BUTTON) && !kid.isBalloon)
   {
     kid.isSucking = true;
-    //mapTimer = TIMER_AMOUNT;
   }
   else
     kid.isSucking = false;
@@ -73,7 +68,6 @@ void checkInputs()
   // Jump Button
   if (arduboy.justPressed(B_BUTTON))
   {
-    //mapTimer = TIMER_AMOUNT;
     if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)
     {
       arduboy.audio.tone(200, 100);
@@ -82,8 +76,8 @@ void checkInputs()
       kid.jumpLetGo = false;
       kid.jumpTimer = PLAYER_JUMP_TIME;
       kid.speed.y = PLAYER_JUMP_VELOCITY;
-      if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = MAX_XSPEED;//(PLAYER_SPEED_WALKING);
-      if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -MAX_XSPEED;//-(PLAYER_SPEED_WALKING);
+      if (arduboy.pressed(RIGHT_BUTTON)) kid.speed.x = MAX_XSPEED;
+      if (arduboy.pressed(LEFT_BUTTON)) kid.speed.x = -MAX_XSPEED;
     }
     else
     {
@@ -93,7 +87,6 @@ void checkInputs()
         kid.balloonOffset = 16;
         kid.isJumping = false;
         kid.isLanding = true;
-        //kid.speed.y = GRAVITY;
       }
     }
   }

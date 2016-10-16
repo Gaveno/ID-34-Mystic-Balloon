@@ -2,13 +2,13 @@
 #define GLOBALS_H
 
 /*-----------------------------*
- * To turn on hard mode
- * uncomment the below define.
- * 
- * Hard mode makes it so you
- * start each level without
- * recovering balloons.
- *----------------------------*/
+   To turn on hard mode
+   uncomment the below define.
+
+   Hard mode makes it so you
+   start each level without
+   recovering balloons.
+  ----------------------------*/
 //#define HARD_MODE
 
 #include <Arduino.h>
@@ -82,6 +82,19 @@ byte coinsActive = 0;
 vec2 levelExit = vec2(0, 0);
 vec2 startPos;
 byte mapTimer = 10;
+
+void loadSetEEPROM()
+{
+  if (EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START) != GAME_ID)
+  {
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START, (byte)GAME_ID); // game id
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1); // beginning level
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS, (byte)0); // coins current run
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS, (byte)0); // coins highscore run
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0); // clear score
+    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, (unsigned long)0); // clear high score
+  }
+}
 
 
 #endif
