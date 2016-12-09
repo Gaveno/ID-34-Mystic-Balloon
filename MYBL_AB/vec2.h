@@ -27,6 +27,7 @@ struct vec2
   {
     x = rhs.x;
     y = rhs.y;
+    return *this;
   }
 };
 

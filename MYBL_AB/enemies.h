@@ -44,7 +44,7 @@ Walker walkers[MAX_PER_TYPE];
 
 struct Spike
 {
-  Rect pos;
+  HighRect pos;
   byte characteristics;//B00000000;   //this byte holds all the enemies characteristics
   //                      ||||||||
   //                      |||||||└->  0 \ these 2 bits are used to determine the spike type

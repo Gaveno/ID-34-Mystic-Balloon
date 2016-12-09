@@ -102,7 +102,7 @@ void checkKid()
     {
       kid.frame = (++kid.frame) % 4;
       if (kid.frame % 2 == 0)
-        arduboy.audio.tone(150, 20);
+        sound.tone(150, 20);
     }
   }
   else
@@ -162,7 +162,7 @@ void checkKid()
   // Kid on ground
   if (kid.balloons > 0 && kid.speed.y <= 0 && (solidV || solidbelow))
   {
-    if (kid.isLanding) arduboy.audio.tone(80, 30);
+    if (kid.isLanding) sound.tone(80, 30);
     kid.speed.y = 0;
     kid.speed.x = 0;
     kid.isLanding = false;
@@ -221,7 +221,7 @@ void checkKid()
     {
       kid.actualpos.y = ((kid.pos.y + 8) >> 4) << (FIXED_POINT + 4);
       kid.speed.y = 0;
-      arduboy.audio.tone(80, 30);
+      sound.tone(80, 30);
     }
   }
 
@@ -242,7 +242,7 @@ void checkKid()
 
   kid.pos = (kid.actualpos >> FIXED_POINT);
 
-  if (kid.isSucking) windNoise();//arduboy.audio.tone(300 + random(10), 20);
+  if (kid.isSucking) windNoise();//sound.tone(300 + random(10), 20);
 }
 
 /*  updateCamera()
