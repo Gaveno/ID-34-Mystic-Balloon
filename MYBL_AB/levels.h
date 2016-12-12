@@ -857,7 +857,7 @@ void drawGrid() {
 
 void windNoise()
 {
-  if (arduboy.everyXFrames(3)) arduboy.audio.tone(330 + random(20), 30);
+  if (arduboy.everyXFrames(3)) sound.tone(330 + random(20), 30);
 }
 
 void kidHurt()
@@ -873,7 +873,7 @@ void kidHurt()
   {*/
     kid.isBalloon = false;
     kid.balloons--;
-    arduboy.audio.tone(420, 100);
+    sound.tone(420, 100);
     kid.isImune = true;
     kid.imuneTimer = 0;
   //}
@@ -884,21 +884,21 @@ void checkCollisions()
   if (kid.balloons == 0)
     return;
 
-  Rect playerRect = {.x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12};
-  Rect playerSuckRect = {.x = kid.pos.x + ((kid.direction ^ 1) * 16) - (kid.direction * 16), .y = kid.pos.y + 2, .width = 16, .height = 14};
+  HighRect playerRect = {.x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12};
+  HighRect playerSuckRect = {.x = kid.pos.x + ((kid.direction ^ 1) * 16) - (kid.direction * 16), .y = kid.pos.y + 2, .width = 16, .height = 14};
 
   // Key
-  Rect keyRect = {.x = key.pos.x, .y = key.pos.y, .width = 8, .height = 16};
-  if (arduboy.collide(keyRect, playerRect) && key.active)
+  HighRect keyRect = {.x = key.pos.x, .y = key.pos.y, .width = 8, .height = 16};
+  if (collide(keyRect, playerRect) && key.active)
   {
     key.active = false;
     key.haveKey = true;
-    arduboy.audio.tone(420, 200);
+    sound.tone(420, 200);
   }
 
   // Level exit
-  Rect exitRect = {.x = levelExit.x + 4, .y = levelExit.y, .width = 8, .height = 16};
-  if (arduboy.collide(exitRect, playerRect) && arduboy.justPressed(UP_BUTTON) && key.haveKey)
+  HighRect exitRect = {.x = levelExit.x + 4, .y = levelExit.y, .width = 8, .height = 16};
+  if (collide(exitRect, playerRect) && arduboy.justPressed(UP_BUTTON) && key.haveKey)
   {
     balloonsLeft = kid.balloons;
     scoreIsVisible = true;
@@ -913,8 +913,8 @@ void checkCollisions()
     // Coins
     if (coins[i].active)
     {
-      Rect coinrect = {.x = coins[i].pos.x, .y = coins[i].pos.y, .width = 10, .height = 12};
-      if (kid.isSucking && arduboy.collide(playerSuckRect, coinrect))
+      HighRect coinrect = {.x = coins[i].pos.x, .y = coins[i].pos.y, .width = 10, .height = 12};
+      if (kid.isSucking && collide(playerSuckRect, coinrect))
       {
         // Suck coin closer
         if (kid.direction)
@@ -922,14 +922,14 @@ void checkCollisions()
         else
           --coins[i].pos.x;
       }
-      else if (arduboy.collide(playerRect, coinrect))
+      else if (collide(playerRect, coinrect))
       {
         // Collect coin
         coins[i].active = false;
         --coinsActive;
         ++coinsCollected;
         ++totalCoins;
-        arduboy.audio.tone(400, 200);
+        sound.tone(400, 200);
         if (coinsActive == 0)
         {
           #ifndef HARD_MODE
@@ -937,7 +937,7 @@ void checkCollisions()
           #else
           scorePlayer += 1000;
           #endif
-          //arduboy.audio.tone(400, 200);
+          //sound.tone(400, 200);
         }
         else
         {
@@ -946,7 +946,7 @@ void checkCollisions()
           #else
           scorePlayer += 400;
           #endif
-          //arduboy.audio.tone(370, 200);
+          //sound.tone(370, 200);
         }
       }
     }
@@ -954,8 +954,8 @@ void checkCollisions()
     // Getting Sucked In
     if (walkers[i].active)
     {
-      Rect walkerrect = {.x = walkers[i].pos.x, .y = walkers[i].pos.y, .width = 8, .height = 8};
-      if (arduboy.collide(playerSuckRect, walkerrect) && kid.isSucking)
+      HighRect walkerrect = {.x = walkers[i].pos.x, .y = walkers[i].pos.y, .width = 8, .height = 8};
+      if (collide(playerSuckRect, walkerrect) && kid.isSucking)
       {
         --walkers[i].HP;
         walkers[i].hurt = true;
@@ -970,7 +970,7 @@ void checkCollisions()
               if (kid.balloons < 3) ++kid.balloons;
               else scorePlayer += 100;
               scorePlayer += 50;
-              arduboy.audio.tone(200, 100);
+              sound.tone(200, 100);
             }
           }
           else
@@ -982,7 +982,7 @@ void checkCollisions()
               if (kid.balloons < 3) ++kid.balloons;
               else scorePlayer += 100;
               scorePlayer += 50;
-              arduboy.audio.tone(200, 100);
+              sound.tone(200, 100);
             }
           }
         }
@@ -991,7 +991,7 @@ void checkCollisions()
         walkers[i].hurt = false;
 
       // Hurt player
-      if (arduboy.collide(playerRect, walkerrect) && walkers[i].HP > 0 && !kid.isImune)
+      if (collide(playerRect, walkerrect) && walkers[i].HP > 0 && !kid.isImune)
       {
         kidHurt();
         kid.speed.y = PLAYER_JUMP_VELOCITY;
@@ -1001,20 +1001,20 @@ void checkCollisions()
     // Fans
     if (fans[i].active)
     {
-      Rect fanrect = {.x = fans[i].pos.x, .y = fans[i].pos.y - (fans[i].height),
+      HighRect fanrect = {.x = fans[i].pos.x, .y = fans[i].pos.y - (fans[i].height),
                       .width = 16, .height = fans[i].height
                      };
-      if (kid.isBalloon && arduboy.collide(playerRect, fanrect))
+      if (kid.isBalloon && collide(playerRect, fanrect))
       {
         kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
-        //if (arduboy.everyXFrames(3)) arduboy.audio.tone(330 + random(20), 30);
+        //if (arduboy.everyXFrames(3)) sound.tone(330 + random(20), 30);
         windNoise();
         //kid.actualpos.y -= FAN_POWER;
       }
     }
 
     // Spikes
-    if (!kid.isImune && bitRead(spikes[i].characteristics, 2) && arduboy.collide(playerRect, spikes[i].pos))
+    if (!kid.isImune && bitRead(spikes[i].characteristics, 2) && collide(playerRect, spikes[i].pos))
     {
       kidHurt();
       if (kid.pos.y < spikes[i].pos.y) kid.speed.y = PLAYER_JUMP_VELOCITY;

@@ -12,7 +12,8 @@
 //#define HARD_MODE
 
 #include <Arduino.h>
-#include "Arglib.h"
+#include <Arduboy2.h>
+#include <ArduboyTones.h>
 #include "vec2.h"
 #include "bitmaps.h"
 
@@ -58,8 +59,20 @@
 
 #define PLAYER_JUMP_TIME             11
 
-Arduboy arduboy;
-Sprites sprites(arduboy);
+// This is a replacement for struct Rect in the Arduboy2 library.
+// It defines height as an int instead of a uint8_t to allow a higher rectangle.
+struct HighRect
+{
+  public:
+    int x;
+    int y;
+    uint8_t width;
+    int height;
+};
+
+Arduboy2Base arduboy;
+Sprites sprites;
+ArduboyTones sound(arduboy.audio.enabled);
 
 byte gameState = STATE_MENU_INTRO;   // start the game with the TEAM a.r.g. logo
 byte menuSelection = STATE_MENU_PLAY; // PLAY menu item is pre-selected
@@ -96,5 +109,14 @@ void loadSetEEPROM()
   }
 }
 
+// This is a replacement for the collide() function in the Arduboy2 library.
+// It uses struct HighRect instead of the struct Rect in the library.
+bool collide(HighRect rect1, HighRect rect2)
+{
+  return !( rect2.x                 >=  rect1.x + rect1.width    ||
+            rect2.x + rect2.width   <=  rect1.x                ||
+            rect2.y                 >=  rect1.y + rect1.height ||
+            rect2.y + rect2.height  <=  rect1.y);
+}
 
 #endif

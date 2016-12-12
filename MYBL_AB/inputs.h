@@ -70,7 +70,7 @@ void checkInputs()
   {
     if (kid.speed.y == 0 && kid.isJumping == false && kid.isLanding == false)
     {
-      arduboy.audio.tone(200, 100);
+      sound.tone(200, 100);
       kid.isWalking = false;
       kid.isJumping = true;
       kid.jumpLetGo = false;

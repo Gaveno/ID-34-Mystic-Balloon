@@ -61,13 +61,13 @@ void stateGameNextLevel()
       {
         coinsCollected--;
         scorePlayer += 20;
-        arduboy.audio.tone(tones[toneindex++], 150);
+        sound.tone(tones[toneindex++], 150);
       }
       else if (balloonsLeft > 0)
       {
         balloonsLeft--;
         scorePlayer += 30;
-        arduboy.audio.tone(tones[toneindex++], 150);
+        sound.tone(tones[toneindex++], 150);
       }
       else
       {
@@ -76,7 +76,7 @@ void stateGameNextLevel()
         pressKeyIsVisible = !pressKeyIsVisible;
         if (toneindex < TOTAL_TONES)
         {
-          arduboy.audio.tone(tones[toneindex], 150);
+          sound.tone(tones[toneindex], 150);
           toneindex = TOTAL_TONES;
         }
         if (level >= TOTAL_LEVELS)
@@ -130,7 +130,7 @@ void stateGameNextLevel()
     if (arduboy.justPressed(A_BUTTON | B_BUTTON))
     {
       toneindex = 0;
-      arduboy.audio.tone(425, 20);
+      sound.tone(425, 20);
       setKid();
       //cam.pos = vec2(0, 0);
       cam.pos = vec2(0, LEVEL_HEIGHT - 64);
