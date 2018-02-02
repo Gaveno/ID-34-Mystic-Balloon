@@ -368,10 +368,10 @@ void checkCollisions()
           kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
           break;
           case FAN_RIGHT:
-          kid.speed.x = min(kid.speed.x + FAN_POWER, MAX_XSPEED * 2);
+          kid.speed.x = min(kid.speed.x + FAN_POWER, MAX_XSPEED_FAN);
           break;
           default:
-          kid.speed.x = max(kid.speed.x - FAN_POWER, -MAX_XSPEED * 2);
+          kid.speed.x = max(kid.speed.x - FAN_POWER, -MAX_XSPEED_FAN);
         }
         //kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
         //if (arduboy.everyXFrames(3)) sound.tone(330 + random(20), 30);
