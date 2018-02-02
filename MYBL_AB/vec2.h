@@ -27,21 +27,22 @@ struct vec2
   {
     x = rhs.x;
     y = rhs.y;
+    return *this;
   }
 };
 
-vec2 operator+(vec2 &lhs, const vec2 &rhs)
+vec2 operator+(vec2 lhs, const vec2 &rhs)
 {
     //vec2 t = lhs;
     //t += rhs;
     return (lhs += rhs);
 }
 
-vec2 operator-(vec2 &lhs, const vec2 &rhs)
+vec2 operator-(vec2 lhs, const vec2 &rhs)
 {
     //vec2 t = lhs;
     //t -= rhs;
-    return (lhs += rhs);
+    return (lhs -= rhs);
 }
 
 vec2 operator<<(vec2 lhs, const int &rhs)
