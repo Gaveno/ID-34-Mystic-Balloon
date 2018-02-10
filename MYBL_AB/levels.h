@@ -108,7 +108,7 @@ void levelLoad(const uint8_t *lvl) {
         {
           // Fan
           byte t = pgm_read_byte(lvl + i++);
-          if (t < 128)
+          if (t < 64)
             fansCreate(vec2(x, y), t);
           else if (t < 192)
             fansCreate(vec2(x, y), t & 0x3F, FAN_RIGHT);

@@ -14,7 +14,7 @@
 #define GRAVITY 3
 #define FRICTION 1 // for horizontal speed
 #define MAX_XSPEED PLAYER_SPEED_WALKING
-#define MAX_XSPEED_FAN 60
+#define MAX_XSPEED_FAN 54
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
 #define CAMERA_OFFSET 16
 
