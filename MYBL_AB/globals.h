@@ -43,8 +43,8 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          35
-#define TOTAL_LEVELS                 35
+#define LEVEL_TO_START_WITH          36
+#define TOTAL_LEVELS                 36
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
 #define MAX_PER_TYPE                 6                    // total instances per enemy type
