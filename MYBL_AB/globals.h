@@ -18,13 +18,13 @@
 #include "bitmaps.h"
 
 // EEPROM - change this address offset from the arduboy starting address if desired
-#define OFFSET_MYSTIC_START          (EEPROM_STORAGE_SPACE_START + 16)
-#define OFFSET_LEVEL                 (OFFSET_MYSTIC_START + sizeof(byte))
+#define OFFSET_MYBL_START            (EEPROM_STORAGE_SPACE_START + 16)
+#define OFFSET_LEVEL                 (OFFSET_MYBL_START + sizeof(byte))
 #define OFFSET_COINS                 (OFFSET_LEVEL + sizeof(byte))
 #define OFFSET_COINSHS               (OFFSET_COINS + sizeof(byte))
 #define OFFSET_SCORE                 (OFFSET_COINSHS + sizeof(byte))
 #define OFFSET_HSCORE                (OFFSET_SCORE + sizeof(unsigned long))
-#define OFFSET_MYSTIC_END            (OFFSET_HSCORE + sizeof(unsigned long))
+#define OFFSET_MYBL_END              (OFFSET_HSCORE + sizeof(unsigned long))
 
 //define menu states (on main menu)
 #define STATE_MENU_INTRO             0
@@ -99,15 +99,15 @@ byte mapTimer = 10;
 
 void loadSetEEPROM()
 {
-  if ((EEPROM.read(OFFSET_MYSTIC_START) != GAME_ID) && (EEPROM.read(OFFSET_MYSTIC_END) != GAME_ID))
+  if ((EEPROM.read(OFFSET_MYBL_START) != GAME_ID) && (EEPROM.read(OFFSET_MYBL_END) != GAME_ID))
   {
-    EEPROM.put(OFFSET_MYSTIC_START, (byte)GAME_ID); // game id
+    EEPROM.put(OFFSET_MYBL_START, (byte)GAME_ID); // game id
     EEPROM.put(OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1); // beginning level
     EEPROM.put(OFFSET_COINS, (byte)0); // coins current run
     EEPROM.put(OFFSET_COINSHS, (byte)0); // coins highscore run
     EEPROM.put(OFFSET_SCORE, (unsigned long)0); // clear score
     EEPROM.put(OFFSET_HSCORE, (unsigned long)0); // clear high score
-    EEPROM.put(OFFSET_MYSTIC_END, (byte)GAME_ID); // game id
+    EEPROM.put(OFFSET_MYBL_END, (byte)GAME_ID); // game id
   }
 }
 
