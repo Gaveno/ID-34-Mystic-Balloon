@@ -1,7 +1,7 @@
 /*
   Mystic Balloon: http://www.team-arg.org/mybl-manual.html
 
-  Arduboy version 1.6:  http://www.team-arg.org/mybl-downloads.html
+  Arduboy version 1.6.1:  http://www.team-arg.org/mybl-downloads.html
 
   MADE by TEAM a.r.g. : http://www.team-arg.org/more-about.html
 
