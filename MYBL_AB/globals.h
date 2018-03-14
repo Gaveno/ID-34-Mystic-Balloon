@@ -18,8 +18,8 @@
 #include "bitmaps.h"
 
 // EEPROM - change this address offset from the arduboy starting address if desired
-#define EEPROM_MYSTIC_START          (EEPROM_STORAGE_SPACE_START + 16)
-#define OFFSET_LEVEL                 (EEPROM_MYSTIC_START + sizeof(byte))
+#define OFFSET_MYSTIC_START          (EEPROM_STORAGE_SPACE_START + 16)
+#define OFFSET_LEVEL                 (OFFSET_MYSTIC_START + sizeof(byte))
 #define OFFSET_COINS                 (OFFSET_LEVEL + sizeof(byte))
 #define OFFSET_COINSHS               (OFFSET_COINS + sizeof(byte))
 #define OFFSET_SCORE                 (OFFSET_COINSHS + sizeof(byte))
@@ -99,9 +99,9 @@ byte mapTimer = 10;
 
 void loadSetEEPROM()
 {
-  if ((EEPROM.read(EEPROM_MYSTIC_START) != GAME_ID) && (EEPROM.read(OFFSET_MYSTIC_END) != GAME_ID))
+  if ((EEPROM.read(OFFSET_MYSTIC_START) != GAME_ID) && (EEPROM.read(OFFSET_MYSTIC_END) != GAME_ID))
   {
-    EEPROM.put(EEPROM_MYSTIC_START, (byte)GAME_ID); // game id
+    EEPROM.put(OFFSET_MYSTIC_START, (byte)GAME_ID); // game id
     EEPROM.put(OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1); // beginning level
     EEPROM.put(OFFSET_COINS, (byte)0); // coins current run
     EEPROM.put(OFFSET_COINSHS, (byte)0); // coins highscore run
