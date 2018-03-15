@@ -18,7 +18,7 @@
 #include "bitmaps.h"
 
 // EEPROM - change this address offset from the arduboy starting address if desired
-#define OFFSET_MYBL_START            (EEPROM_STORAGE_SPACE_START + 16)
+#define OFFSET_MYBL_START            (EEPROM_STORAGE_SPACE_START + 51)
 #define OFFSET_LEVEL                 (OFFSET_MYBL_START + sizeof(byte))
 #define OFFSET_COINS                 (OFFSET_LEVEL + sizeof(byte))
 #define OFFSET_COINSHS               (OFFSET_COINS + sizeof(byte))
