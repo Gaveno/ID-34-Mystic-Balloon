@@ -66,7 +66,7 @@ struct HighRect
   public:
     int x;
     int y;
-    uint8_t width;
+    uint16_t width;
     int height;
 };
 
