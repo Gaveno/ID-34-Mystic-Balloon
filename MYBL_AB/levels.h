@@ -35,7 +35,8 @@ bool gridGetSolid(int8_t x, int8_t y) {
 }
 
 byte gridGetTile(int8_t x, int8_t y) {
-  if (!gridGetSolid(x, y)) return 0;
+  //if (!gridGetSolid(x, y)) return 0;
+  if (!gridGetSolid(x, y)) return 16;
   //if (x < 0 || x >= LEVEL_WIDTH || y < 0 || y >= LEVEL_HEIGHT || !gridGetSolid(x, y))
   //return 0;
   //return gameGrid[x + (y * LEVEL_WIDTH_CELLS)] >> 4;
@@ -46,6 +47,11 @@ byte gridGetTile(int8_t x, int8_t y) {
   b = gridGetSolid(x, y + 1);
 
   f = 0;
+  f = r | (t << 1) | (l << 2) | (b << 3);
+
+  return f;
+  
+  /*f = 0;
   f |= t << 3;
   f |= l << 2;
   f |= r << 1;
@@ -64,7 +70,7 @@ byte gridGetTile(int8_t x, int8_t y) {
     default: i = 10;
   }
 
-  return i;
+  return i;*/
 }
 
 
@@ -151,7 +157,8 @@ void drawGrid() {
   {
       for (byte y = 5; y < 6; --y)
       {
-            sprites.drawSelfMasked(x * spacing - (cam.pos.x >> 2) % spacing, (int)y * spacing - (cam.pos.y >> 2) % spacing, tileSetTwo, 0);
+            //sprites.drawSelfMasked(x * spacing - (cam.pos.x >> 2) % spacing, (int)y * spacing - (cam.pos.y >> 2) % spacing, tileSetTwo, 16);
+            sprites.drawSelfMasked(x * spacing - (cam.pos.x >> 2) % spacing, (int)y * spacing - ((cam.pos.y + 64) >> 2) % spacing, tileSetTwo, 16);
       }
   }
   for ( int x = (cam.pos.x >> 4); x <= (cam.pos.x >> 4) + 8; ++x)
@@ -172,7 +179,7 @@ void drawGrid() {
         //        Serial.print(gridGetTile(x, y));
         //        Serial.print("\n");
         byte tile = gridGetTile(x, y);
-        if (tile != 0)
+        if (tile != 16)
           sprites.drawOverwrite((x << 4) - cam.pos.x, (y << 4) - cam.pos.y, tileSetTwo, tile);
       }
     }
