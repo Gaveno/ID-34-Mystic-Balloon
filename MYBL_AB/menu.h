@@ -20,7 +20,7 @@ extern void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data);
 
 void drawTitleScreen()
 {
-  if (arduboy.everyXFrames(7))blinkingFrames = (++blinkingFrames) % 32;
+  if (arduboy.everyXFrames(8))blinkingFrames = (++blinkingFrames) % 32;
   for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, titleScreen, i);
   sprites.drawSelfMasked(85, 45, badgeMysticBalloon, 0);
   sprites.drawSelfMasked(79, 43, stars, sparkleFrames);
@@ -39,7 +39,11 @@ void stateMenuIntro()
   else
   {
     drawTitleScreen();
-    if ((globalCounter > 250) || arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+    if ((globalCounter > 250) || arduboy.justPressed(A_BUTTON | B_BUTTON))
+    {
+      gameState = STATE_MENU_MAIN;
+      sound.tone(425, 20);
+    }
   }
 }
 
@@ -48,16 +52,32 @@ void stateMenuMain()
 
   drawTitleScreen();
   sprites.drawOverwrite(51, 9, mainMenu, 0);
-  if (arduboy.justPressed(DOWN_BUTTON) && (menuSelection < 5)) menuSelection++;
-  if (arduboy.justPressed(UP_BUTTON) && (menuSelection > 2)) menuSelection--;
-  if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = menuSelection;
+  if (arduboy.justPressed(DOWN_BUTTON) && (menuSelection < 5))
+  {
+    menuSelection++;
+    sound.tone(300, 20);
+  }
+  if (arduboy.justPressed(UP_BUTTON) && (menuSelection > 2))
+  {
+    menuSelection--;
+    sound.tone(300, 20);
+  }
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+  {
+    gameState = menuSelection;
+    sound.tone(425, 20);
+  }
   sprites.drawPlusMask(46, 9 + 9 * (menuSelection - 2), selector_plus_mask, 0);
 }
 
 void stateMenuHelp()
 {
   for (byte i = 0; i < 2; i++) sprites.drawSelfMasked(32, 32 * i, qrcode, i);
-  if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+  {
+    gameState = STATE_MENU_MAIN;
+    sound.tone(425, 20);
+  }
 }
 
 
@@ -77,20 +97,29 @@ void stateMenuInfo()
   }
   sprites.drawSelfMasked(30, 28, badgeHighScore, 0);
   drawNumbers(55, 30, FONT_BIG, DATA_SCORE);
-  if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
+  if (arduboy.justPressed(A_BUTTON | B_BUTTON))
+  {
+    gameState = STATE_MENU_MAIN;
+    sound.tone(425, 20);
+  }
 }
 
 void stateMenuSoundfx()
 {
   drawTitleScreen();
   sprites.drawOverwrite(51, 9, soundMenu, 0);
-  if (arduboy.justPressed(DOWN_BUTTON)) arduboy.audio.on();
+  if (arduboy.justPressed(DOWN_BUTTON))
+  {
+    arduboy.audio.on();
+    sound.tone(300, 20);
+  }
   if (arduboy.justPressed(UP_BUTTON)) arduboy.audio.off();
   sprites.drawPlusMask(54, 18 + 9 * arduboy.audio.enabled(), selector_plus_mask, 0);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
   {
     arduboy.audio.saveOnOff();
     gameState = STATE_MENU_MAIN;
+    sound.tone(425, 20);
   }
 }
 
@@ -98,17 +127,27 @@ void stateMenuPlaySelect()
 {
   drawTitleScreen();
   sprites.drawOverwrite(53, 18, continueMenu, 0);
-  if (arduboy.justPressed(DOWN_BUTTON)) cont = 1;
-  if (arduboy.justPressed(UP_BUTTON)) cont = 0;
+  if (arduboy.justPressed(DOWN_BUTTON))
+  {
+    cont = 1;
+    sound.tone(300, 20);
+  }
+  if (arduboy.justPressed(UP_BUTTON))
+  {
+    cont = 0;
+    sound.tone(300, 20);
+  }
   sprites.drawPlusMask(48, 18 + 9 * cont, selector_plus_mask, 0);
   if (arduboy.justPressed(B_BUTTON))
   {
     gameState = STATE_GAME_PLAYCONTNEW + cont;
     cont = 0;
+    sound.tone(425, 20);
   }
   if (arduboy.justPressed(A_BUTTON))
   {
     gameState = STATE_MENU_MAIN;
+    sound.tone(425, 20);
   }
 }
 

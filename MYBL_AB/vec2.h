@@ -31,18 +31,18 @@ struct vec2
   }
 };
 
-vec2 operator+(vec2 &lhs, const vec2 &rhs)
+vec2 operator+(vec2 lhs, const vec2 &rhs)
 {
     //vec2 t = lhs;
     //t += rhs;
     return (lhs += rhs);
 }
 
-vec2 operator-(vec2 &lhs, const vec2 &rhs)
+vec2 operator-(vec2 lhs, const vec2 &rhs)
 {
     //vec2 t = lhs;
     //t -= rhs;
-    return (lhs += rhs);
+    return (lhs -= rhs);
 }
 
 vec2 operator<<(vec2 lhs, const int &rhs)

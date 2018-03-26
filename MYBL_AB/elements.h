@@ -22,7 +22,8 @@ void drawBalloonLives()
 
 void drawCoinHUD()
 {
-  for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  //for (byte i = 0; i < MAX_PER_TYPE; ++i)
+  for (byte i = MAX_PER_TYPE-1; i < MAX_PER_TYPE; --i)
   {
     if (i >= MAX_PER_TYPE - coinsActive)
       sprites.drawOverwrite(40 + (i * 6), 0, elementsHUD, 11);
@@ -43,7 +44,9 @@ void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
       charLen = strlen(buf);
       pad = 6 - charLen;
       sprites.drawSelfMasked(numbersX - 2, numbersY - 2, numbersBigMask, 0);
-      for (byte i = 0; i < 6; i++)sprites.drawSelfMasked(numbersX + (7 * i), numbersY - 2, numbersBigMask01, 0);
+      //for (byte i = 0; i < 6; i++)
+      for (byte i = 5; i <= 5; --i)
+        sprites.drawSelfMasked(numbersX + (7 * i), numbersY - 2, numbersBigMask01, 0);
       sprites.drawSelfMasked(numbersX + 41, numbersY - 2, numbersBigMask, 1);
       break;
     case DATA_LEVEL:

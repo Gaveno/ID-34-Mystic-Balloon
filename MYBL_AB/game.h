@@ -10,8 +10,9 @@
 #include "levels.h"
 
 #define TOTAL_TONES 10
-const int tones[] = {
-  200, 100, 250, 125, 300, 150, 350, 400, 425, 475
+PROGMEM const byte tones[] = {
+  //200, 100, 250, 125, 300, 150, 350, 400, 425, 475
+  131, 145, 139, 152, 131, 172, 200, 188, 213, 255
 };
 
 byte toneindex = 0;
@@ -59,13 +60,13 @@ void stateGameNextLevel()
       {
         coinsCollected--;
         scorePlayer += 20;
-        sound.tone(tones[toneindex++], 150);
+        sound.tone(pgm_read_byte(tones + toneindex++), 150);
       }
       else if (balloonsLeft > 0)
       {
         balloonsLeft--;
         scorePlayer += 30;
-        sound.tone(tones[toneindex++], 150);
+        sound.tone(pgm_read_byte(tones + toneindex++), 150);
       }
       else
       {
@@ -74,7 +75,7 @@ void stateGameNextLevel()
         pressKeyIsVisible = !pressKeyIsVisible;
         if (toneindex < TOTAL_TONES)
         {
-          sound.tone(tones[toneindex], 150);
+          sound.tone(pgm_read_byte(tones + toneindex++), 200);
           toneindex = TOTAL_TONES;
         }
         if (level >= TOTAL_LEVELS)

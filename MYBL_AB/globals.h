@@ -44,8 +44,8 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          1
-#define TOTAL_LEVELS                 30
+#define LEVEL_TO_START_WITH          31
+#define TOTAL_LEVELS                 39
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
 #define MAX_PER_TYPE                 6                    // total instances per enemy type
@@ -67,7 +67,7 @@ struct HighRect
   public:
     int x;
     int y;
-    uint8_t width;
+    uint16_t width;
     int height;
 };
 

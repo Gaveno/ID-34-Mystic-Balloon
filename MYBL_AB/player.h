@@ -14,8 +14,9 @@
 #define GRAVITY 3
 #define FRICTION 1 // for horizontal speed
 #define MAX_XSPEED PLAYER_SPEED_WALKING
+#define MAX_XSPEED_FAN 54
 #define MAX_YSPEED 3 * (1 << FIXED_POINT)
-#define CAMERA_OFFSET 5
+#define CAMERA_OFFSET 16
 
 extern bool gridGetSolid(int8_t x, int8_t y);
 extern void kidHurt();
@@ -86,7 +87,7 @@ void checkKid()
 {
   if (kid.isImune)
   {
-    if (arduboy.everyXFrames(3)) kid.isActive = !kid.isActive;
+    if (arduboy.everyXFrames(2)) kid.isActive = !kid.isActive;
     kid.imuneTimer++;
     if (kid.imuneTimer > 60)
     {
@@ -131,9 +132,9 @@ void checkKid()
   int tx = (kid.pos.x + 6) >> 4;
   int ty = (kid.pos.y + 8) >> 4;
   boolean solidbelow = gridGetSolid(tx, (kid.pos.y + 16) >> 4);
-  boolean solidabove = gridGetSolid(tx, (kid.pos.y - 1) >> 4);
-  boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, ty);
-  boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, ty);
+  //boolean solidabove = gridGetSolid(tx, (kid.pos.y - 1) >> 4);
+  //boolean solidleft = gridGetSolid((kid.pos.x - 1) >> 4, ty);
+  //boolean solidright = gridGetSolid((kid.pos.x + 13) >> 4, ty);
   int tx2 = (((kid.actualpos.x + kid.speed.x) >> FIXED_POINT) - 1 + (kid.speed.x > 0) * 14) >> 4;
   boolean solidH = gridGetSolid(tx2, (kid.pos.y + 2) >> 4)
                    || gridGetSolid(tx2, (kid.pos.y + 13) >> 4);
@@ -174,7 +175,8 @@ void checkKid()
 
     // Fall off edge
     //if (abs(((kid.pos.x + 6) % 16) - 8) >= 4)
-    if (!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
+    //if (!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON))
+    if (!arduboy.pressed(RIGHT_BUTTON | LEFT_BUTTON))
     {
       int yy = (kid.pos.y + 16) >> 4;
       bool sl = gridGetSolid((kid.pos.x + 4) >> 4, yy);
@@ -266,7 +268,7 @@ void updateCamera()
   //vec2 V = (kid.pos - cam.pos + cam.offset) >> 3; // more bytes
   V.x = kid.pos.x - cp.x - 58;
   V.y = kid.pos.y - cp.y - 24;
-  V = V >> 3;
+  V = V >> 2;
 
   cam.pos += V;
   cam.pos.y = min(320, cam.pos.y);
