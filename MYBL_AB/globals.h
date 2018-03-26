@@ -44,7 +44,7 @@
 #define FACING_RIGHT                 0
 #define FACING_LEFT                  1
 
-#define LEVEL_TO_START_WITH          31
+#define LEVEL_TO_START_WITH          1
 #define TOTAL_LEVELS                 39
 #define TOTAL_COINS                  TOTAL_LEVELS * 6
 
