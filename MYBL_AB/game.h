@@ -34,14 +34,12 @@ void stateMenuPlayNew()
 
 void stateMenuPlayContinue()
 {
-  //level = LEVEL_TO_START_WITH - 1;
-  //EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + 1, level);
-  level = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL);
-  totalCoins = EEPROM.read(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS);
+  level = EEPROM.read(OFFSET_LEVEL);
+  totalCoins = EEPROM.read(OFFSET_COINS);
   coinsCollected = 0;
   balloonsLeft = 0;
   //scorePlayer = 0;
-  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, scorePlayer);
+  EEPROM.get(OFFSET_SCORE, scorePlayer);
   globalCounter = 0;
   kid.balloons = 3;
   gameState = STATE_GAME_NEXT_LEVEL;
@@ -92,9 +90,9 @@ void stateGameNextLevel()
   }*/
 
   // Update EEPROM
-  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, level);
-  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINS, totalCoins);
-  EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, scorePlayer);
+  EEPROM.put(OFFSET_LEVEL, level);
+  EEPROM.put(OFFSET_COINS, totalCoins);
+  EEPROM.put(OFFSET_SCORE, scorePlayer);
 
 
   //if (nextLevelIsVisible)
@@ -106,9 +104,9 @@ void stateGameNextLevel()
   }
   else
   {
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1);
+    EEPROM.put(OFFSET_LEVEL, (byte)LEVEL_TO_START_WITH - 1);
     // Score remains after completing game? (no)
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_SCORE, (unsigned long)0);
+    EEPROM.put(OFFSET_SCORE, (unsigned long)0);
   }
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
   //}
@@ -182,10 +180,10 @@ void stateGameOver()
   drawNumbers(43, 49, FONT_BIG, DATA_SCORE);
 
   unsigned long highscore = 0;
-  EEPROM.get(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, highscore);
+  EEPROM.get(OFFSET_HSCORE, highscore);
   if (scorePlayer > highscore) {
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_COINSHS, totalCoins);
-    EEPROM.put(EEPROM_STORAGE_SPACE_START + EEPROM_MYSTIC_START + OFFSET_HSCORE, scorePlayer);
+    EEPROM.put(OFFSET_COINSHS, totalCoins);
+    EEPROM.put(OFFSET_HSCORE, scorePlayer);
   }
     
   if (arduboy.justPressed(A_BUTTON | B_BUTTON))
