@@ -16,6 +16,7 @@
 #define SPIKES_RIGHT        2
 #define SPIKES_UP           3
 
+extern byte fanFrame;
 
 struct Coin
 {

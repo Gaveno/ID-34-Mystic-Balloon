@@ -40,7 +40,7 @@ byte gridGetTile(int8_t x, int8_t y) {
   //if (x < 0 || x >= LEVEL_WIDTH || y < 0 || y >= LEVEL_HEIGHT || !gridGetSolid(x, y))
   //return 0;
   //return gameGrid[x + (y * LEVEL_WIDTH_CELLS)] >> 4;
-  byte l, r, t, b, f, i;
+  byte l, r, t, b, f;
   l = gridGetSolid(x - 1, y);
   t = gridGetSolid(x, y - 1);
   r = gridGetSolid(x + 1, y);
@@ -81,7 +81,7 @@ void levelLoad(const uint8_t *lvl) {
   byte b = pgm_read_byte(lvl);
   while (b != 0xFF)
   {
-    byte id, x, y, h;
+    byte id, x, y;
     id = pgm_read_byte(lvl + i) & 0xE0;
     y = (pgm_read_byte(lvl + i++) & 0x1F);
     x = pgm_read_byte(lvl + i++) & 0x1F;

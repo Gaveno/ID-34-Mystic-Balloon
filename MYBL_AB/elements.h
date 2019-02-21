@@ -35,8 +35,8 @@ void drawCoinHUD()
 void drawNumbers(byte numbersX, byte numbersY, byte fontType, byte data)
 {
   char buf[10];
-  char charLen;
-  char pad;
+  char charLen = 0;
+  char pad = 0;
   switch (data)
   {
     case DATA_SCORE:
