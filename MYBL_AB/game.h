@@ -134,7 +134,6 @@ void stateGameNextLevel()
       //cam.pos = vec2(0, 0);
       cam.pos = vec2(0, LEVEL_HEIGHT - 64);
       cam.offset = vec2(0, 0);
-      enemiesInit();
       levelLoad(levels[level]);
       gameState = STATE_GAME_PLAYING;
     }
@@ -147,14 +146,28 @@ void stateGamePlaying()
   checkInputs();
   checkKid();
   updateCamera();
+  HighRect playerRect = {
+    .x = kid.pos.x + 2, .y = kid.pos.y + 2, .width = 8, .height = 12
+  };
+  HighRect playerSuckRect = {
+    .x = kid.pos.x + ((kid.direction ^ 1) * 16) - (kid.direction * 16),
+    .y = kid.pos.y + 2, .width = 16, .height = 14
+  };
+
+  if (kid.balloons > 0) {
+    GameObjects::updateAll(playerRect, playerSuckRect);
+  }
+
+  if (arduboy.everyXFrames(8))
+  {
+    walkerFrame = (++walkerFrame) % 2;
+    coinFrame = (++coinFrame) % 4;
+  }
 
   drawGrid();
-  enemiesUpdate();
-
+  GameObjects::drawAll();
   drawKid();
   drawHUD();
-
-  checkCollisions();
 }
 
 

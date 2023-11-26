@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "globals.h"
+#include "GameObjects.hpp"
 //#include "vec2.h"
 
 #define MAX_FAN_PARTICLES 4
@@ -16,113 +17,43 @@
 #define SPIKES_RIGHT        2
 #define SPIKES_UP           3
 
+#ifndef LSTART
+#define LSTART  0
+#define LFINISH 1 << 5
+#define LWALKER 2 << 5
+#define LFAN    3 << 5
+#define LSPIKES 4 << 5
+#define LCOIN   5 << 5
+#define LKEY    6 << 5
+#endif
+
 extern byte fanFrame;
+extern byte keysActive;
+extern byte coinsActive;
+extern bool haveKey;
 
-class GameObjects {
-  vec2 pos;
-  GameObjects *mNext;
-  static GameObjects *smObjectListFore = nullptr;
-  static GameObjects *smObjectListBack = nullptr;
-
-  static void addObj(GameObj *mObj, GameObjects **mList) {
-    GameObjects **mCurrent = mList;
-    while (*mCurrent != nullptr) {
-      *mCurrent = (*mCurrent)->mNext;
-    }
-    *mCurrent = mObj;
-  }
-
-  static void clearList(GameObjects **mList) {
-    while (*mList != nullptr) {
-      GameObjects *mCurrent = &mList;
-      *mList = mCurrent->mNext;
-      delete mCurrent;
-    }
-  }
-
-public:
-  GameObjects() : pos(0, 0), mNext(nullptr) {}
-  GameObjects(vec2 cellpos) : pos(cellpos << 4), mNext(nullptr) {}
-  virtual void update();
-  virtual void draw();
-
-  static void removeForegroundObject(GameObjects *mObj) {
-    GameObjects **mPrev = &smObjectListFore;
-    while (*mPrev != nullptr && (*mPrev)->mNext != nullptr) {
-      if (*mPrev == mObj) {
-        *mPrev = mObj->mNext;
-        delete mObj;
-        break;
-      }
-    }
-  }
-
-  static void clearBackground() {
-    clearList(smObjectListBack);
-  }
-
-  static void clearForeground() {
-    clearList(smObjectListFore);
-  }
-
-  static void addBackgroundObject(GameObjects *mObj) {
-    addObj(mObj, &smObjectListBack);
-  }
-
-  static void addForegroundObject(GameObjects *mObj) {
-    addObj(mObj, &smObjectListFore);
-  }
-
-  static void updateObjects() {
-    GameObjects **mCurrent = &smObjectListBack;
-    while (*mCurrent != nullptr) {
-      (*mCurrent)->update();
-      *mCurrent = (*mCurrent)->mNext;
-    }
-    mCurrent = &smObjectListFore;
-    while (*mCurrent != nullptr) {
-      (*mCurrent)->update();
-      *mCurrent = (*mCurrent)->mNext;
-    }
-  }
-
-  static void drawObjects() {
-    GameObjects **mCurrent = &smObjectListBack;
-    while (*mCurrent != nullptr) {
-      (*mCurrent)->update();
-      *mCurrent = (*mCurrent)->mNext;
-    }
-    mCurrent = &smObjectListFore;
-    while (*mCurrent != nullptr) {
-      (*mCurrent)->update();
-      *mCurrent = (*mCurrent)->mNext;
-    }
-  }
-};
-
-
-
-class Coin: public GameObjects
+class Coin : public GameObject
 {
 public:
-  Coin(vec2 cellPos) : GameObjects(cellPos) {
-    pos.x += 2;
+  Coin(int x, int y) : GameObject(x, y) {
+    x += 2;
+    objType = LCOIN;
+    ++coinsActive;
   }
-  void update() override {
-    HighRect coinrect = {.x = pos.x, .y = pos.y, .width = 10, .height = 12};
+  void update(HighRect &playerRect, HighRect &playerSuckRect) override {
+    HighRect coinrect = {.x = x, .y = y, .width = 10, .height = 12};
     
     if (kid.isSucking && collide(playerSuckRect, coinrect))
     {
       // Suck coin closer
       if (kid.direction)
-        ++pos.x;
+        ++x;
       else
-        --pos.x;
+        --x;
     }
     else if (collide(playerRect, coinrect))
     {
       // Collect coin
-      coins[i].active = false; // TO-DO: Remove
       --coinsActive;
       ++coinsCollected;
       ++totalCoins;
@@ -134,7 +65,6 @@ public:
         #else
         scorePlayer += 1000;
         #endif
-        //sound.tone(400, 200);
       }
       else
       {
@@ -143,294 +73,318 @@ public:
         #else
         scorePlayer += 400;
         #endif
-        //sound.tone(370, 200);
       }
+      GameObjects::removeForegroundObject(this);
     }
   }
 
   void draw() override {
-    sprites.drawOverwrite(pos.x - cam.pos.x, pos.y - cam.pos.y, elements, coinFrame);
+    sprites.drawOverwrite(x - cam.pos.x, y - cam.pos.y, elements, coinFrame);
   }
 };
 
-// Coin coins[MAX_PER_TYPE];
-
-struct Door: public GameObjects {
+struct Door : public GameObject {
   bool locked;
 
 public:
-  Door(vec2 cellPos) : locked(true), GameObjects(cellPos) {}
+  Door(int x, int y) : locked(true), GameObject(x, y) {
+    objType = LFINISH;
+  }
 
   void unlock() {
     locked = false;
   }
 
+  void update(HighRect &playerRect, HighRect &playerSuckRect) override {
+    HighRect exitRect = {.x = x + 4, .y = y, .width = 8, .height = 16};
+
+    if (collide(exitRect, playerRect) && arduboy.justPressed(UP_BUTTON) && !locked)
+    {
+      balloonsLeft = kid.balloons;
+      scoreIsVisible = true;
+      canPressButton = false;
+      level++;
+      gameState = STATE_GAME_NEXT_LEVEL;
+    }
+  }
+
   void draw() override {
-    sprites.drawOverwrite(pos.x - cam.pos.x, pos.x - cam.pos.y, door, !locked);
+    sprites.drawOverwrite(x - cam.pos.x, x - cam.pos.y, door, !locked);
   }
 };
 
-struct Key: public GameObjects
+struct Key : public GameObject
 {
-  Door *pDoor
+  Key(int x, int y) : GameObject(x, y) {
+    objType = LKEY;
+  }
 
-  Key(vec2 cellPos, bool haveKey) : haveKey(haveKey), GameObjects(cellPos) {}
+  void draw() override {
+    sprites.drawOverwrite(x - cam.pos.x, y - cam.pos.y, elements, 4);
+  }
+
+  void update(HighRect &playerRect, HighRect &playerSuckRect) override {
+    HighRect keyRect = {.x = x, .y = y, .width = 8, .height = 16};
+    
+    if (kid.isSucking && collide(playerSuckRect, keyRect))
+    {
+      // Suck coin closer
+      if (kid.direction)
+        ++x;
+      else
+        --x;
+    }
+    else if (collide(playerRect, keyRect))
+    {
+      --keysActive;
+      haveKey = true;
+      sound.tone(420, 200);
+      if (keysActive == 0) {
+        unlockDoor();
+      }
+      GameObjects::removeForegroundObject(this);
+    }
+  }
+
+  void unlockDoor() {
+    for (auto current = GameObjects::getForegroundHead(); current != nullptr; current = current->next) {
+
+      if (current->objType == LFINISH) {
+        Door *door = current;
+        door->unlock();
+        break;
+      }
+    }
+  }
 };
 
-Key key = {.pos = vec2(0, 0), .haveKey = false};
-
-struct Walker
+struct Walker : public GameObject
 {
-  vec2 pos;
   int8_t direction;
-  int8_t HP;
+  int8_t hp;
   bool hurt;
-  bool active;
-};
 
-Walker walkers[MAX_PER_TYPE];
-
-struct Spike
-{
-  HighRect pos;
-  byte characteristics;//B00000000;   //this byte holds all the characteristics for the spike
-  //                      ||||||||
-  //                      |||||||└->  0 \ these 2 bits are used to determine the spike type
-  //                      ||||||└-->  1 /  
-  //                      |||||└--->  2   the spike is active    (0 = false / 1 = true)
-};
-
-  Spike spikes[MAX_PER_TYPE];
-
-struct Fan
-{
-  vec2 pos;
-  vec2 particles[5];
-  int height;
-  bool active;
-  uint8_t dir;
-};
-
-Fan fans[MAX_PER_TYPE];
-
-void enemiesInit()
-{
-  coinsActive = 0;
-  //for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  for (byte i = MAX_PER_TYPE-1; i < MAX_PER_TYPE; --i)
-  {
-    // Fans
-    fans[i].pos = vec2(0, 0);
-    for (byte a = 0; a < MAX_FAN_PARTICLES; ++a)
-      fans[i].particles[a] = vec2(random(16), random(16));
-    fans[i].height = 0;
-    fans[i].active = false;
-    fans[i].dir = FAN_UP;
-
-    // Spikes
-    spikes[i].pos.x = 0;
-    spikes[i].pos.y = 0;
-    spikes[i].pos.width = 16;
-    spikes[i].pos.height = 16;
-    
-    spikes[i].characteristics = 1;
-    
-    // Walkers
-    walkers[i].pos.x = 0;
-    walkers[i].pos.y = 0;
-    walkers[i].active = false;
-    walkers[i].HP = 30;
-    walkers[i].direction = 1;
-    walkers[i].hurt = false;
-
-    // Coins
-    coins[i].pos.x = 0;
-    coins[i].pos.y = 0;
-    coins[i].active = false;
-  }
-}
-
-void keyCreate(vec2 pos)
-{
-  key.pos = pos << 4;
-  key.active = true;
-  key.haveKey = false;
-}
-
-void walkersCreate(vec2 pos)
-{
-  for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  //for (byte i = MAX_PER_TYPE-1; i < MAX_PER_TYPE; --i)
-  {
-    if (!walkers[i].active)
-    {
-      walkers[i].pos = pos << 4;
-      walkers[i].pos.y += 8;
-      walkers[i].active = true;
-      return;
-    }
-  }
-}
-
-void spikesCreate(vec2 pos, byte cellsToSpan)
-{
-  for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  {
-    if (!bitRead(spikes[i].characteristics, 2))
-    {
-      int len = 16 * (cellsToSpan + 1);
-      spikes[i].pos.x = pos.x << 4;
-      spikes[i].pos.y = pos.y << 4;
-      // Solid above
-      if (gridGetSolid(pos.x, pos.y - 1))
-      {
-        spikes[i].characteristics = B00000111;
-        spikes[i].pos.width = len;
-        spikes[i].pos.height = 8;
-      }
-      // Solid below
-      else if (gridGetSolid(pos.x, pos.y + 1))
-      {
-        spikes[i].characteristics = B00000101;
-        spikes[i].pos.width = len;
-        spikes[i].pos.height = 8;
-        spikes[i].pos.y += 8;
-      }
-      // Solid left
-      else if (gridGetSolid(pos.x - 1, pos.y))
-      {
-        spikes[i].characteristics = B00000100;
-        spikes[i].pos.width = 8;
-        spikes[i].pos.height = len;
-      }
-      // Solid right
-      else if (gridGetSolid(pos.x + 1, pos.y))
-      {
-        spikes[i].characteristics = B00000110;
-        spikes[i].pos.width = 8;
-        spikes[i].pos.height = len;
-        spikes[i].pos.x += 8;
-      }
-      return;
-    }
-  }
-}
-
-void fansCreate(vec2 pos, byte height, uint8_t dir = FAN_UP)
-{
-  //for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  for (byte i = MAX_PER_TYPE-1; i < MAX_PER_TYPE; --i)
-  {
-    if (!fans[i].active)
-    {
-      fans[i].pos = pos << 4;
-      fans[i].height = height << 4;
-      fans[i].active = true;
-      fans[i].dir = dir;
-      return;
-    }
-  }
-}
-
-void enemiesUpdate()
-{
-  if (arduboy.everyXFrames(8))
-  {
-    walkerFrame = (++walkerFrame) % 2;
-    coinFrame = (++coinFrame) % 4;
+  Walker(int x, int y) : hp(30), direction(1), hurt(false), GameObject(x, y) {
+    y += 8;
+    objType = LWALKER;
   }
 
-  if (key.active)
-  {
-    int commonx = key.pos.x - cam.pos.x;
-    int commony = key.pos.y - cam.pos.y;
-    sprites.drawOverwrite(commonx, commony, elements, 4);
-  }
-
-  // Draw spikes first
-  //for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  for (byte i = MAX_PER_TYPE-1; i < MAX_PER_TYPE; --i)
-  {
-    if (bitRead(spikes[i].characteristics, 2)) // spike active
-    {
-      int commonx = spikes[i].pos.x - cam.pos.x;
-      int commony = spikes[i].pos.y - cam.pos.y;
-      sprites.drawOverwrite(commonx, commony, sprSpikes,  spikes[i].characteristics & B00000011);
-      if (!bitRead(spikes[i].characteristics, 0)) {
-        for (int l = 8; l < spikes[i].pos.height; l += 8)
-          sprites.drawOverwrite(commonx, commony + l, sprSpikes,  spikes[i].characteristics & B00000011);
+  void update(HighRect &playerRect, HighRect &playerSuckRect) override {
+    // Movement
+    int yR = y >> 4;
+    int xR = (x + 4 + (direction * 5)) >> 4;
+    if (arduboy.everyXFrames(2) && hp > 0 && !hurt) {
+      if (!gridGetSolid(xR, yR)
+          && gridGetSolid(xR, yR + 1)) {
+        x += direction;
       }
       else {
-        for (int l = 8; l < spikes[i].pos.width; l += 8)
-          sprites.drawOverwrite(commonx + l, commony, sprSpikes,  spikes[i].characteristics & B00000011);
+        direction = -direction;
       }
     }
-  }
 
-  if (arduboy.everyXFrames(4)) fanFrame = (++fanFrame) % 3;
-  for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  {
-    // Fans
-    if (fans[i].active)
-    {
-      // Update
-      if (arduboy.everyXFrames(2))
-        for (byte a = 0; a < MAX_FAN_PARTICLES; ++a)
-        {
-          // Update Particles
-          fans[i].particles[a].y =
-            (fans[i].particles[a].y < (fans[i].height)) ?
-            fans[i].particles[a].y + 6 : random((fans[i].height) >> 2);
+    // Collisions
+    HighRect walkerrect = {.x = x, .y = y, .width = 8, .height = 8};
+    if (collide(playerSuckRect, walkerrect) && kid.isSucking) {
 
-          // Draw particles
-          switch (fans[i].dir)
-          {
-            case FAN_UP:
-            sprites.drawErase(fans[i].pos.x + fans[i].particles[a].x - cam.pos.x, fans[i].pos.y - fans[i].particles[a].y - cam.pos.y, particle , 0);
-            break;
-            case FAN_RIGHT:
-            sprites.drawErase(fans[i].pos.x + 16 + fans[i].particles[a].y - cam.pos.x, fans[i].pos.y + 16 - fans[i].particles[a].x - cam.pos.y, particle , 0);
-            break;
-            default:
-            sprites.drawErase(fans[i].pos.x - fans[i].particles[a].y - cam.pos.x, fans[i].pos.y + 16 - fans[i].particles[a].x - cam.pos.y, particle , 0);
+      --hp;
+      hurt = true;
+
+      if (hp <= 0) {
+        if (kid.direction) {
+          ++x;
+
+          if (x > kid.pos.x - 8) {
+            if (kid.balloons < 3) {
+              ++kid.balloons;
+            } else {
+              scorePlayer += 100;
+            }
+
+            scorePlayer += 50;
+            sound.tone(200, 100);
+            GameObjects::removeForegroundObject(this);
           }
         }
+        else {
+          --x;
 
-      // Draw fan
-      int _x = fans[i].pos.x - cam.pos.x;
-      int _y = fans[i].pos.y - cam.pos.y;
-      uint8_t foff = 3 * fans[i].dir;
-      //if (fans[i].dir > FAN_UP) foff += 3;
-      //else if (fans[i].dir > FAN_RIGHT) foff += 6;
-      sprites.drawOverwrite(_x, _y, fan, fanFrame + foff);
-    }
-
-    // Walkers
-    if (walkers[i].active)
-    {
-      if (arduboy.everyXFrames(2) && walkers[i].HP > 0 && !walkers[i].hurt)
-      {
-        if (!gridGetSolid((walkers[i].pos.x + 4 + (walkers[i].direction * 5)) >> 4, walkers[i].pos.y >> 4)
-            && gridGetSolid((walkers[i].pos.x + 4 + (walkers[i].direction * 5)) >> 4, (walkers[i].pos.y >> 4) + 1))
-        {
-          walkers[i].pos.x += walkers[i].direction;
-        }
-        else
-        {
-          walkers[i].direction = -walkers[i].direction;
+          if (x < kid.pos.x + 16) {
+            if (kid.balloons < 3) {
+              ++kid.balloons;
+            } else {
+              scorePlayer += 100;
+            }
+            
+            scorePlayer += 50;
+            sound.tone(200, 100);
+            GameObjects::removeForegroundObject(this);
+          }
         }
       }
-
-      sprites.drawOverwrite(walkers[i].pos.x - cam.pos.x, walkers[i].pos.y - cam.pos.y, walkerSprite, walkerFrame + (walkers[i].HP <= 0) * 2);
+    } else {
+      hurt = false;
     }
 
-    // Coins
-    if (coins[i].active)
-    {
-      sprites.drawOverwrite(coins[i].pos.x - cam.pos.x, coins[i].pos.y - cam.pos.y, elements, coinFrame);
+    // Hurt player
+    if (collide(playerRect, walkerrect) && hp > 0 && !kid.isImune) {
+      kidHurt();
+      kid.speed.y = PLAYER_JUMP_VELOCITY;
+      kid.speed.x = max(min((kid.pos.x - x - 2), 3), -3) << FIXED_POINT;
     }
   }
-}
+
+  void draw() override {
+    sprites.drawOverwrite(x - cam.pos.x, y - cam.pos.y, walkerSprite, walkerFrame + (hp <= 0) * 2);
+  }
+};
+
+struct Spike : public GameObject
+{
+  int w;
+  int h;
+  byte image;
+
+  Spike(int x, int y, int cellsToSpan) : GameObject(x, y) {
+    objType = LSPIKES;
+    int len = 16 * (cellsToSpan + 1);
+    // Solid above
+    if (gridGetSolid(x, y - 1))
+    {
+      image = 3;
+      w = len;
+      h = 8;
+    }
+    // Solid below
+    else if (gridGetSolid(x, y + 1))
+    {
+      image = 1;
+      w = len;
+      h = 8;
+      y += 8;
+    }
+    // Solid left
+    else if (gridGetSolid(x - 1, y))
+    {
+      image = 0;
+      w = 8;
+      h = len;
+    }
+    // Solid right
+    else if (gridGetSolid(x + 1, y))
+    {
+      image = 2;
+      w = 8;
+      h = len;
+      x += 8;
+    }
+  }
+
+  void draw() override {
+    int commonX = x - cam.pos.x;
+    int commonY = y - cam.pos.y;
+    sprites.drawOverwrite(commonX, commonY, sprSpikes,  image);
+    if (!bitRead(image, 0)) {
+      for (int i = 8; i < h; i += 8)
+        sprites.drawOverwrite(commonX, commonY + i, sprSpikes,  image);
+    }
+    else {
+      for (int i = 8; i < w; i += 8)
+        sprites.drawOverwrite(commonX + i, commonY, sprSpikes,  image);
+    }
+  }
+
+  void update(HighRect &playerRect, HighRect &playerSuckRect) override {
+    HighRect spikes = { .x = x, .y = y, .width = w, .height = h };
+    if (!kid.isImune && collide(playerRect, spikes))
+    {
+      kidHurt();
+      if (kid.pos.y < y) kid.speed.y = PLAYER_JUMP_VELOCITY;
+    }
+  }
+};
+
+struct Fan : public GameObject
+{
+  vec2 particles[5];
+  int height;
+  uint8_t dir;
+  HighRect particleBox;
+
+  Fan(int x, int y, int height, int direction) : height(height), dir(direction), GameObject(x, y) {
+    objType = LFAN;
+    for (byte i = 0; i < MAX_FAN_PARTICLES; ++i) {
+      particles[i] = vec2(random(16), random(16));
+    }
+
+    switch (dir) {
+      case FAN_UP:
+      particleBox.x = x;
+      particleBox.y = y - height;
+      particleBox.width = 16;
+      particleBox.height = height;
+      break;
+      case FAN_RIGHT:
+      particleBox.x = x + 16;
+      particleBox.y = y;
+      particleBox.width = height;
+      particleBox.height = 16;
+      break;
+      default:
+      particleBox.x = x - height;
+      particleBox.y = y;
+      particleBox.width = height;
+      particleBox.height = 16;
+    }
+  }
+
+  void update(HighRect &playerRect, HighRect &playerSuckRect) override {
+    if (collide(playerRect, particleBox) && kid.isBalloon) {
+      switch (dir)
+      {
+        case FAN_UP:
+        kid.speed.y = min(kid.speed.y + FAN_POWER, MAX_YSPEED);
+        break;
+        case FAN_RIGHT:
+        kid.speed.x = min(kid.speed.x + FAN_POWER, MAX_XSPEED_FAN);
+        break;
+        default:
+        kid.speed.x = max(kid.speed.x - FAN_POWER, -MAX_XSPEED_FAN);
+      }
+
+      windNoise();
+    }
+  }
+
+  void draw() override {
+    if (arduboy.everyXFrames(2)) {
+      for (byte i = 0; i < MAX_FAN_PARTICLES; ++i)
+      {
+        // Update Particles
+        particles[i].y = (particles[i].y < height) ? particles[i].y + 6 : random(height >> 2);
+
+        // Draw particles
+        switch (dir)
+        {
+          case FAN_UP:
+          sprites.drawErase(x + particles[i].x - cam.pos.x, y - particles[i].y - cam.pos.y, particle , 0);
+          break;
+          case FAN_RIGHT:
+          sprites.drawErase(x + 16 + particles[i].y - cam.pos.x, y + 16 - particles[i].x - cam.pos.y, particle , 0);
+          break;
+          default:
+          sprites.drawErase(x - particles[i].y - cam.pos.x, y + 16 - particles[i].x - cam.pos.y, particle , 0);
+        }
+      }
+    }
+
+    // Draw fan
+    int _x = x - cam.pos.x;
+    int _y = y - cam.pos.y;
+    uint8_t foff = 3 * dir;
+    sprites.drawOverwrite(_x, _y, fan, fanFrame + foff);
+  }
+};
 
 
 #endif

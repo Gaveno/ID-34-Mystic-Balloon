@@ -7,7 +7,7 @@ struct vec2
   int y;
 
   vec2() : x(0), y(0) {}
-  vec2(vec2 v) : vec2(v.x, v.y) {}
+  vec2(const vec2 &v) : vec2(v.x, v.y) {}
   vec2(int vx, int vy) : x(vx), y(vy) {}
 
   vec2 &operator+=(const vec2 &rhs)

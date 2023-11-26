@@ -16,6 +16,7 @@
 #include <ArduboyTones.h>
 #include "vec2.h"
 #include "bitmaps.h"
+#include "HighRect.hpp"
 
 // EEPROM - change this address offset from the arduboy starting address if desired
 #define OFFSET_MYBL_START            (EEPROM_STORAGE_SPACE_START + 51)
@@ -59,30 +60,7 @@
 #define LEVEL_ARRAY_SIZE             576
 
 #define PLAYER_JUMP_TIME             11
-
-// This is a replacement for struct Rect in the Arduboy2 library.
-// It defines height as an int instead of a uint8_t to allow a higher rectangle.
-struct HighRect
-{
-  public:
-    int x;
-    int y;
-    uint16_t width;
-    int height;
-
-    HighRect() {
-      x = 0;
-      y = 0;
-      width = 0;
-      height = 0;
-    }
-
-    HighRect(int x, int y, int width, int height) : x(x), y(y), width(width), height(height) {}
-
-    HighRect(vec2 pos, vec2 dimensions) {
-      HighRect(pos.x, pos.y, dimensions.x, dimensions.y);
-    }
-};
+#define PLAYER_JUMP_VELOCITY         (1 << FIXED_POINT) + 8
 
 Arduboy2Base arduboy;
 Sprites sprites;
@@ -106,9 +84,10 @@ byte walkerFrame = 0;
 byte fanFrame = 0;
 byte coinFrame = 0;
 byte coinsActive = 0;
-vec2 levelExit = vec2(0, 0);
 vec2 startPos;
 byte mapTimer = 10;
+byte keysActive = 0;
+bool haveKey = false;
 
 void loadSetEEPROM()
 {
