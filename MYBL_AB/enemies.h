@@ -18,22 +18,166 @@
 
 extern byte fanFrame;
 
-struct Coin
-{
+class GameObjects {
   vec2 pos;
-  bool active;
+  GameObjects *mNext;
+  static GameObjects *smObjectListFore = nullptr;
+  static GameObjects *smObjectListBack = nullptr;
+
+  static void addObj(GameObj *mObj, GameObjects **mList) {
+    GameObjects **mCurrent = mList;
+    while (*mCurrent != nullptr) {
+      *mCurrent = (*mCurrent)->mNext;
+    }
+    *mCurrent = mObj;
+  }
+
+  static void clearList(GameObjects **mList) {
+    while (*mList != nullptr) {
+      GameObjects *mCurrent = &mList;
+      *mList = mCurrent->mNext;
+      delete mCurrent;
+    }
+  }
+
+public:
+  GameObjects() : pos(0, 0), mNext(nullptr) {}
+  GameObjects(vec2 cellpos) : pos(cellpos << 4), mNext(nullptr) {}
+  virtual void update();
+  virtual void draw();
+
+  static void removeForegroundObject(GameObjects *mObj) {
+    GameObjects **mPrev = &smObjectListFore;
+    while (*mPrev != nullptr && (*mPrev)->mNext != nullptr) {
+      if (*mPrev == mObj) {
+        *mPrev = mObj->mNext;
+        delete mObj;
+        break;
+      }
+    }
+  }
+
+  static void clearBackground() {
+    clearList(smObjectListBack);
+  }
+
+  static void clearForeground() {
+    clearList(smObjectListFore);
+  }
+
+  static void addBackgroundObject(GameObjects *mObj) {
+    addObj(mObj, &smObjectListBack);
+  }
+
+  static void addForegroundObject(GameObjects *mObj) {
+    addObj(mObj, &smObjectListFore);
+  }
+
+  static void updateObjects() {
+    GameObjects **mCurrent = &smObjectListBack;
+    while (*mCurrent != nullptr) {
+      (*mCurrent)->update();
+      *mCurrent = (*mCurrent)->mNext;
+    }
+    mCurrent = &smObjectListFore;
+    while (*mCurrent != nullptr) {
+      (*mCurrent)->update();
+      *mCurrent = (*mCurrent)->mNext;
+    }
+  }
+
+  static void drawObjects() {
+    GameObjects **mCurrent = &smObjectListBack;
+    while (*mCurrent != nullptr) {
+      (*mCurrent)->update();
+      *mCurrent = (*mCurrent)->mNext;
+    }
+    mCurrent = &smObjectListFore;
+    while (*mCurrent != nullptr) {
+      (*mCurrent)->update();
+      *mCurrent = (*mCurrent)->mNext;
+    }
+  }
 };
 
-Coin coins[MAX_PER_TYPE];
 
-struct Key
+
+class Coin: public GameObjects
 {
-  vec2 pos;
-  bool active;
-  bool haveKey;
+public:
+  Coin(vec2 cellPos) : GameObjects(cellPos) {
+    pos.x += 2;
+  }
+  void update() override {
+    HighRect coinrect = {.x = pos.x, .y = pos.y, .width = 10, .height = 12};
+    
+    if (kid.isSucking && collide(playerSuckRect, coinrect))
+    {
+      // Suck coin closer
+      if (kid.direction)
+        ++pos.x;
+      else
+        --pos.x;
+    }
+    else if (collide(playerRect, coinrect))
+    {
+      // Collect coin
+      coins[i].active = false; // TO-DO: Remove
+      --coinsActive;
+      ++coinsCollected;
+      ++totalCoins;
+      sound.tone(400, 200);
+      if (coinsActive == 0)
+      {
+        #ifndef HARD_MODE
+        scorePlayer += 500;
+        #else
+        scorePlayer += 1000;
+        #endif
+        //sound.tone(400, 200);
+      }
+      else
+      {
+        #ifndef HARD_MODE
+        scorePlayer += 200;
+        #else
+        scorePlayer += 400;
+        #endif
+        //sound.tone(370, 200);
+      }
+    }
+  }
+
+  void draw() override {
+    sprites.drawOverwrite(pos.x - cam.pos.x, pos.y - cam.pos.y, elements, coinFrame);
+  }
 };
 
-Key key = {.pos = vec2(0, 0), .active = false, .haveKey = false};
+// Coin coins[MAX_PER_TYPE];
+
+struct Door: public GameObjects {
+  bool locked;
+
+public:
+  Door(vec2 cellPos) : locked(true), GameObjects(cellPos) {}
+
+  void unlock() {
+    locked = false;
+  }
+
+  void draw() override {
+    sprites.drawOverwrite(pos.x - cam.pos.x, pos.x - cam.pos.y, door, !locked);
+  }
+};
+
+struct Key: public GameObjects
+{
+  Door *pDoor
+
+  Key(vec2 cellPos, bool haveKey) : haveKey(haveKey), GameObjects(cellPos) {}
+};
+
+Key key = {.pos = vec2(0, 0), .haveKey = false};
 
 struct Walker
 {
@@ -49,7 +193,7 @@ Walker walkers[MAX_PER_TYPE];
 struct Spike
 {
   HighRect pos;
-  byte characteristics;//B00000000;   //this byte holds all the enemies characteristics
+  byte characteristics;//B00000000;   //this byte holds all the characteristics for the spike
   //                      ||||||||
   //                      |||||||└->  0 \ these 2 bits are used to determine the spike type
   //                      ||||||└-->  1 /  
@@ -106,22 +250,6 @@ void enemiesInit()
   }
 }
 
-void coinsCreate(vec2 pos)
-{
-  //for (byte i = 0; i < MAX_PER_TYPE; ++i)
-  for (byte i = MAX_PER_TYPE-1; i < MAX_PER_TYPE; --i)
-  {
-    if (!coins[i].active)
-    {
-      ++coinsActive;
-      coins[i].pos = pos << 4;
-      coins[i].pos.x += 2;
-      coins[i].active = true;
-      return;
-    }
-  }
-}
-
 void keyCreate(vec2 pos)
 {
   key.pos = pos << 4;
@@ -144,13 +272,13 @@ void walkersCreate(vec2 pos)
   }
 }
 
-void spikesCreate(vec2 pos, byte l)
+void spikesCreate(vec2 pos, byte cellsToSpan)
 {
   for (byte i = 0; i < MAX_PER_TYPE; ++i)
   {
     if (!bitRead(spikes[i].characteristics, 2))
     {
-      int len = 16 * (l + 1);
+      int len = 16 * (cellsToSpan + 1);
       spikes[i].pos.x = pos.x << 4;
       spikes[i].pos.y = pos.y << 4;
       // Solid above

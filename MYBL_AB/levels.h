@@ -7,6 +7,7 @@
 //#include "Point.h"
 #include "player.h"
 
+// Type IDs of game objects in level data
 #define LSTART  0
 #define LFINISH 1 << 5
 #define LWALKER 2 << 5

@@ -69,6 +69,19 @@ struct HighRect
     int y;
     uint16_t width;
     int height;
+
+    HighRect() {
+      x = 0;
+      y = 0;
+      width = 0;
+      height = 0;
+    }
+
+    HighRect(int x, int y, int width, int height) : x(x), y(y), width(width), height(height) {}
+
+    HighRect(vec2 pos, vec2 dimensions) {
+      HighRect(pos.x, pos.y, dimensions.x, dimensions.y);
+    }
 };
 
 Arduboy2Base arduboy;
