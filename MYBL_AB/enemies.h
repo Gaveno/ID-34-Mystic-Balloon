@@ -84,21 +84,15 @@ public:
 };
 
 struct Door : public GameObject {
-  bool locked;
-
 public:
-  Door(int x, int y) : locked(true), GameObject(x, y) {
+  Door(int x, int y) : GameObject(x, y) {
     objType = LFINISH;
-  }
-
-  void unlock() {
-    locked = false;
   }
 
   void update(HighRect &playerRect, HighRect &playerSuckRect) override {
     HighRect exitRect = {.x = x + 4, .y = y, .width = 8, .height = 16};
 
-    if (collide(exitRect, playerRect) && arduboy.justPressed(UP_BUTTON) && !locked)
+    if (collide(exitRect, playerRect) && arduboy.justPressed(UP_BUTTON) && haveKey)
     {
       balloonsLeft = kid.balloons;
       scoreIsVisible = true;
@@ -109,7 +103,7 @@ public:
   }
 
   void draw() override {
-    sprites.drawOverwrite(x - cam.pos.x, x - cam.pos.y, door, !locked);
+    sprites.drawOverwrite(x - cam.pos.x, x - cam.pos.y, door, haveKey);
   }
 };
 
@@ -139,21 +133,7 @@ struct Key : public GameObject
       --keysActive;
       haveKey = true;
       sound.tone(420, 200);
-      if (keysActive == 0) {
-        unlockDoor();
-      }
       GameObjects::removeForegroundObject(this);
-    }
-  }
-
-  void unlockDoor() {
-    for (auto current = GameObjects::getForegroundHead(); current != nullptr; current = current->next) {
-
-      if (current->objType == LFINISH) {
-        Door *door = current;
-        door->unlock();
-        break;
-      }
     }
   }
 };

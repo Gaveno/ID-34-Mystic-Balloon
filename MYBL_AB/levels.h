@@ -75,6 +75,13 @@ void levelLoad(const uint8_t *lvl) {
     id = pgm_read_byte(lvl + i) & 0xE0;
     y = (int)(pgm_read_byte(lvl + i++) & 0x1F) << 4;
     x = (int)(pgm_read_byte(lvl + i++) & 0x1F) << 4;
+
+    // #ifdef DEBUG_MESSAGES
+    Serial.println("x, y");
+    Serial.println(x);
+    Serial.println(y);
+    // #endif
+
     switch ( id )
     {
       case LSTART:
@@ -83,18 +90,30 @@ void levelLoad(const uint8_t *lvl) {
           startPos.x = x << FIXED_POINT;
           startPos.y = y << FIXED_POINT;
           kid.actualpos = startPos;
+          
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Start");
+          // #endif
         }
         break;
       case LFINISH:
         {
           // Finish/Door
           GameObjects::addBackgroundObject(new Door(x, y));
+
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Exit Door");
+          // #endif
         }
         break;
       case LWALKER:
         {
           // Walker
           GameObjects::addForegroundObject(new Walker(x, y));
+
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Walker");
+          // #endif
         }
         break;
       case LFAN:
@@ -107,24 +126,40 @@ void levelLoad(const uint8_t *lvl) {
           else if (t >= 192)
             direction = FAN_LEFT;
           GameObjects::addForegroundObject(new Fan(x, y, (t & 0x3F) << 4, direction));
+
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Fan");
+          // #endif
         }
         break;
       case LSPIKES:
         {
           // Spikes
           GameObjects::addBackgroundObject(new Spike(x, y, pgm_read_byte(lvl + (i - 1)) >> 5));
+
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Spikes");
+          // #endif
         }
         break;
       case LCOIN:
         {
           // Coins
           GameObjects::addForegroundObject(new Coin(x, y));
+
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Coin");
+          // #endif
         }
         break;
       default: //case LKEY:
         {
           // Key
           GameObjects::addForegroundObject(new Key(x, y));
+
+          // #ifdef DEBUG_MESSAGES
+          Serial.println("Key");
+          // #endif
         }
         break;
     }

@@ -23,6 +23,7 @@
 #include "elements.h"
 #include "levels.h"
 
+#define DEBUG_MESSAGES
 
 typedef void (*FunctionPointer) ();
 
@@ -48,6 +49,10 @@ void setup()
   arduboy.bootLogoSpritesSelfMasked();
   arduboy.setFrameRate(60);                                 // set the frame rate of the game at 60 fps
   loadSetEEPROM();
+
+  // #ifdef DEBUG_MESSAGES
+  Serial.begin(9600);
+  // #endif
 }
 
 void loop() {
