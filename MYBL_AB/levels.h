@@ -77,9 +77,9 @@ void levelLoad(const uint8_t *lvl) {
     x = (int)(pgm_read_byte(lvl + i++) & 0x1F) << 4;
 
     // #ifdef DEBUG_MESSAGES
-    Serial.println("x, y");
-    Serial.println(x);
-    Serial.println(y);
+    // Serial.println("x, y");
+    // Serial.println(x);
+    // Serial.println(y);
     // #endif
 
     switch ( id )
@@ -92,7 +92,7 @@ void levelLoad(const uint8_t *lvl) {
           kid.actualpos = startPos;
           
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Start");
+          // Serial.println("Start");
           // #endif
         }
         break;
@@ -102,7 +102,7 @@ void levelLoad(const uint8_t *lvl) {
           GameObjects::addBackgroundObject(new Door(x, y));
 
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Exit Door");
+          // Serial.println("Exit Door");
           // #endif
         }
         break;
@@ -112,7 +112,7 @@ void levelLoad(const uint8_t *lvl) {
           GameObjects::addForegroundObject(new Walker(x, y));
 
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Walker");
+          // Serial.println("Walker");
           // #endif
         }
         break;
@@ -128,7 +128,7 @@ void levelLoad(const uint8_t *lvl) {
           GameObjects::addForegroundObject(new Fan(x, y, (t & 0x3F) << 4, direction));
 
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Fan");
+          // Serial.println("Fan");
           // #endif
         }
         break;
@@ -138,7 +138,7 @@ void levelLoad(const uint8_t *lvl) {
           GameObjects::addBackgroundObject(new Spike(x, y, pgm_read_byte(lvl + (i - 1)) >> 5));
 
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Spikes");
+          // Serial.println("Spikes");
           // #endif
         }
         break;
@@ -148,7 +148,7 @@ void levelLoad(const uint8_t *lvl) {
           GameObjects::addForegroundObject(new Coin(x, y));
 
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Coin");
+          // Serial.println("Coin");
           // #endif
         }
         break;
@@ -158,7 +158,7 @@ void levelLoad(const uint8_t *lvl) {
           GameObjects::addForegroundObject(new Key(x, y));
 
           // #ifdef DEBUG_MESSAGES
-          Serial.println("Key");
+          // Serial.println("Key");
           // #endif
         }
         break;

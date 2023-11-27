@@ -158,10 +158,13 @@ void stateGamePlaying()
     GameObjects::updateAll(playerRect, playerSuckRect);
   }
 
-  if (arduboy.everyXFrames(8))
-  {
+  if (arduboy.everyXFrames(8)) {
     walkerFrame = (++walkerFrame) % 2;
     coinFrame = (++coinFrame) % 4;
+  }
+
+  if (arduboy.everyXFrames(4)) {
+    fanFrame = (++fanFrame) % 3;
   }
 
   drawGrid();

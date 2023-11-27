@@ -35,7 +35,7 @@ extern bool haveKey;
 class Coin : public GameObject
 {
 public:
-  Coin(int x, int y) : GameObject(x, y) {
+  Coin(int xStart, int yStart) : GameObject(xStart, yStart) {
     x += 2;
     objType = LCOIN;
     ++coinsActive;
@@ -85,7 +85,7 @@ public:
 
 struct Door : public GameObject {
 public:
-  Door(int x, int y) : GameObject(x, y) {
+  Door(int xStart, int yStart) : GameObject(xStart, yStart) {
     objType = LFINISH;
   }
 
@@ -103,13 +103,13 @@ public:
   }
 
   void draw() override {
-    sprites.drawOverwrite(x - cam.pos.x, x - cam.pos.y, door, haveKey);
+    sprites.drawOverwrite(x - cam.pos.x, y - cam.pos.y, door, haveKey);
   }
 };
 
 struct Key : public GameObject
 {
-  Key(int x, int y) : GameObject(x, y) {
+  Key(int xStart, int yStart) : GameObject(xStart, yStart) {
     objType = LKEY;
   }
 
@@ -144,7 +144,7 @@ struct Walker : public GameObject
   int8_t hp;
   bool hurt;
 
-  Walker(int x, int y) : hp(30), direction(1), hurt(false), GameObject(x, y) {
+  Walker(int xStart, int yStart) : hp(30), direction(1), hurt(false), GameObject(xStart, yStart) {
     y += 8;
     objType = LWALKER;
   }
@@ -225,18 +225,20 @@ struct Spike : public GameObject
   int h;
   byte image;
 
-  Spike(int x, int y, int cellsToSpan) : GameObject(x, y) {
+  Spike(int xStart, int yStart, int cellsToSpan) : GameObject(xStart, yStart) {
     objType = LSPIKES;
     int len = 16 * (cellsToSpan + 1);
+    int xR = x >> 4;
+    int yR = y >> 4;
     // Solid above
-    if (gridGetSolid(x, y - 1))
+    if (gridGetSolid(xR, yR - 1))
     {
       image = 3;
       w = len;
       h = 8;
     }
     // Solid below
-    else if (gridGetSolid(x, y + 1))
+    else if (gridGetSolid(xR, yR + 1))
     {
       image = 1;
       w = len;
@@ -244,14 +246,14 @@ struct Spike : public GameObject
       y += 8;
     }
     // Solid left
-    else if (gridGetSolid(x - 1, y))
+    else if (gridGetSolid(xR - 1, yR))
     {
       image = 0;
       w = 8;
       h = len;
     }
     // Solid right
-    else if (gridGetSolid(x + 1, y))
+    else if (gridGetSolid(xR + 1, yR))
     {
       image = 2;
       w = 8;
@@ -263,14 +265,16 @@ struct Spike : public GameObject
   void draw() override {
     int commonX = x - cam.pos.x;
     int commonY = y - cam.pos.y;
-    sprites.drawOverwrite(commonX, commonY, sprSpikes,  image);
-    if (!bitRead(image, 0)) {
-      for (int i = 8; i < h; i += 8)
-        sprites.drawOverwrite(commonX, commonY + i, sprSpikes,  image);
-    }
-    else {
-      for (int i = 8; i < w; i += 8)
+    bool wide = (w > h);
+
+    if (wide) {
+      for (int i = 0; i < w; i += 8) {
         sprites.drawOverwrite(commonX + i, commonY, sprSpikes,  image);
+      }
+    } else {
+      for (int i = 0; i < h; i += 8) {
+        sprites.drawOverwrite(commonX, commonY + i, sprSpikes,  image);
+      }
     }
   }
 
@@ -291,7 +295,7 @@ struct Fan : public GameObject
   uint8_t dir;
   HighRect particleBox;
 
-  Fan(int x, int y, int height, int direction) : height(height), dir(direction), GameObject(x, y) {
+  Fan(int xStart, int yStart, int height, int direction) : height(height), dir(direction), GameObject(xStart, yStart) {
     objType = LFAN;
     for (byte i = 0; i < MAX_FAN_PARTICLES; ++i) {
       particles[i] = vec2(random(16), random(16));
